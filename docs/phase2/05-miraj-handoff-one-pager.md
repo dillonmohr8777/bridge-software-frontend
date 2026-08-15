@@ -4,11 +4,13 @@
 **From:** Dillon (product / UX / front-end)  
 **To:** Miraj (backend / platform)
 
-## What is locked on the front-end side for review
-- Five primary routes: Home, Community News, Create, My Profile, Explore
-- Role/visibility matrix baseline (see `02-role-and-field-permission-matrix.md`)
-- Journeys A–E with acceptance criteria
-- Review prototype on Trusted Current stack (not Kimi)
+## Truthful front-end status
+
+- Product definition (route map, role/visibility matrix, journeys + acceptance, backlog, this contract) is complete and lives in this repo under `docs/phase2/`.
+- The **reviewable interactive prototype** (five routes with feed comparison, Create upload + multi-audience + protected guard, Public/B2B profile + contacts, Explore filters/favorites) is live at:
+  **https://bridge-connected-signal.netlify.app** (noindex,nofollow).
+- That suite currently lives in the validated static package under `dillonmohr8777/bridge-discovery-prototype-kimi-design` → `latest-signal-app/`.
+- The Next.js / Trusted Current UI port of those five routes into this repository is **still pending**. Do not assume the App Router already implements the Phase 2 journeys.
 
 ## Entities to model
 `User`, `Organization`, `Membership`, `RoleGrant`, `Verification`, `ProfileField`, `ResponsibleContact`,  
@@ -34,10 +36,19 @@ PNG, JPEG, WebP, PDF; max 25 MB in prototype rules; malware scan + processing st
 ## Audience rules
 Multi-select; protected detail disables Adults 21+; **server must enforce**.
 
+## Recommended first vertical slice
+Targeted Promotion creation + protected profile projection.  
+Proves: identity/claims, upload intent + scan + storage, multi-audience rules, public vs B2B projection, contact confirmation + next-due, audit events.  
+Explicitly out of slice: full nationwide marketplace, live menus/orders, production auth UI, EIN verification flow, algorithmic feed.
+
 ## Non-goals for this handoff
-Live marketplace data, production billing, HR module, final legal policy text.
+Live marketplace data, production billing, HR module, final legal policy text, real auth in the current prototype.
 
 ## Ask from Miraj
-1. Confirm or revise API behaviors  
-2. Agree vertical slice + staging target date  
-3. Publish auth claims list you will enforce  
+1. Confirm or revise API behaviors and claims model against the matrix.  
+2. Agree vertical slice + staging target date.  
+3. Publish the auth claims list and authorization rules you will enforce.  
+4. Confirm upload, storage, scanning, audience persistence, profile projection, contact confirmation/reminder, search/favorites, introduction request, and audit event contracts.
+
+Full product contract: `docs/phase2/phase2-product-contract.md`  
+Status note: `docs/phase2/00-status-and-reconciliation.md`
