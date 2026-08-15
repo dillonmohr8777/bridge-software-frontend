@@ -1,5 +1,22 @@
 # Bridge decision log
 
+## Phase 2 scope reconciliation — 2026-08-15
+
+| Item | Current status | Evidence boundary |
+|---|---|---|
+| Community default | Unresolved; News Grid is Dillon's recommendation and Classic remains available for comparison | Tori's written choice is still required |
+| MVP feed behavior | Basic chronological/non-algorithmic | Later scope alignment narrowed the MVP; no ranking system is approved |
+| Approved MVP roles | Brands, retailers, dispensaries, sales representatives, and administrators | Final claim names and permissions require Miraj confirmation |
+| Public/member/business fields | Working matrix only | Tori must approve exact fields; Miraj must confirm enforceable projections |
+| Vendor visibility | Deny protected fields by default | Relationship-based access remains an unresolved product/legal/technical decision |
+| Private Bridge League/rewards | Future scope | Interest or discussion is not written approval |
+| Expanded live directories | Future scope/change order | Sample search and filters do not promise a production directory dataset |
+| Subscriptions and payments | Future scope/change order | Pricing discussion is not an approved build requirement |
+| Marketplace or ordering | Future scope/change order | MVP may use external links only |
+| HR functionality | Future scope/change order | Requires separate discovery and privacy/legal review |
+
+No unresolved item in this table is an approved decision.
+
 ## Confirmed from written history
 
 | Decision | Status | Evidence/owner |

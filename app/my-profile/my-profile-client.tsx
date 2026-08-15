@@ -24,19 +24,19 @@ export function MyProfileClient() {
         <div className="tag-row"><span className="tag">Retail</span><span className="tag">Education</span><span className="tag">Maryland</span></div>
         {mode === "b2b" ? (
           <div className="contact-blocks">
-            <div className="contact-card inner">
+            <section className="profile-detail">
               <h3>Sales contact</h3>
               <p><strong>Jordan Lee</strong></p>
               <p className="muted">jordan.lee@example-harbor.invalid · (410) 555-0142</p>
               <p className="form-hint">Protected field · not shown in Public view</p>
-            </div>
-            <div className="contact-card inner">
+            </section>
+            <section className="profile-detail">
               <h3>Accounting contact</h3>
               <p><strong>Sam Rivera</strong></p>
               <p className="muted">sam.rivera@example-harbor.invalid · (410) 555-0198</p>
               <p className="form-hint">Protected field · not shown in Public view</p>
-            </div>
-            <div className="content-card inner confirm-panel">
+            </section>
+            <section className="profile-detail confirm-panel">
               <h3>Contact confirmation</h3>
               <p className="muted">First-login and recurring 90-day review. Next due: {nextDue}.</p>
               {confirmed ? <p className="status-chip verified">Confirmed {confirmedAt}</p> : <p className="status-chip pending">Confirmation needed</p>}
@@ -45,10 +45,10 @@ export function MyProfileClient() {
                 <button type="button" className="button secondary" onClick={() => setConfirmed(false)}>Mark for update</button>
               </div>
               <p className="form-hint">Email reminder integration is pending production. Prototype records actor/time locally only.</p>
-            </div>
+            </section>
           </div>
         ) : (
-          <div className="content-card inner">
+          <div className="profile-visibility-note">
             <p className="muted">Protected sales and accounting contacts are hidden in Public view. EIN and verification documents never appear here.</p>
           </div>
         )}

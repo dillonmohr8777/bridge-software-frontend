@@ -10,7 +10,7 @@
 - The **reviewable interactive prototype** (five routes with feed comparison, Create upload + multi-audience + protected guard, Public/B2B profile + contacts, Explore filters/favorites) is live at:
   **https://bridge-connected-signal.netlify.app** (noindex,nofollow).
 - That suite currently lives in the validated static package under `dillonmohr8777/bridge-discovery-prototype-kimi-design` → `latest-signal-app/`.
-- The Next.js / Trusted Current UI port of those five routes into this repository is **still pending**. Do not assume the App Router already implements the Phase 2 journeys.
+- The Next.js / Trusted Current UI port of those five routes is implemented and locally verified on `phase2-reconcile-2026-08-06`, but remains uncommitted and unpushed pending Dillon's diff approval.
 
 ## Entities to model
 `User`, `Organization`, `Membership`, `RoleGrant`, `Verification`, `ProfileField`, `ResponsibleContact`,  
@@ -45,10 +45,12 @@ Explicitly out of slice: full nationwide marketplace, live menus/orders, product
 Live marketplace data, production billing, HR module, final legal policy text, real auth in the current prototype.
 
 ## Ask from Miraj
-1. Confirm or revise API behaviors and claims model against the matrix.  
-2. Agree vertical slice + staging target date.  
-3. Publish the auth claims list and authorization rules you will enforce.  
+1. Provide the exact repository, branch, PR or commit, and staging endpoint for inspection.
+2. Confirm or revise API behaviors and claims model against the matrix.
+3. Provide migrations and RLS test evidence for identity, roles, and protected records.
 4. Confirm upload, storage, scanning, audience persistence, profile projection, contact confirmation/reminder, search/favorites, introduction request, and audit event contracts.
+5. Provide current `/health` and `/version` evidence and the first staging vertical-slice availability or delivery date.
+6. Identify any contract mismatch or blocker rather than treating this checklist as acceptance.
 
 Full product contract: `docs/phase2/phase2-product-contract.md`  
 Status note: `docs/phase2/00-status-and-reconciliation.md`

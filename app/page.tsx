@@ -20,7 +20,7 @@ export default function Home() {
           <p className="form-hint home-hint">Phase 2 review prototype · provisional identity · illustrative sample data only.</p>
         </div>
         <div className="home-moments" aria-label="Product spaces">
-          <Link className="moment-card" href="/community">
+          <Link className="moment-card moment-card-media community-media" href="/community">
             <span className="moment-label">Community News</span>
             <strong>Scan stories and signals</strong>
             <span className="muted">News grid or Classic feed</span>
@@ -35,7 +35,7 @@ export default function Home() {
             <strong>Business home base</strong>
             <span className="muted">Public vs B2B · contacts</span>
           </Link>
-          <Link className="moment-card" href="/explore">
+          <Link className="moment-card moment-card-media explore-media" href="/explore">
             <span className="moment-label">Explore</span>
             <strong>Nationwide discovery</strong>
             <span className="muted">Filters · favorites · honest coverage</span>

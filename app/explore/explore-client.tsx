@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { profiles } from "@/lib/data";
 import { StatusChip } from "@/components/StatusChip";
 const STATES = ["All states","Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Lab","Transport","Bank","Service"];
+const FAVORITES_STORAGE_KEY = "bridge-phase2-favorites";
+const DEFAULT_FAVORITES = ["harbor-dispensary"];
 function stateFromLocation(location: string) {
   const parts = location.split(",").map((p) => p.trim());
   return parts[1] || "";
@@ -14,7 +16,34 @@ export function ExploreClient() {
   const [state, setState] = useState("All states");
   const [category, setCategory] = useState("All categories");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>(["harbor-dispensary"]);
+  const [favorites, setFavorites] = useState<string[]>(DEFAULT_FAVORITES);
+  const [favoritesReady, setFavoritesReady] = useState(false);
+  const [introStatus, setIntroStatus] = useState("");
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        const saved = JSON.parse(window.localStorage.getItem(FAVORITES_STORAGE_KEY) ?? "null");
+        if (Array.isArray(saved) && saved.every((value) => typeof value === "string")) {
+          setFavorites(saved);
+        }
+      } catch {
+        // Keep the safe illustrative default when storage is unavailable or invalid.
+      } finally {
+        setFavoritesReady(true);
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!favoritesReady) return;
+    try {
+      window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    } catch {
+      // Session state remains usable when persistent storage is unavailable.
+    }
+  }, [favorites, favoritesReady]);
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     return profiles.filter((p) => {
@@ -48,7 +77,7 @@ export function ExploreClient() {
         <p className="form-hint">Geographic filter: 50 states + D.C. Sample records currently illustrate: {sampleStates.join(", ")}.</p>
       </aside>
       <div>
-        <div className="result-bar"><p className="result-count"><strong>{results.length}</strong> result{results.length === 1 ? "" : "s"}</p></div>
+        <div className="result-bar"><p className="result-count" aria-live="polite"><strong>{results.length}</strong> result{results.length === 1 ? "" : "s"}</p></div>
         {noSampleForState && (
           <div className="empty-state">
             <h3>No sample records for {state}</h3>
@@ -70,13 +99,14 @@ export function ExploreClient() {
                 <div className="tag-row">{profile.specialties.map((s) => <span className="tag" key={s}>{s}</span>)}</div>
                 <div className="button-row" style={{ marginTop: "auto", paddingTop: "1rem" }}>
                   <Link className="button secondary" href={`/profile/${profile.slug}`}>View profile</Link>
-                  <button type="button" className={fav ? "button primary" : "button secondary"} onClick={() => toggleFavorite(profile.slug)}>{fav ? "Favorited" : "Favorite"}</button>
+                  <button type="button" className={fav ? "button primary" : "button secondary"} aria-pressed={fav} aria-label={`${fav ? "Remove" : "Add"} ${profile.name} ${fav ? "from" : "to"} favorites`} onClick={() => toggleFavorite(profile.slug)}>{fav ? "Favorited" : "Favorite"}</button>
+                  <button type="button" className="button secondary" onClick={() => setIntroStatus(`Introduction request for ${profile.name} is ready for verified staff review. No contact details were disclosed.`)}>Request introduction</button>
                 </div>
               </article>
             );
           })}
         </div>
-        <p className="form-hint">Introduction requests are permissioned — this prototype does not auto-disclose protected contacts.</p>
+        <p className="form-hint" role="status" aria-live="polite">{introStatus || "Introduction requests are permissioned — this prototype does not auto-disclose protected contacts."}</p>
       </div>
     </div>
   );
