@@ -3,7 +3,7 @@
 **Prepared:** August 4, 2026  
 **Feedback source:** Tori prototype review, July 23, 2026, approximately 39 minutes  
 **Contract status:** Prototype-complete; stakeholder and technical decisions remain as labeled below  
-**Source of interactive review prototype:** https://bridge-connected-signal.netlify.app (static suite; Next.js port pending)
+**Source of interactive review prototype:** https://bridge-connected-signal.netlify.app (actual client-facing static review suite)
 
 ## 1. Approved route and screen map
 
@@ -150,8 +150,8 @@ This matrix is the Phase 2 implementation baseline. “Decision” means the vis
 | Default Community News layout | News grid; retain Classic feed as comparison until Tori signs off | Tori + Dillon | Approval needed |
 | Vendor-to-vendor protected visibility | Deny by default; grant by explicit organization role and relationship | Tori + Miraj + legal | Unresolved |
 | Exact public/member/business field set | Use the matrix above as working baseline | Tori + Miraj | Field-level approval needed |
-| Phase 2 vertical slice | Create targeted promotion plus protected profile projection | Dillon + Miraj | Select before build |
-| Nationwide data coverage | Expose all 50 states and D.C. as the geographic filter; keep the current four-state fixtures explicitly labeled until authoritative providers and market-eligibility rules are chosen | Miraj + product | Technical discovery needed |
+| Phase 2 vertical slice | Create targeted promotion plus protected profile projection | Dillon + Miraj | Recommended; written technical lock still needed |
+| Nationwide data coverage | Keep the current sample records explicitly labeled; expanded live directories require approved providers, market rules, and a written change order | Miraj + product | Future scope unless approved otherwise |
 | Subscription pricing | Keep $349-$350 discussion out of product UI until packaging research is complete | Dillon + business | Not final |
 | HR concept | Separate future discovery with employment/privacy counsel | Dillon + legal | Outside Phase 2 MVP |
 
@@ -166,8 +166,8 @@ Phase 2 is ready to enter production implementation when:
 - Acceptance criteria are converted to automated tests against real APIs.
 - Final Bridge imagery and copy are approved for any screen leaving prototype status.
 
-The current prototype completes the reviewable interaction layer and the contracts needed to make those decisions. It does not convert the unresolved decisions into false certainty.
+The current prototype and local Next.js feature-branch implementation complete the reviewable interaction layer and the contracts needed to make those decisions. They do not convert the unresolved decisions into false certainty or prove a production backend.
 
 ---
 
-*Imported into canonical Trusted Current repo 2026-08-06. Interactive UI remains on the static review suite until the deliberate Next.js port is completed and verified.*
+*Imported into the canonical Trusted Current repo 2026-08-06. The five-route Next.js reconciliation is implemented and verified locally, while the actual client-facing review UI remains the static suite at bridge-connected-signal.netlify.app.*

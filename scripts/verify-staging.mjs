@@ -6,6 +6,10 @@ const root = process.cwd();
 const directions = ["current", "network", "botanical"];
 const expectedRoutes = [
   "index.html",
+  "community/index.html",
+  "create/index.html",
+  "my-profile/index.html",
+  "explore/index.html",
   "directory/index.html",
   "join/index.html",
   "dashboard/index.html",
@@ -27,6 +31,22 @@ for (const direction of directions) {
   for (const route of expectedRoutes) {
     assert.ok(existsSync(join(outputRoot, route)), `${direction} is missing ${route}`);
   }
+
+  const community = readFileSync(join(outputRoot, "community/index.html"), "utf8");
+  assert.match(community, /News grid/, `${direction} Community News is missing News grid`);
+  assert.match(community, /Classic feed/, `${direction} Community News is missing Classic feed`);
+
+  const create = readFileSync(join(outputRoot, "create/index.html"), "utf8");
+  assert.match(create, /PNG, JPEG, WebP, or PDF/, `${direction} Create is missing upload guidance`);
+  assert.match(create, /Protected (?:business )?detail/, `${direction} Create is missing the protected-detail boundary`);
+
+  const profile = readFileSync(join(outputRoot, "my-profile/index.html"), "utf8");
+  assert.match(profile, /Public view/, `${direction} My Profile is missing Public view`);
+  assert.match(profile, /B2B/, `${direction} My Profile is missing the verified-business view`);
+
+  const explore = readFileSync(join(outputRoot, "explore/index.html"), "utf8");
+  assert.match(explore, /All states/, `${direction} Explore is missing nationwide state selection`);
+  assert.match(explore, /Favorites only/, `${direction} Explore is missing favorites filtering`);
 }
 
 console.log(`Verified ${directions.length} direction builds and ${expectedRoutes.length} routes per build.`);
