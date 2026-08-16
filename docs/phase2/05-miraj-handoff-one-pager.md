@@ -9,8 +9,9 @@
 - Product definition (route map, role/visibility matrix, journeys + acceptance, backlog, this contract) is complete and lives in this repo under `docs/phase2/`.
 - The **reviewable interactive prototype** (five routes with feed comparison, Create upload + multi-audience + protected guard, Public/B2B profile + contacts, Explore filters/favorites) is live at:
   **https://bridge-connected-signal.netlify.app** (noindex,nofollow).
-- That suite currently lives in the validated static package under `dillonmohr8777/bridge-discovery-prototype-kimi-design` → `latest-signal-app/`.
-- The Next.js / Trusted Current UI port of those five routes is implemented and locally verified on `phase2-reconcile-2026-08-06`, but remains uncommitted and unpushed pending Dillon's diff approval.
+- The unified URL now serves the canonical Next.js Trusted Current application from `dillonmohr8777/bridge-discovery-prototype`.
+- The validated Kimi static suite remains historical product and visual evidence. It is no longer the deployed frontend owner.
+- `/studio`, `/business`, and `/signal` remain compatible links and redirect to `/create`, `/my-profile`, and `/explore`.
 
 ## Entities to model
 `User`, `Organization`, `Membership`, `RoleGrant`, `Verification`, `ProfileField`, `ResponsibleContact`,  
@@ -45,7 +46,7 @@ Explicitly out of slice: full nationwide marketplace, live menus/orders, product
 Live marketplace data, production billing, HR module, final legal policy text, real auth in the current prototype.
 
 ## Ask from Miraj
-1. Provide the exact repository, branch, PR or commit, and staging endpoint for inspection.
+1. Provide the exact repository, branch, commit, and staging endpoint for inspection.
 2. Confirm or revise API behaviors and claims model against the matrix.
 3. Provide migrations and RLS test evidence for identity, roles, and protected records.
 4. Confirm upload, storage, scanning, audience persistence, profile projection, contact confirmation/reminder, search/favorites, introduction request, and audit event contracts.
