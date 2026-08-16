@@ -17,6 +17,16 @@
 
 No unresolved item in this table is an approved decision.
 
+## Unified review deployment — 2026-08-16
+
+| Item | Recorded decision | Evidence boundary |
+|---|---|---|
+| Client review URL | `https://bridge-connected-signal.netlify.app` is the one unified review destination | Existing Netlify site updated in place; no replacement client URL created |
+| Visual direction | Trusted Current is the deployed provisional direction | Tori still owns final visual acceptance |
+| August 15 sites | Trusted Current, Modern Network, and Botanical Ledger are visual variants of the same canonical application | They do not contain separate product functionality and are not additional client deliverables |
+| Legacy links | `/studio`, `/business`, and `/signal` redirect to `/create`, `/my-profile`, and `/explore` | Live desktop and mobile verification passed |
+| Deployment format | Native Next.js deployment is required for the unified site | Static export produced failed background route prefetch requests and was replaced before final verification |
+
 ## Confirmed from written history
 
 | Decision | Status | Evidence/owner |
