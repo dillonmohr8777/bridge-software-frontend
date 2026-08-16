@@ -23,6 +23,11 @@ for (const direction of directions) {
   const outputRoot = join(root, "staging", direction);
   assert.ok(existsSync(outputRoot), `Missing staging output for ${direction}`);
 
+  const redirects = readFileSync(join(outputRoot, "_redirects"), "utf8");
+  assert.match(redirects, /^\/studio \/create 301$/m, `${direction} is missing the legacy Create redirect`);
+  assert.match(redirects, /^\/business \/my-profile 301$/m, `${direction} is missing the legacy My Profile redirect`);
+  assert.match(redirects, /^\/signal \/explore 301$/m, `${direction} is missing the legacy Explore redirect`);
+
   const home = readFileSync(join(outputRoot, "index.html"), "utf8");
   assert.match(home, new RegExp(`data-theme=\\"${direction}\\"`), `${direction} theme is not pinned`);
   assert.match(home, /Provisional preview/, `${direction} preview is not labeled provisional`);
