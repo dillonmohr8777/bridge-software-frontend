@@ -19,7 +19,6 @@ const directions: {
     promise: "Credible, useful, and distinctly B2B.",
     rationale: "Navy and teal establish trust without copying category clichés. Amber creates a human signal for introductions and pending actions.",
     colors: ["#12324A", "#0A766E", "#D9820F", "#F5F8F7"],
-    recommendation: true,
   },
   {
     name: "02 · Modern Network",
@@ -27,6 +26,7 @@ const directions: {
     promise: "Bold, connected, and startup-forward.",
     rationale: "Ink, electric violet, and coral make Bridge feel like a modern software network rather than a directory listing site.",
     colors: ["#17152D", "#6556E8", "#D95848", "#F7F6FB"],
+    recommendation: true,
   },
   {
     name: "03 · Botanical Ledger",
