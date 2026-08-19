@@ -1,12 +1,14 @@
 # Bridge decision log
 
-## Phase 3 vertical slice opened — 2026-08-19
+## Phase 3 frontend slice complete — 2026-08-19
 
 | Item | Recorded decision | Evidence boundary |
 |---|---|---|
 | Current product/UX lane | Phase 3 is open: productionize Promotion create + protected profile projection | Phase 2 frontend is technically complete; Melissa said the team is good to move forward after Tori's payment work; Miraj reported Milestone 2 done pending his tests |
 | Slice lock | Targeted Promotion creation plus protected profile projection / 90-day contact confirmation | Matches Dillon's 2026-08-16 recommended first slice and `docs/phase2/04-phased-backlog-and-decisions.md` |
 | Adapter | In-memory Phase 3 client by default; HTTP client when `NEXT_PUBLIC_BRIDGE_API_BASE` is set | Live bind still requires Miraj's inspectable staging origin |
+| Dillon frontend lock | Create, My Profile, design-system mutation states, and contract tests are the internal deliverable | `docs/phase3/02-dillon-deliverable.md`; do not Slack, email, or update Netlify until Dillon asks |
+| Unified review visual | Connected purple (Modern Network) on the same Phase 1/2 five-route product. Do not ship Trusted Current navy/teal on that URL. Do not substitute a different app or the Kimi suite. | Dillon 2026-08-19: restore the last purple Connected look with every Tori-instituted Phase 1/2 integration from the 2026-08-16 actual-work report. Trusted Current stays on `bridge-preview-current` |
 | Still out of slice | Expanded directories, ranking, subscriptions/payments, in-platform ordering, EIN documents, production auth UI | Contract Section 10 / 2026-08-05 Slack alignment |
 
 ## Phase 2 scope reconciliation — 2026-08-15
@@ -31,7 +33,7 @@ No unresolved item in this table is an approved decision.
 | Item | Recorded decision | Evidence boundary |
 |---|---|---|
 | Client review URL | `https://bridge-connected-signal.netlify.app` is the one unified review destination | Existing Netlify site updated in place; no replacement client URL created |
-| Visual direction | Trusted Current is the deployed provisional direction | Tori still owns final visual acceptance |
+| Visual direction | **Superseded 2026-08-19.** Connected purple is the unified-review visual. Trusted Current remains an alternate preview only. | Dillon restored Connected on the existing five-route app. Tori still owns formal brand acceptance |
 | August 15 sites | Trusted Current, Modern Network, and Botanical Ledger are visual variants of the same canonical application | They do not contain separate product functionality and are not additional client deliverables |
 | Legacy links | `/studio`, `/business`, and `/signal` redirect to `/create`, `/my-profile`, and `/explore` | Live desktop and mobile verification passed |
 | Deployment format | Native Next.js deployment is required for the unified site | Static export produced failed background route prefetch requests and was replaced before final verification |
@@ -52,7 +54,7 @@ No unresolved item in this table is an approved decision.
 
 | Decision | Why it was made | Approval needed |
 |---|---|---|
-| Trusted Current is the default visual direction | Best balance of credibility, distinctiveness, and category restraint | Tori |
+| Trusted Current is the default visual direction | **Superseded 2026-08-19 for the unified review URL.** Connected / Modern Network is now the review default. Trusted Current remains an alternate at `bridge-preview-current`. | Dillon (unified URL); Tori still owns formal brand acceptance |
 | Simplified bridge mark | Enables realistic layouts without implying a final logo | Tori / brand process |
 | Retailer and dispensary are shown as separate roles | Both appear in project language | Tori + Miraj |
 | Contact starts as a structured request | Matches scope and protects private details without adding direct messaging | Tori + Miraj |
