@@ -84,6 +84,11 @@ export type ConfirmContactsResult = {
   actorUserId: string;
 };
 
+export type UpdateContactsInput = {
+  organizationId: string;
+  contacts: ResponsibleContact[];
+};
+
 export type CreatePostInput = {
   contentType: ContentType;
   message: string;
@@ -118,6 +123,8 @@ export type Phase3Client = {
   getSession(): Promise<SessionClaims>;
   createUploadIntent(file: File): Promise<UploadIntent>;
   createPost(input: CreatePostInput): Promise<PostRecord>;
+  listPosts(): Promise<PostRecord[]>;
   getProfileProjection(view: "public" | "protected"): Promise<ProfileProjection>;
   confirmContacts(input: ConfirmContactsInput): Promise<ConfirmContactsResult>;
+  updateContacts(input: UpdateContactsInput): Promise<ProfileProjection>;
 };

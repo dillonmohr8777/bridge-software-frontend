@@ -1,4 +1,4 @@
-import { audienceIds, type AudienceId, type SessionClaims } from "./types.ts";
+import { audienceIds, type AudienceId, type PostRecord, type SessionClaims } from "./types.ts";
 
 export const audienceCatalog: ReadonlyArray<{
   id: AudienceId;
@@ -73,4 +73,31 @@ export function canConfirmContacts(claims: SessionClaims): boolean {
 
 export function audienceLabel(id: AudienceId): string {
   return audienceCatalog.find((item) => item.id === id)?.label ?? id;
+}
+
+export function visiblePostsForView(
+  posts: readonly PostRecord[],
+  view: "public" | "protected",
+): PostRecord[] {
+  if (view === "protected") return [...posts];
+  return posts.filter((post) => !post.protectedDetail && post.audienceIds.includes("adults"));
+}
+
+export function validateContacts(contacts: readonly { kind: string; name: string; email: string; phone: string }[]): string | null {
+  if (contacts.length !== 2) {
+    return "B2B profiles keep one sales contact and one accounting contact.";
+  }
+  const kinds = contacts.map((contact) => contact.kind).sort().join(",");
+  if (kinds !== "accounting,sales") {
+    return "B2B profiles keep one sales contact and one accounting contact.";
+  }
+  for (const contact of contacts) {
+    if (!contact.name.trim() || !contact.email.trim() || !contact.phone.trim()) {
+      return "Name, email, and phone are required for each responsible contact.";
+    }
+    if (!contact.email.includes("@")) {
+      return "Use a valid email for each responsible contact.";
+    }
+  }
+  return null;
 }
