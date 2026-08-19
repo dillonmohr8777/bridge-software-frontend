@@ -1,5 +1,14 @@
 # Bridge decision log
 
+## Phase 3 vertical slice opened — 2026-08-19
+
+| Item | Recorded decision | Evidence boundary |
+|---|---|---|
+| Current product/UX lane | Phase 3 is open: productionize Promotion create + protected profile projection | Phase 2 frontend is technically complete; Melissa said the team is good to move forward after Tori's payment work; Miraj reported Milestone 2 done pending his tests |
+| Slice lock | Targeted Promotion creation plus protected profile projection / 90-day contact confirmation | Matches Dillon's 2026-08-16 recommended first slice and `docs/phase2/04-phased-backlog-and-decisions.md` |
+| Adapter | In-memory Phase 3 client by default; HTTP client when `NEXT_PUBLIC_BRIDGE_API_BASE` is set | Live bind still requires Miraj's inspectable staging origin |
+| Still out of slice | Expanded directories, ranking, subscriptions/payments, in-platform ordering, EIN documents, production auth UI | Contract Section 10 / 2026-08-05 Slack alignment |
+
 ## Phase 2 scope reconciliation — 2026-08-15
 
 | Item | Current status | Evidence boundary |
