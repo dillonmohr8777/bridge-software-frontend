@@ -3,9 +3,9 @@
 Status: discovery recommendation, not client-approved
 Prepared: 2026-07-11
 
-## Recommendation: Trusted Current
+## Recommendation: Modern Network (Connected)
 
-Bridge should initially feel like trusted business infrastructure with a human connection layer. This direction avoids both generic corporate-software blue and the cannabis category's overused leaf/bright-green vocabulary.
+The unified review URL uses this direction. Bridge should feel like a modern professional network: ink, electric violet, and coral. Trusted Current navy/teal remains an alternate on `bridge-preview-current` only.
 
 ### Core attributes
 
@@ -19,18 +19,18 @@ Bridge should initially feel like trusted business infrastructure with a human c
 
 | Token | Hex | Intended use |
 |---|---:|---|
-| Bridge Navy | `#12324A` | Logo field, navigation emphasis, primary actions, large branded surfaces |
-| Current Teal | `#0A766E` | Links, selection, connection moments, secondary visual identity |
-| Signal Amber | `#D9820F` | Introductions, pending states, small high-attention details |
-| Canvas | `#F5F8F7` | Page background |
+| Bridge Ink | `#17152D` | Logo field, navigation emphasis, primary actions, large branded surfaces |
+| Electric Violet | `#6556E8` | Links, selection, connection moments, secondary visual identity |
+| Signal Coral | `#D95848` | Introductions, pending states, small high-attention details |
+| Canvas | `#F7F6FB` | Page background |
 | Surface | `#FFFFFF` | Cards, fields, tables |
-| Primary Text | `#14232E` | Headlines and body text |
-| Muted Text | `#5D6D76` | Supporting metadata on light surfaces |
-| Border | `#CEDBD7` | Dividers and controls |
-| Success | `#177245` | Verified and completed states |
+| Primary Text | `#1D1A32` | Headlines and body text |
+| Muted Text | `#66617D` | Supporting metadata on light surfaces |
+| Border | `#D9D5E8` | Dividers and controls |
+| Success | `#247451` | Verified and completed states |
 | Error | `#B42318` | Blocking or failed states |
 
-Do not use amber for small body text on white. Do not rely on color alone for verification or error states; pair it with a label and icon.
+Do not use coral for small body text on white. Do not rely on color alone for verification or error states; pair it with a label and icon.
 
 ### Typography
 
@@ -63,9 +63,9 @@ Avoid:
 
 ## Alternate directions for the meeting
 
-### Modern Network
+### Trusted Current
 
-Ink `#17152D`, electric violet `#6556E8`, coral `#D95848`, soft canvas `#F7F6FB`. Best if Tori wants Bridge to feel like a venture-backed professional network with a broader future beyond cannabis.
+Navy `#12324A`, teal `#0A766E`, amber `#D9820F`, canvas `#F5F8F7`. Alternate only. Do not deploy this palette to `bridge-connected-signal.netlify.app`.
 
 ### Botanical Ledger
 
