@@ -10,13 +10,21 @@ Connect Claude to the public GitHub repository `dillonmohr8777/bridge-discovery-
 
 ## What is included
 
-- Responsive landing and directory experiences
-- Working search, role, and verification filters
-- Role selection/onboarding direction
-- Member profile and permission-based contact request
-- Brand dashboard
-- Admin verification queue
-- Three switchable visual directions
+Phase 2 five-route product (2026-08-16 actual-work report), in Connected purple:
+
+- `/` Home, `/community` Community News (News Grid + Classic), `/create` Create, `/my-profile` My Profile, `/explore` Explore
+- Legacy redirects: `/studio` → Create, `/business` → My Profile, `/signal` → Explore
+- Create: PNG/JPEG/WebP/PDF up to 25 MB, multi-audience, protected-detail guardrail
+- My Profile: Public vs verified-business, sales/accounting contacts, 90-day confirmation
+- Explore: search, composable filters, 50 states + D.C., local favorites, permissioned introductions
+
+Phase 1 surfaces that remain in this same app:
+
+- Working search, role, and verification filters (`/directory`, `/explore`)
+- Role selection/onboarding (`/join`)
+- Member profile and permission-based contact request (`/profile/<slug>`)
+- Brand dashboard and admin verification queue
+- Three switchable visual directions on unlocked builds; unified review URL stays Connected
 - Provisional brand kit and reusable design-system page
 - Monday meeting package, product definition, evidence audit, and Claude workflow
 
@@ -29,9 +37,12 @@ npm run dev
 
 Open `http://localhost:3000`. Important routes:
 
-- `/create` — Phase 3 targeted Promotion slice
-- `/my-profile` — Phase 3 protected profile projection
-- `/directory`
+- `/` — Home
+- `/community` — Community News (News Grid / Classic)
+- `/create` — Phase 3 targeted Promotion slice (upload intent on file select, persisted audiences)
+- `/my-profile` — Phase 3 protected profile projection (contact edit, 90-day confirm, Public vs B2B)
+- `/explore` — search, filters, favorites, introductions
+- `/directory` — Phase 1 directory (also reachable from Explore)
 - `/join`
 - `/profile/cascade-canna` (any member: `/profile/<slug>`)
 - `/dashboard`
@@ -51,7 +62,7 @@ Rebuild all three with `./scripts/build-staging.sh` (outputs to `staging/<direct
 
 ## Status and boundaries
 
-Phase 3 is open on the Promotion + protected-profile slice. `/create` and `/my-profile` use typed claims, upload-intent, post, and projection adapters in `lib/phase3/`. The default adapter is in-memory. A live `/api/v1` bind requires `NEXT_PUBLIC_BRIDGE_API_BASE` plus Miraj's inspectable staging origin.
+Phase 3 frontend lock is complete on the Promotion + protected-profile slice. `/create` and `/my-profile` use typed claims, upload-intent, post, projection, and contact adapters in `lib/phase3/`. The default visual direction is Modern Network (Connected purple). A live `/api/v1` bind requires `NEXT_PUBLIC_BRIDGE_API_BASE` plus Miraj's inspectable staging origin. Do not send this slice to the client until Dillon asks. Republishing `https://bridge-connected-signal.netlify.app` must keep Modern Network, not Trusted Current navy/teal.
 
 There is still no production Supabase session, email delivery, or real license verification. All profiles and metrics are fictional. The brand identity is provisional.
 
