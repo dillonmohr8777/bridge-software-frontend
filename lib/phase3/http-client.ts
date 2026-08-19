@@ -7,6 +7,7 @@ import {
   type Phase3ErrorCode,
   type ProfileProjection,
   type SessionClaims,
+  type UpdateContactsInput,
   type UploadIntent,
   type PostRecord,
 } from "./types.ts";
@@ -35,7 +36,11 @@ function userMessageFor(code: Phase3ErrorCode): string {
 }
 
 export class HttpPhase3Client implements Phase3Client {
-  constructor(private readonly baseUrl: string) {}
+  private readonly baseUrl: string;
+
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
 
   private endpoint(path: string): string {
     return `${this.baseUrl.replace(/\/$/, "")}${path}`;
@@ -90,6 +95,10 @@ export class HttpPhase3Client implements Phase3Client {
     });
   }
 
+  listPosts() {
+    return this.request<PostRecord[]>(this.endpointPath.posts);
+  }
+
   getProfileProjection(view: "public" | "protected") {
     return this.request<ProfileProjection>(`${this.endpointPath.profile}?view=${view}`);
   }
@@ -101,11 +110,19 @@ export class HttpPhase3Client implements Phase3Client {
     });
   }
 
+  updateContacts(input: UpdateContactsInput) {
+    return this.request<ProfileProjection>(this.endpointPath.contacts, {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    });
+  }
+
   private readonly endpointPath = {
     session: "/api/v1/session",
     uploads: "/api/v1/uploads/intent",
     posts: "/api/v1/posts",
     profile: "/api/v1/profiles/current",
     confirmContacts: "/api/v1/contacts/confirm",
+    contacts: "/api/v1/contacts",
   } as const;
 }
