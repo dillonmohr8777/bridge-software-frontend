@@ -4,21 +4,26 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Phase3Error,
   audienceCatalog,
+  audienceLabel,
+  applySimulatedFailure,
+  applyUnverifiedOrganization,
   canCreatePromotion,
   canPublishPost,
   contentTypes,
-  applySimulatedFailure,
   getPhase3Client,
   isPhase3LiveApi,
   resolveEffectiveAudiences,
   validateUploadFile,
+  visiblePostsForView,
   type ContentType,
+  type PostRecord,
   type SessionClaims,
   type UploadIntent,
 } from "@/lib/phase3";
 
 type PublishStatus = "idle" | "pending" | "success" | "error";
 type SessionStatus = "loading" | "ready" | "error";
+type UploadStatus = "idle" | "pending" | "accepted" | "error";
 
 export function CreateClient() {
   const client = useMemo(() => getPhase3Client(), []);
@@ -33,24 +38,36 @@ export function CreateClient() {
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [upload, setUpload] = useState<UploadIntent | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle");
   const [status, setStatus] = useState<PublishStatus>("idle");
   const [publishError, setPublishError] = useState<string | null>(null);
   const [simulateFailure, setSimulateFailure] = useState(false);
+  const [unverifiedOrg, setUnverifiedOrg] = useState(false);
   const [publishedId, setPublishedId] = useState<string | null>(null);
+  const [posts, setPosts] = useState<PostRecord[]>([]);
 
   const effectiveAudiences = useMemo(
     () => resolveEffectiveAudiences(selected, protectedDetail),
     [protectedDetail, selected],
   );
   const eligible = claims ? canCreatePromotion(claims) : false;
-  const canPublish = eligible && canPublishPost(selected, protectedDetail, fileError) && status !== "success";
+  const hasMessage = message.trim().length > 0;
+  const uploadReady = file === null || (uploadStatus === "accepted" && upload !== null);
+  const canPublish = eligible
+    && canPublishPost(selected, protectedDetail, fileError)
+    && hasMessage
+    && uploadReady
+    && uploadStatus !== "pending"
+    && status !== "success"
+    && status !== "pending";
 
   useEffect(() => {
     let cancelled = false;
-    client.getSession()
-      .then((session) => {
+    Promise.all([client.getSession(), client.listPosts()])
+      .then(([session, listed]) => {
         if (cancelled) return;
         setClaims(session);
+        setPosts(listed);
         setSessionStatus("ready");
       })
       .catch((error: unknown) => {
@@ -68,6 +85,7 @@ export function CreateClient() {
     setFileMeta(null);
     setFile(null);
     setUpload(null);
+    setUploadStatus("idle");
     if (!next) return;
     const problem = validateUploadFile(next);
     if (problem) {
@@ -76,6 +94,16 @@ export function CreateClient() {
     }
     setFile(next);
     setFileMeta({ name: next.name, size: next.size });
+    setUploadStatus("pending");
+    try {
+      applySimulatedFailure(client, simulateFailure);
+      const intent = await client.createUploadIntent(next);
+      setUpload(intent);
+      setUploadStatus("accepted");
+    } catch (error: unknown) {
+      setUploadStatus("error");
+      setFileError(error instanceof Phase3Error ? error.userMessage : "The upload could not be accepted.");
+    }
   }
 
   function toggleAudience(id: string) {
@@ -83,26 +111,50 @@ export function CreateClient() {
     setSelected((prev) => (prev.includes(id) ? prev.filter((value) => value !== id) : [...prev, id]));
   }
 
+  function resetComposer() {
+    setContentType("Promotion");
+    setMessage("");
+    setProtectedDetail(false);
+    setSelected(["retailers"]);
+    setFileMeta(null);
+    setFile(null);
+    setFileError(null);
+    setUpload(null);
+    setUploadStatus("idle");
+    setStatus("idle");
+    setPublishError(null);
+    setPublishedId(null);
+  }
+
+  async function reloadSession() {
+    setSessionStatus("loading");
+    setSessionError(null);
+    try {
+      const [session, listed] = await Promise.all([client.getSession(), client.listPosts()]);
+      setClaims(session);
+      setPosts(listed);
+      setSessionStatus("ready");
+    } catch (error: unknown) {
+      setSessionStatus("error");
+      setSessionError(error instanceof Phase3Error ? error.userMessage : "The session could not be loaded.");
+    }
+  }
+
   async function publish() {
-    if (!canPublish || status === "pending") return;
+    if (!canPublish) return;
     setStatus("pending");
     setPublishError(null);
     try {
       applySimulatedFailure(client, simulateFailure);
-      let uploadId = upload?.uploadId ?? null;
-      if (file && !uploadId) {
-        const intent = await client.createUploadIntent(file);
-        setUpload(intent);
-        uploadId = intent.uploadId;
-      }
       const post = await client.createPost({
         contentType,
         message,
-        uploadId,
+        uploadId: upload?.uploadId ?? null,
         audienceIds: effectiveAudiences,
         protectedDetail,
       });
       setPublishedId(post.postId);
+      setPosts(await client.listPosts());
       setStatus("success");
     } catch (error: unknown) {
       setStatus("error");
@@ -110,30 +162,14 @@ export function CreateClient() {
     }
   }
 
+  const visiblePosts = visiblePostsForView(posts, "protected");
+
   if (sessionStatus === "loading") {
     return <p className="form-hint" aria-busy="true">Loading creator session…</p>;
   }
 
   if (sessionStatus === "error") {
     return <p className="form-error" role="alert">{sessionError}</p>;
-  }
-
-  if (status === "success") {
-    return (
-      <div className="content-card" role="status">
-        <p className="eyebrow">Promotion accepted</p>
-        <h2>The targeted promotion is recorded.</h2>
-        <p>
-          Access is limited to {effectiveAudiences.map((id) => audienceCatalog.find((item) => item.id === id)?.label).join(", ")}.
-          Protected detail {protectedDetail ? "is on" : "is off"}.
-        </p>
-        <p className="form-hint">
-          {isPhase3LiveApi()
-            ? `Recorded as ${publishedId}.`
-            : `Prototype adapter recorded ${publishedId}. Connect NEXT_PUBLIC_BRIDGE_API_BASE to persist through Miraj's /api/v1.`}
-        </p>
-      </div>
-    );
   }
 
   return (
@@ -144,9 +180,14 @@ export function CreateClient() {
             This account cannot create promotions until membership is active and the organization is verified.
           </p>
         )}
+        {status === "success" && (
+          <p className="status-chip verified" role="status">
+            Promotion accepted{publishedId ? ` · ${publishedId}` : ""}. Access is limited to {effectiveAudiences.map(audienceLabel).join(", ")}.
+          </p>
+        )}
         <label htmlFor="content-type">Content type</label>
         <select
-          disabled={!eligible || status === "pending"}
+          disabled={!eligible || status === "pending" || status === "success"}
           id="content-type"
           value={contentType}
           onChange={(event) => setContentType(event.target.value as ContentType)}
@@ -155,7 +196,7 @@ export function CreateClient() {
         </select>
         <label htmlFor="message">Message</label>
         <textarea
-          disabled={!eligible || status === "pending"}
+          disabled={!eligible || status === "pending" || status === "success"}
           id="message"
           rows={4}
           value={message}
@@ -164,19 +205,20 @@ export function CreateClient() {
         />
         <label htmlFor="asset">Asset upload</label>
         <input
-          disabled={!eligible || status === "pending"}
+          disabled={!eligible || status === "pending" || status === "success"}
           id="asset"
           type="file"
           accept=".png,.jpg,.jpeg,.webp,.pdf,image/png,image/jpeg,image/webp,application/pdf"
           onChange={(event) => void onFile(event.target.files?.[0] ?? null)}
         />
         {fileMeta && <p className="form-hint">Selected: <strong>{fileMeta.name}</strong> ({Math.round(fileMeta.size / 1024)} KB)</p>}
+        {uploadStatus === "pending" && <p className="form-hint" aria-busy="true">Requesting upload intent…</p>}
         {upload && <p className="form-hint">Upload intent accepted: {upload.uploadId}</p>}
         {fileError && <p className="form-error" role="alert">{fileError}</p>}
         <fieldset className="audience-fieldset">
           <legend>Audiences</legend>
           {audienceCatalog.map((audience) => {
-            const disabled = !eligible || status === "pending" || (protectedDetail && audience.id === "adults");
+            const disabled = !eligible || status === "pending" || status === "success" || (protectedDetail && audience.id === "adults");
             const checked = effectiveAudiences.includes(audience.id);
             return (
               <label key={audience.id} className="check-row">
@@ -190,7 +232,7 @@ export function CreateClient() {
           <input
             type="checkbox"
             checked={protectedDetail}
-            disabled={!eligible || status === "pending"}
+            disabled={!eligible || status === "pending" || status === "success"}
             onChange={(event) => {
               setProtectedDetail(event.target.checked);
               if (event.target.checked) setSelected((prev) => prev.filter((id) => id !== "adults"));
@@ -200,16 +242,35 @@ export function CreateClient() {
         </label>
         {protectedDetail && <p className="form-hint">Protected detail limits this post to verified audiences. Adults 21+ is disabled.</p>}
         {publishError && <p className="form-error" role="alert">{publishError}</p>}
-        <button className="button primary full" type="submit" disabled={!canPublish || status === "pending"}>
-          {status === "pending" ? "Publishing…" : canPublish ? "Publish promotion" : "Publish unavailable"}
-        </button>
-        {!canPublish && <p className="form-hint">Publish requires an eligible creator, at least one eligible audience, and a valid file (if attached).</p>}
+        {status === "success" ? (
+          <button className="button secondary full" type="button" onClick={resetComposer}>Create another promotion</button>
+        ) : (
+          <button className="button primary full" type="submit" disabled={!canPublish}>
+            {status === "pending" ? "Publishing…" : canPublish ? "Publish promotion" : "Publish unavailable"}
+          </button>
+        )}
+        {!canPublish && status !== "success" && (
+          <p className="form-hint">Publish requires an eligible creator, a message, at least one eligible audience, and a finished upload when a file is attached.</p>
+        )}
         {!isPhase3LiveApi() && (
           <details className="demo-controls">
             <summary>Phase 3 adapter controls</summary>
             <label className="check-row">
               <input checked={simulateFailure} onChange={(event) => setSimulateFailure(event.target.checked)} type="checkbox" />
               Simulate a network failure
+            </label>
+            <label className="check-row">
+              <input
+                checked={unverifiedOrg}
+                onChange={(event) => {
+                  const enabled = event.target.checked;
+                  setUnverifiedOrg(enabled);
+                  applyUnverifiedOrganization(client, enabled);
+                  void reloadSession();
+                }}
+                type="checkbox"
+              />
+              Use an unverified organization
             </label>
             <p className="form-hint">Using the in-memory adapter. Server authorization is still required in production.</p>
           </details>
@@ -224,12 +285,30 @@ export function CreateClient() {
         <div className="tag-row">
           {effectiveAudiences.length === 0
             ? <span className="tag">No eligible audience</span>
-            : effectiveAudiences.map((id) => <span className="tag" key={id}>{audienceCatalog.find((item) => item.id === id)?.label}</span>)}
+            : effectiveAudiences.map((id) => <span className="tag" key={id}>{audienceLabel(id)}</span>)}
         </div>
         <p className="form-hint">
           {isPhase3LiveApi() ? "Publishing through the live /api/v1 contract." : "Phase 3 mock adapter. Server authorization is required in production."}
         </p>
       </aside>
+      <section className="content-card published-feed" aria-live="polite">
+        <p className="eyebrow">Persisted promotions</p>
+        <h3>Multi-audience records stay on this organization</h3>
+        {visiblePosts.length === 0 ? (
+          <p className="muted">No promotions recorded yet. Publish one to see audience persistence here and on My Profile.</p>
+        ) : (
+          visiblePosts.map((post) => (
+            <article className="published-item" key={post.postId}>
+              <h4>{post.contentType} · {post.postId}</h4>
+              <p>{post.message}</p>
+              <p className="muted">{post.protectedDetail ? "Verified audiences only" : "As selected"}</p>
+              <div className="tag-row">
+                {post.audienceIds.map((id) => <span className="tag" key={id}>{audienceLabel(id)}</span>)}
+              </div>
+            </article>
+          ))
+        )}
+      </section>
     </div>
   );
 }
