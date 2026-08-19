@@ -40,6 +40,7 @@ The repository contains a decision prototype, not production software. All membe
 ```bash
 npm install
 npm run dev
+npm run test:phase3
 npm run typecheck
 npm run lint
 npm run build
@@ -61,10 +62,11 @@ and artifact verification commands to pass.
 - TypeScript in strict mode
 - Plain CSS with semantic design tokens and three runtime themes
 - Mock data in `lib/data.ts`
+- Phase 3 vertical slice adapters in `lib/phase3/` (in-memory by default; live `/api/v1` only when `NEXT_PUBLIC_BRIDGE_API_BASE` is set)
 - Reusable presentational components in `components/`
-- No backend, authentication, persistence, or real verification yet
+- No production Supabase, authentication, or real verification yet
 
-Miraj owns the future Supabase/PostgreSQL/auth/storage contracts. Do not invent production database or authorization behavior without an approved contract.
+Miraj owns the future Supabase/PostgreSQL/auth/storage contracts. Do not invent production database or authorization behavior without an inspectable staging origin.
 
 ## Routes
 

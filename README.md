@@ -29,6 +29,8 @@ npm run dev
 
 Open `http://localhost:3000`. Important routes:
 
+- `/create` — Phase 3 targeted Promotion slice
+- `/my-profile` — Phase 3 protected profile projection
 - `/directory`
 - `/join`
 - `/profile/cascade-canna` (any member: `/profile/<slug>`)
@@ -49,11 +51,14 @@ Rebuild all three with `./scripts/build-staging.sh` (outputs to `staging/<direct
 
 ## Status and boundaries
 
-This is a discovery prototype, not production software. There is no Supabase connection, authentication, persistent data, email delivery, or real license verification. All profiles and metrics are fictional. The brand identity is provisional because no approved Bridge brand kit or delivered Tori prototype was found in the accessible project history.
+Phase 3 is open on the Promotion + protected-profile slice. `/create` and `/my-profile` use typed claims, upload-intent, post, and projection adapters in `lib/phase3/`. The default adapter is in-memory. A live `/api/v1` bind requires `NEXT_PUBLIC_BRIDGE_API_BASE` plus Miraj's inspectable staging origin.
+
+There is still no production Supabase session, email delivery, or real license verification. All profiles and metrics are fictional. The brand identity is provisional.
 
 ## Verification
 
 ```powershell
+npm run test:phase3
 npm run typecheck
 npm run lint
 npm run build
