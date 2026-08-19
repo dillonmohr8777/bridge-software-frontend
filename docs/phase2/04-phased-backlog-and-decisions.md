@@ -5,11 +5,11 @@
 - Tori written accept/revise — **open**
 - Default feed confirmation — **recommended News grid**
 
-## Phase 3 (front-end foundation + Miraj contracts)
-- Design-system tokens/components production rules
-- Auth claims, upload intent, multi-audience persistence, profile projections
-- One vertical slice: **Promotion creation + protected profile projection**
-- Automated tests once APIs exist
+## Phase 3 (front-end foundation + Miraj contracts) — opened 2026-08-19
+- Design-system tokens/components production rules — **documented in `docs/phase3/01-design-system-production-rules.md`**
+- Auth claims, upload intent, multi-audience persistence, profile projections — **typed in `lib/phase3/`**
+- One vertical slice: **Promotion creation + protected profile projection** — **wired on `/create` and `/my-profile`**
+- Automated tests once APIs exist — **contract tests live against the mock adapter; live API tests wait on staging**
 
 ## Later
 - Nationwide live data providers

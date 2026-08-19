@@ -12,7 +12,8 @@
     "build:staging:current": "node scripts/build-staging-one.mjs current",
     "build:staging:network": "node scripts/build-staging-one.mjs network",
     "build:staging:botanical": "node scripts/build-staging-one.mjs botanical",
-    "test:staging": "node scripts/verify-staging.mjs"
+    "test:staging": "node scripts/verify-staging.mjs",
+    "test:phase3": "node --test --experimental-strip-types lib/phase3/phase3.test.ts"
   },
   "dependencies": {
     "next": "16.3.1",

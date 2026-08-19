@@ -1,10 +1,10 @@
 # Phase 2 Status & Reconciliation — updated August 16, 2026
 
-**Status:** FRONTEND TECHNICALLY COMPLETE — FORMAL PHASE 2 CLOSE PENDING
+**Status:** FRONTEND TECHNICALLY COMPLETE — PHASE 3 SLICE OPEN
 
 ## One-sentence status
 
-Phase 2's five-route Trusted Current frontend is implemented, integrated, verified, and live at the unified Bridge review URL. Phase 2 is not formally closed until Tori accepts or revises the routes and product choices, Miraj supplies inspectable backend and staging evidence, and the approved integration slice is verified.
+Phase 2's five-route Trusted Current frontend is implemented and live. Phase 3 is now open on the Promotion + protected-profile slice, using typed claims/upload/post/projection adapters. Formal Tori route acceptance and Miraj's inspectable staging origin are still outstanding and do not block frontend Phase 3 work.
 
 ## What is true right now
 
@@ -16,7 +16,7 @@ Phase 2's five-route Trusted Current frontend is implemented, integrated, verifi
 | Tori route-by-route accept/revise + default feed choice | Pending | No dated acceptance recorded |
 | Miraj auth/claims/upload/search/audit contract confirmation + vertical-slice lock | Pending | |
 | Unified review front end | Complete | Trusted Current is live on the existing unified URL; `/studio`, `/business`, and `/signal` redirect to the canonical routes |
-| Production backend integration | Not started; shared later work with Miraj | Requires inspectable contracts and the approved vertical slice |
+| Production backend integration | Phase 3 adapter ready; live bind not started | `lib/phase3/`; requires inspectable `/api/v1` origin |
 
 ## Source of truth hierarchy
 
@@ -27,9 +27,9 @@ Phase 2's five-route Trusted Current frontend is implemented, integrated, verifi
 
 ## Remaining technical work for Dillon (UI/product lane)
 
-1. Obtain Tori's written route-by-route acceptance and decisions recorded in `phase2-acceptance-record.md`.
-2. Obtain Miraj's inspectable repository, branch, commit, migrations, RLS tests, endpoint evidence, and first staging vertical slice.
-3. Integrate only the approved slice, then rerun the production and staging gates against real contracts.
+1. Keep the Phase 3 Promotion + protected-profile slice current as Miraj returns inspectable session, upload, post, and projection evidence.
+2. Record Tori's route-by-route acceptance in `phase2-acceptance-record.md` when it arrives. Do not stall the slice on that paperwork.
+3. Bind `NEXT_PUBLIC_BRIDGE_API_BASE` only after Miraj supplies repository, branch, commit, and staging URL, then rerun typecheck, lint, build, and `test:phase3`.
 
 The unified URL above is the only client-facing Bridge review destination. The three visual variant sites remain internal comparison evidence.
 
