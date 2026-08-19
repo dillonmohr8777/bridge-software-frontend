@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
-import { lockedTheme } from "@/lib/direction-lock";
+import { DEFAULT_THEME, lockedTheme } from "@/lib/direction-lock";
 
 export const metadata: Metadata = {
   title: "Bridge — Cannabis industry connections",
@@ -11,13 +11,21 @@ export const metadata: Metadata = {
   robots: lockedTheme ? { index: false, follow: false } : undefined,
 };
 
+// Connected-signal is the purple Modern Network review URL. Force it before
+// first paint even when a Netlify site is still locked to Trusted Current.
+const unifiedThemeScript = `(function(){try{var h=location.hostname;if(h==="bridge-connected-signal.netlify.app"){document.documentElement.setAttribute("data-theme","network");}}catch(e){}})();`;
+
 // Applies the saved provisional direction before first paint so a full page
-// load does not flash the default theme. Skipped on direction-locked builds.
-const themeInitScript = `(function(){try{var t=window.localStorage.getItem("bridge-theme");if(t==="network"||t==="botanical"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}})();`;
+// load does not flash the default theme. Skipped on direction-locked builds
+// and never allowed to override Connected purple on the unified review host.
+const themeInitScript = `(function(){try{var h=location.hostname;if(h==="bridge-connected-signal.netlify.app"){document.documentElement.setAttribute("data-theme","network");return;}var t=window.localStorage.getItem("bridge-theme");if(t==="current"||t==="botanical"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}})();`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme={lockedTheme ?? "current"} suppressHydrationWarning>
+    <html lang="en" data-theme={lockedTheme ?? DEFAULT_THEME} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: unifiedThemeScript }} />
+      </head>
       <body>
         {!lockedTheme && <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />}
         <a className="skip-link" href="#main">Skip to content</a>
