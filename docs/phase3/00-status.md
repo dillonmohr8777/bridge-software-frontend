@@ -1,7 +1,25 @@
-# Phase 3 — Promotion + protected profile slice
+# Phase 3 — Promotion, protected profile, and Tori feedback reconciliation
 
 **Opened:** 2026-08-19  
-**Status:** FRONTEND SLICE COMPLETE — typed contract, mock adapter, Create / My Profile journeys, design-system mutation states, and contract tests are in. Live `/api/v1` bind waits on Miraj's inspectable staging origin. Netlify and client send stay gated.
+**Expanded:** 2026-08-20
+**Status:** FRONTEND REVIEW BUILD COMPLETE LOCALLY — typed contract, mock adapter, Create / My Profile journeys, transcript feedback surfaces, and contract tests are in. Live `/api/v1` bind waits on Miraj's inspectable staging origin. Netlify and client send stay gated.
+
+## August 20 feedback pass
+
+The Connected purple direction, existing typography, exact Bridge mark, and core Home, Community News, Create, My Profile, and Explore product remain intact. The review build now also includes:
+
+1. Unmistakable legal cannabis positioning and a single primary join action on first impression
+2. Media rich Community News with category, state, favorites, visual grid, and classic feed controls
+3. Nationwide sample discovery for brands, dispensaries, retailers, sales representatives, cultivators, manufacturers, laboratories, transport, cannabis aware banking, service trades, media, and hydroponics
+4. Visual product and service categories plus California to Michigan cross market discovery cues
+5. Rich profiles with products, capabilities, menu preview, ordering state, directions, channels, and recent activity
+6. Three purple creative directions, local draft and library actions, review routing, and PNG preview export
+7. A required first login and monthly sales and accounting contact confirmation gate
+8. Clearly labeled pricing and Bridge League concept pages for Tori's review
+9. Grain animation and slow editorial image movement inspired by the approved Align HCM industry page treatment, with reduced motion support
+
+Full transcript reconciliation: `docs/phase3/03-tori-feedback-reconciliation.md`.
+Unsent communication drafts: `docs/phase3/04-message-drafts.md`.
 
 ## Why this is Phase 3 now
 
@@ -10,9 +28,9 @@ Phase 2's five-route frontend is technically complete and live. That product sta
 Locked slice for this implementation:
 
 1. Targeted **Promotion** creation
-2. **Protected profile projection** plus 90-day contact confirmation
+2. **Protected profile projection** plus required first-login and monthly contact confirmation
 
-Out of this slice: nationwide live directories, algorithmic ranking, subscriptions/payments, in-platform ordering, EIN document handling, production auth UI.
+Still outside the production contract: live nationwide data, algorithmic ranking, subscriptions and payments, in-platform ordering, EIN document handling, production auth UI, and third party provider integrations. Some are represented as clearly labeled review concepts only.
 
 ## Adapter contract
 
@@ -48,7 +66,7 @@ Promotion create requires an active membership, a verified organization, and `cr
 - A successful publish is never reported as failed just because the subsequent list refresh fails
 - Published posts persist on the organization; Public view hides protected promotions
 - Public projection never includes sales/accounting contacts
-- Contacts can be updated, then confirmed; confirmation records actor, time, and next-due (+90 days)
+- Contacts can be updated, then confirmed; confirmation records actor, time, and next-due (+30 days)
 
 ## Verification
 

@@ -19,6 +19,15 @@ export default function DashboardPage() {
           <Link className="button secondary full" href="/profile/cascade-canna">View public profile</Link>
         </aside>
       </div>
+      <section className="content-card league-dashboard">
+        <div><p className="eyebrow">Bridge League · private</p><h2>Your contribution, without a public rank</h2><p>Only you can see these participation signals. Bridge does not publish a leaderboard or pressure members to accept every connection.</p></div>
+        <div className="private-signals">
+          <p><strong>Current profile</strong><span>Monthly contacts are ready for confirmation</span></p>
+          <p><strong>Useful activity</strong><span>Two relevant updates shared this month</span></p>
+          <p><strong>Response habit</strong><span>Qualified introductions acknowledged</span></p>
+        </div>
+        <Link className="button secondary" href="/league">Review the Bridge League concept</Link>
+      </section>
     </section>
   );
 }

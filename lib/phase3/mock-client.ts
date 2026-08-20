@@ -85,7 +85,7 @@ export class MockPhase3Client implements Phase3Client {
     this.confirmation = {
       status: "needed",
       confirmedAt: null,
-      nextDue: iso(addDays(this.now(), 90)),
+      nextDue: iso(addDays(this.now(), 30)),
       actorUserId: null,
     };
   }
@@ -210,7 +210,7 @@ export class MockPhase3Client implements Phase3Client {
     }
     const now = this.now();
     const confirmedAt = iso(now);
-    const nextDue = iso(addDays(now, 90));
+    const nextDue = iso(addDays(now, 30));
     this.confirmation = {
       status: "confirmed",
       confirmedAt,

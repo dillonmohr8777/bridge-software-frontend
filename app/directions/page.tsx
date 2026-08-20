@@ -1,8 +1,4 @@
-"use client";
-
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
-import { directionNames, lockedTheme } from "@/lib/direction-lock";
-import { applyTheme, useTheme, type ThemeId } from "@/lib/theme";
+import { directionNames, lockedTheme, type ThemeId } from "@/lib/direction-lock";
 
 // Swatches must match the theme tokens in globals.css so the comparison is honest.
 const directions: {
@@ -38,13 +34,10 @@ const directions: {
 ];
 
 export default function DirectionsPage() {
-  const theme = useTheme();
-
   return (
     <section className="page shell">
       <div className="page-heading split-heading">
-        <div><p className="eyebrow">Provisional brand exploration</p><h1>Three directions for Tori to react to.</h1><p className="lede">These are decision tools, not an approved Bridge identity. Choose a direction, then refine it after the prototype walkthrough.</p>{lockedTheme && <p className="form-hint">This staging build is pinned to {directionNames[lockedTheme]}. Each direction has its own staging link for side-by-side comparison.</p>}</div>
-        {!lockedTheme && <ThemeSwitcher />}
+        <div><p className="eyebrow">Archived brand exploration</p><h1>Connected purple remains the active Bridge direction.</h1><p className="lede">The earlier visual options remain here as a decision record. They no longer change the active review build.</p>{lockedTheme && <p className="form-hint">This archival staging build is pinned to {directionNames[lockedTheme]}.</p>}</div>
       </div>
       <div className="direction-grid">
         {directions.map((direction) => (
@@ -56,26 +49,13 @@ export default function DirectionsPage() {
             <h2>{direction.promise}</h2>
             <p>{direction.rationale}</p>
             <div className="swatches" aria-label={`${direction.name} colors`}>{direction.colors.map((color) => <span key={color} style={{ background: color }} title={color} />)}</div>
-            <button
-              aria-pressed={theme === direction.id}
-              className="button secondary full"
-              disabled={Boolean(lockedTheme) && lockedTheme !== direction.id}
-              onClick={() => applyTheme(direction.id)}
-              title={lockedTheme && lockedTheme !== direction.id ? `This staging build is pinned to ${directionNames[lockedTheme]} — open that direction's staging link to compare` : undefined}
-              type="button"
-            >
-              {lockedTheme
-                ? lockedTheme === direction.id
-                  ? "This build's pinned direction"
-                  : `Pinned build — see the ${directionNames[direction.id]} link`
-                : theme === direction.id
-                  ? "Previewing across prototype"
-                  : "Preview across prototype"}
-            </button>
+            <span className={`status-chip ${direction.id === "network" ? "verified" : ""}`}>
+              {direction.id === "network" ? "Active Bridge direction" : "Archived reference"}
+            </span>
           </article>
         ))}
       </div>
-      <div className="content-card meeting-note"><p className="eyebrow">Monday decision</p><h2>Ask Tori to choose attributes before colors.</h2><p>Start with: “Should Bridge feel most like trusted infrastructure, a modern professional network, or a premium industry platform?” Then use the color directions to confirm—not lead—the conversation.</p></div>
+      <div className="content-card meeting-note"><p className="eyebrow">Production confirmation</p><h2>Ask Tori to confirm the active direction, not reopen the visual system.</h2><p>The remaining brand question is whether Connected purple and the current Bridge mark are formally approved for production.</p></div>
     </section>
   );
 }

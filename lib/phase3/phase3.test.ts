@@ -145,7 +145,7 @@ test("protected profile projection hides contacts in public view and records con
 
   const confirmation = await client.confirmContacts({ organizationId: "org-harbor" });
   assert.equal(confirmation.actorUserId, "user-harbor-owner");
-  assert.equal(confirmation.nextDue, "2026-11-17T17:00:00.000Z");
+  assert.equal(confirmation.nextDue, "2026-09-18T17:00:00.000Z");
 
   const after = await client.getProfileProjection("protected");
   assert.equal(after.confirmation.status, "confirmed");

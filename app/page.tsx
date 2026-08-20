@@ -10,8 +10,7 @@ export default function Home() {
           <span>BRIDGE</span>
         </Link>
         <div className="landing-links">
-          <Link className="button ghost" href="#suite">Explore the platform</Link>
-          <Link className="button primary" href="/explore">Get on the Bridge</Link>
+          <Link className="button primary" href="/join">Join the Bridge</Link>
         </div>
       </nav>
 
@@ -23,13 +22,13 @@ export default function Home() {
             Connect cannabis brands, dispensaries, cultivators, sales teams, and service partners. Follow industry activity, discover verified operators, and build the right relationships nationwide.
           </p>
           <div className="landing-links landing-actions">
-            <Link className="button primary" href="/explore">Explore cannabis businesses <span aria-hidden="true">→</span></Link>
-            <Link className="button ghost" href="/community">Open Community News</Link>
+            <Link className="button primary" href="/join">Join the verified network <span aria-hidden="true">→</span></Link>
+            <Link className="button ghost" href="/explore">Explore cannabis businesses</Link>
           </div>
           <div className="landing-stats" aria-label="Bridge capabilities">
-            <div><strong>04</strong><span>Connected spaces</span></div>
             <div><strong>50</strong><span>State discovery</span></div>
-            <div><strong>B2B</strong><span>Protected access</span></div>
+            <div><strong>03</strong><span>Audience controls</span></div>
+            <div><strong>B2B</strong><span>EIN aware access</span></div>
           </div>
         </div>
 
@@ -37,11 +36,11 @@ export default function Home() {
           <div className="signal-orbit" />
           <div className="signal-orbit" />
           <div className="signal-orbit" />
-          <Link className="signal-node one" href="/community"><span><strong>Community</strong><small>Industry activity</small></span></Link>
-          <Link className="signal-node two" href="/my-profile"><span><strong>Businesses</strong><small>Verified profiles</small></span></Link>
-          <Link className="signal-node three" href="/create"><span><strong>Campaigns</strong><small>Targeted promotion</small></span></Link>
-          <Link className="signal-node four" href="/explore"><span><strong>Explore</strong><small>Markets and services</small></span></Link>
-          <Link className="signal-core" href="/explore"><span><strong>Connected<br />cannabis</strong><small>Trusted by design</small></span></Link>
+          <div className="signal-node one"><span><strong>Community</strong><small>Industry activity</small></span></div>
+          <div className="signal-node two"><span><strong>Businesses</strong><small>Verified profiles</small></span></div>
+          <div className="signal-node three"><span><strong>Campaigns</strong><small>Targeted promotion</small></span></div>
+          <div className="signal-node four"><span><strong>Explore</strong><small>Markets and services</small></span></div>
+          <div className="signal-core"><span><strong>Connected<br />cannabis</strong><small>Trusted by design</small></span></div>
         </div>
       </section>
 
@@ -70,6 +69,21 @@ export default function Home() {
           <Link href="/explore"><strong>Explore</strong><span>Search markets, businesses, products, and services</span></Link>
         </div>
       </nav>
+
+      <section className="bridge-growth-model" aria-labelledby="growth-model-title">
+        <div>
+          <p className="hero-label">Bridge League</p>
+          <h2 id="growth-model-title">Cooperate, contribute, and grow without public rankings.</h2>
+          <p>Bridge League gives members private recognition for useful participation. There are no public leaderboards and no pressure to turn selective relationships into a popularity contest.</p>
+          <Link className="button ghost" href="/league">Review the Bridge League concept</Link>
+        </div>
+        <div>
+          <p className="hero-label">Founding pricing</p>
+          <h2>See the membership concepts before billing is connected.</h2>
+          <p>Review a consumer entry, the founding business concept discussed in the meeting, and a multi-market option. Every price remains subject to Tori’s approval.</p>
+          <Link className="button ghost" href="/pricing">Review proposed pricing</Link>
+        </div>
+      </section>
 
       <section className="suite-section" id="suite" aria-labelledby="suite-title">
         <div className="suite-heading">

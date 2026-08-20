@@ -1,11 +1,23 @@
 # Bridge decision log
 
+## Tori feedback reconciliation — 2026-08-20
+
+| Item | Recorded decision | Evidence boundary |
+|---|---|---|
+| Visual identity | Preserve Connected purple, the existing typography, and the exact Bridge mark across the review build | Dillon direction plus Tori's positive reaction to the dark purple direction in the full transcript; Tori's written production acceptance is still pending |
+| First impression | State legal cannabis audience and nationwide network value immediately, with Join as the primary action and Explore as the secondary action | Mac feedback and Dillon approval |
+| Content depth | Expand the review build across Community News, Explore, profiles, Create, pricing, and Bridge League concepts | Tori transcript; all records and market signals remain fictional prototype content |
+| Motion treatment | Apply purple grain and slow editorial image movement to realistic cannabis industry imagery | Dillon direction based on the Align HCM industry page treatment; reduced motion is supported |
+| Production boundary | Represent unapproved pricing, rewards, ordering, and integrations as explicit concepts or pending connections | No billing, live provider connection, external send, or deployment was authorized in this pass |
+
+Full mapping: `docs/phase3/03-tori-feedback-reconciliation.md`.
+
 ## Phase 3 frontend slice complete — 2026-08-19
 
 | Item | Recorded decision | Evidence boundary |
 |---|---|---|
 | Current product/UX lane | Phase 3 is open: productionize Promotion create + protected profile projection | Phase 2 frontend is technically complete; Melissa said the team is good to move forward after Tori's payment work; Miraj reported Milestone 2 done pending his tests |
-| Slice lock | Targeted Promotion creation plus protected profile projection / 90-day contact confirmation | Matches Dillon's 2026-08-16 recommended first slice and `docs/phase2/04-phased-backlog-and-decisions.md` |
+| Slice lock | Targeted Promotion creation plus protected profile projection / required monthly contact confirmation | Corrected to Tori's July 23 transcript: first login and monthly confirmation, not a 90-day cycle |
 | Adapter | In-memory Phase 3 client by default; HTTP client when `NEXT_PUBLIC_BRIDGE_API_BASE` is set | Live bind still requires Miraj's inspectable staging origin |
 | Dillon frontend lock | Create, My Profile, design-system mutation states, and contract tests are the internal deliverable | `docs/phase3/02-dillon-deliverable.md`; do not Slack, email, or update Netlify until Dillon asks |
 | Unified review visual | Connected purple (Modern Network) on the same Phase 1/2 five-route product. Do not ship Trusted Current navy/teal on that URL. Do not substitute a different app or the Kimi suite. | Dillon 2026-08-19: restore the last purple Connected look with every Tori-instituted Phase 1/2 integration from the 2026-08-16 actual-work report. Trusted Current stays on `bridge-preview-current` |
@@ -55,7 +67,7 @@ No unresolved item in this table is an approved decision.
 | Decision | Why it was made | Approval needed |
 |---|---|---|
 | Trusted Current is the default visual direction | **Superseded 2026-08-19 for the unified review URL.** Connected / Modern Network is now the review default. Trusted Current remains an alternate at `bridge-preview-current`. | Dillon (unified URL); Tori still owns formal brand acceptance |
-| Simplified bridge mark | Enables realistic layouts without implying a final logo | Tori / brand process |
+| Exact Bridge mark | Reuse `public/bridge-mark.svg` from the established Connected build; do not substitute a new logo | Tori still owns formal production brand acceptance |
 | Retailer and dispensary are shown as separate roles | Both appear in project language | Tori + Miraj |
 | Contact starts as a structured request | Matches scope and protects private details without adding direct messaging | Tori + Miraj |
 | Verification uses explicit pending/verified/attention states | Makes admin and member UX testable | Compliance definition needed |
@@ -82,7 +94,7 @@ All Phase 1 work repaired existing defects without pre-approving product or bran
 
 | ID | Question | Decision owner | Needed by |
 |---|---|---|---|
-| D-01 | Is Trusted Current, Modern Network, or Botanical Ledger the best starting direction? | Tori | Monday |
+| D-01 | Is the dark Connected purple direction formally approved for production? | Tori | Before production brand lock |
 | D-02 | Are retailer and dispensary distinct account types? | Tori/Miraj | Data model lock |
 | D-03 | What exact evidence is required per role? | Tori/Miraj/compliance | Verification build |
 | D-04 | What does the public “Verified” label promise? | Mac/Tori/compliance | Copy approval |

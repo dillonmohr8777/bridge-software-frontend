@@ -15,7 +15,7 @@
 **Pass:** File rules + audience guard behave as specified.
 
 ## Journey D — Business home base
-1. Open My Profile. 2. See 90-day contact language. 3. Review sales + accounting contacts in B2B. 4. Confirm cycle. 5. Switch Public → protected contacts hidden; no EIN.  
+1. Open My Profile. 2. Complete the mandatory first-login or monthly contact review. 3. Review sales + accounting contacts in B2B. 4. Confirm cycle. 5. Switch Public → protected contacts hidden; no EIN.
 **Pass:** Cadence clear; Public strips protected data.
 
 ## Journey E — Nationwide discovery + favorites

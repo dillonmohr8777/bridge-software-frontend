@@ -45,6 +45,8 @@ export function CreateClient() {
   const [unverifiedOrg, setUnverifiedOrg] = useState(false);
   const [publishedId, setPublishedId] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostRecord[]>([]);
+  const [creativeDirection, setCreativeDirection] = useState<"Signal" | "Product" | "Editorial">("Signal");
+  const [workflowMessage, setWorkflowMessage] = useState("");
   const uploadRequestId = useRef(0);
 
   const effectiveAudiences = useMemo(
@@ -137,6 +139,78 @@ export function CreateClient() {
     setStatus("idle");
     setPublishError(null);
     setPublishedId(null);
+    setCreativeDirection("Signal");
+    setWorkflowMessage("");
+  }
+
+  function saveLocally(kind: "draft" | "library") {
+    const record = {
+      contentType,
+      message,
+      protectedDetail,
+      audienceIds: effectiveAudiences,
+      fileName: fileMeta?.name ?? null,
+      creativeDirection,
+      savedAt: new Date().toISOString(),
+    };
+    window.localStorage.setItem(`bridge-create-${kind}`, JSON.stringify(record));
+    setWorkflowMessage(kind === "draft" ? "Draft saved on this device." : "Creative saved to the prototype library.");
+  }
+
+  function routeForReview() {
+    if (!message.trim()) {
+      setWorkflowMessage("Add a message before routing this promotion for review.");
+      return;
+    }
+    saveLocally("draft");
+    setWorkflowMessage("Promotion routed to the prototype review queue. Production review notifications still require the live API.");
+  }
+
+  function downloadPreview() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 1200;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    const palettes = {
+      Signal: ["#09060d", "#7900c9", "#ff7968"],
+      Product: ["#17111e", "#3b0064", "#b983ff"],
+      Editorial: ["#0d0812", "#6500a8", "#f7f2fb"],
+    } as const;
+    const [background, accent, text] = palettes[creativeDirection];
+    context.fillStyle = background;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = accent;
+    context.beginPath();
+    context.arc(970, 210, 270, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = text;
+    context.font = "800 54px Arial";
+    context.fillText("BRIDGE", 92, 120);
+    context.font = "700 32px Arial";
+    context.fillText(creativeDirection.toUpperCase(), 92, 180);
+    context.font = "700 58px Arial";
+    const words = (message.trim() || "Your promotion preview").split(/\s+/);
+    let line = "";
+    let y = 490;
+    for (const word of words) {
+      const test = `${line}${word} `;
+      if (context.measureText(test).width > 930 && line) {
+        context.fillText(line.trim(), 92, y);
+        line = `${word} `;
+        y += 78;
+      } else {
+        line = test;
+      }
+    }
+    context.fillText(line.trim(), 92, y);
+    context.font = "500 28px Arial";
+    context.fillText(`Audience: ${effectiveAudiences.map(audienceLabel).join(", ") || "Not selected"}`, 92, 1080);
+    const anchor = document.createElement("a");
+    anchor.download = `bridge-${creativeDirection.toLowerCase()}-promotion.png`;
+    anchor.href = canvas.toDataURL("image/png");
+    anchor.click();
+    setWorkflowMessage("PNG preview downloaded.");
   }
 
   async function reloadSession() {
@@ -222,7 +296,19 @@ export function CreateClient() {
           onChange={(event) => setMessage(event.target.value)}
           placeholder="Describe the offer or update"
         />
-        <label htmlFor="asset">Asset upload</label>
+        <fieldset className="creative-directions">
+          <legend>Choose a creative direction</legend>
+          <p className="form-hint">Three Bridge routes use the same approved purple identity with a different information emphasis.</p>
+          <div className="direction-choice-grid">
+            {(["Signal", "Product", "Editorial"] as const).map((direction) => (
+              <button aria-pressed={creativeDirection === direction} className={`direction-choice direction-${direction.toLowerCase()}`} key={direction} onClick={() => setCreativeDirection(direction)} type="button">
+                <strong>{direction}</strong>
+                <span>{direction === "Signal" ? "Fast promotion and audience" : direction === "Product" ? "Product first merchandising" : "News and education framing"}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <label htmlFor="asset">I already have an image or PDF. Upload it here.</label>
         <input
           disabled={!eligible || status === "pending" || status === "success"}
           id="asset"
@@ -266,6 +352,13 @@ export function CreateClient() {
         </label>
         {protectedDetail && <p className="form-hint">Protected detail limits this post to verified audiences. Adults 21+ is disabled.</p>}
         {publishError && <p className="form-error" role="alert">{publishError}</p>}
+        <div className="create-workflow-actions">
+          <button className="button secondary" onClick={() => saveLocally("draft")} type="button">Save draft</button>
+          <button className="button secondary" onClick={() => saveLocally("library")} type="button">Save to library</button>
+          <button className="button secondary" onClick={routeForReview} type="button">Route for review</button>
+          <button className="button secondary" onClick={downloadPreview} type="button">Download PNG</button>
+        </div>
+        <p aria-live="polite" className="form-hint">{workflowMessage || "Draft, library, review, and download actions remain on this device until the production API is connected."}</p>
         {status === "success" ? (
           <button className="button secondary full" type="button" onClick={resetComposer}>Create another promotion</button>
         ) : (
@@ -303,6 +396,7 @@ export function CreateClient() {
       <aside className="content-card create-preview" aria-live="polite">
         <p className="eyebrow">Preview</p>
         <h3>{contentType}</h3>
+        <p className="status-chip">{creativeDirection} direction</p>
         <p>{message || "Message preview appears here."}</p>
         {fileMeta && <p className="muted">Asset: {fileMeta.name}</p>}
         <p className="muted">Access level: {protectedDetail ? "Verified audiences only" : "As selected"}</p>

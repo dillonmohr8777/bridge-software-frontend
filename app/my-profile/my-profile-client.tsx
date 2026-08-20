@@ -130,6 +130,37 @@ export function MyProfileClient() {
       {loadStatus === "loading" && <p className="form-hint" aria-busy="true">Loading profile projection…</p>}
       {loadStatus === "error" && <p className="form-error" role="alert">{loadError}</p>}
       {loadStatus === "ready" && profile && (
+        <>
+        {showProtected && profile.confirmation.status !== "confirmed" && (
+          <div className="mandatory-review-backdrop">
+            <section aria-labelledby="mandatory-review-title" aria-modal="true" className="mandatory-review" role="dialog">
+              <p className="eyebrow">Required monthly check</p>
+              <h2 id="mandatory-review-title">Confirm who Bridge members should contact</h2>
+              <p>Before continuing, verify the current sales and accounting contacts or update them here. This appears on first login and again each month.</p>
+              <div className="mandatory-contact-grid">
+                {draftContacts.map((contact) => (
+                  <div className="contact-edit" key={`gate-${contact.kind}`}>
+                    <h3>{contact.kind === "sales" ? "Sales contact" : "Accounting contact"}</h3>
+                    <label htmlFor={`gate-${contact.kind}-name`}>Name</label>
+                    <input id={`gate-${contact.kind}-name`} value={contact.name} onChange={(event) => updateDraft(contact.kind, "name", event.target.value)} />
+                    <label htmlFor={`gate-${contact.kind}-email`}>Email</label>
+                    <input id={`gate-${contact.kind}-email`} type="email" value={contact.email} onChange={(event) => updateDraft(contact.kind, "email", event.target.value)} />
+                    <label htmlFor={`gate-${contact.kind}-phone`}>Phone</label>
+                    <input id={`gate-${contact.kind}-phone`} value={contact.phone} onChange={(event) => updateDraft(contact.kind, "phone", event.target.value)} />
+                  </div>
+                ))}
+              </div>
+              <div className="button-row">
+                <button className="button secondary" disabled={!canConfirm || saveStatus === "pending" || !dirty} onClick={() => void saveContacts()} type="button">{saveStatus === "pending" ? "Saving…" : "Save updates"}</button>
+                <button className="button primary" disabled={!canConfirm || confirmStatus === "pending" || dirty} onClick={() => void confirm()} type="button">{confirmStatus === "pending" ? "Confirming…" : "Confirm and enter Bridge"}</button>
+              </div>
+              {dirty && <p className="form-hint">Save the updated details before confirming.</p>}
+              {saveError && <p className="form-error" role="alert">{saveError}</p>}
+              {confirmError && <p className="form-error" role="alert">{confirmError}</p>}
+              <p className="form-hint">Production will pair this required login check with a monthly email reminder.</p>
+            </section>
+          </div>
+        )}
         <div className="profile-shell content-card">
           <div className="card-topline">
             <div>
@@ -163,12 +194,12 @@ export function MyProfileClient() {
                 <p className="muted">
                   {firstLogin
                     ? "First-login contact review. Confirm sales and accounting contacts or update the details."
-                    : "Recurring 90-day contact review. Confirm the stored details or update them first."}
+                    : "Recurring monthly contact review. Confirm the stored details or update them first."}
                   {" "}Next due: {formatStamp(profile.confirmation.nextDue)}.
                 </p>
                 {profile.confirmation.status === "confirmed"
                   ? <p className="status-chip verified">Confirmed {formatStamp(profile.confirmation.confirmedAt)}</p>
-                  : <p className="status-chip pending">{firstLogin ? "First-login confirmation needed" : "90-day confirmation needed"}</p>}
+                  : <p className="status-chip pending">{firstLogin ? "First-login confirmation needed" : "Monthly confirmation needed"}</p>}
                 <div className="button-row">
                   <button type="button" className="button secondary" disabled={!canConfirm || saveStatus === "pending" || !dirty} onClick={() => void saveContacts()}>
                     {saveStatus === "pending" ? "Saving…" : "Save contact updates"}
@@ -225,6 +256,7 @@ export function MyProfileClient() {
             )}
           </section>
         </div>
+        </>
       )}
     </div>
   );

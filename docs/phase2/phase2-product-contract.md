@@ -22,7 +22,7 @@ Home
 │   ├── Public view
 │   ├── Verified B2B view
 │   ├── Sales and accounting contacts
-│   └── First-login / 90-day contact confirmation
+│   └── First-login / monthly contact confirmation
 └── Explore
     ├── Nationwide search and filters
     ├── Favorites
@@ -97,7 +97,7 @@ This matrix is the Phase 2 implementation baseline. “Decision” means the vis
 4. They confirm the cycle or update details.
 5. They switch to Public view to audit exposure.
 
-**Acceptance:** The 90-day cadence is explained; confirmation provides a clear state change; protected contacts disappear in Public view; EIN and source documents never appear publicly.
+**Acceptance:** First login and monthly confirmation are mandatory; confirmation provides a clear state change; protected contacts disappear in Public view; EIN and source documents never appear publicly.
 
 ### Journey E: nationwide discovery and favorites
 

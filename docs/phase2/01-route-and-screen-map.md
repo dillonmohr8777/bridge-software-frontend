@@ -11,7 +11,7 @@
 | `/` | Home | Understand Bridge; enter one of four product spaces without a dominating hero |
 | `/community` | Community News | Scan stories/promotions/signals; compare News grid vs Classic feed |
 | `/create` | Create | Build Promotion; upload PNG/JPEG/WebP/PDF; multi-audience; protected-detail guard |
-| `/my-profile` | My Profile | Business home base; Public vs B2B; sales/accounting contacts; 90-day confirm |
+| `/my-profile` | My Profile | Business home base; Public vs B2B; sales/accounting contacts; required monthly confirm |
 | `/explore` | Explore | Nationwide state filters; category/search; favorites; honest coverage language |
 
 ## Secondary / retained routes

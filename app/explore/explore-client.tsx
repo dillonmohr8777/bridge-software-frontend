@@ -1,10 +1,19 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { profiles } from "@/lib/data";
 import { StatusChip } from "@/components/StatusChip";
 const STATES = ["All states","Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
-const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Lab","Transport","Bank","Service"];
+const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Cultivator","Manufacturer","Lab","Transport","Bank","Service","Media","Hydroponics"];
+const FEATURED_MARKETS = ["All states", "California", "Michigan", "Maryland", "Colorado", "Pennsylvania"];
+const VISUAL_CATEGORIES = [
+  { label: "Flower and genetics", query: "genetics", image: "/bridge-cultivation-lab.png" },
+  { label: "Pre rolls and vapes", query: "pre rolls", image: "/bridge-industry-products.png" },
+  { label: "Edibles and wellness", query: "wellness", image: "/bridge-industry-products.png" },
+  { label: "Testing and compliance", query: "testing", image: "/bridge-cultivation-lab.png" },
+  { label: "Industry services", query: "service", image: "/bridge-industry-networking.png" },
+];
 const FAVORITES_STORAGE_KEY = "bridge-phase2-favorites";
 const DEFAULT_FAVORITES = ["harbor-dispensary"];
 function stateFromLocation(location: string) {
@@ -52,7 +61,7 @@ export function ExploreClient() {
       const st = stateFromLocation(p.location);
       if (state !== "All states" && st !== state) return false;
       if (!q) return true;
-      const hay = [p.name, p.role, p.location, p.description, p.serving, ...p.specialties].join(" ").toLowerCase();
+      const hay = [p.name, p.role, p.location, p.description, p.serving, ...p.specialties, ...(p.products ?? [])].join(" ").toLowerCase();
       return hay.includes(q);
     });
   }, [query, state, category, favoritesOnly, favorites]);
@@ -65,7 +74,35 @@ export function ExploreClient() {
   }
   const noSampleForState = state !== "All states" && !sampleStates.includes(state) && results.length === 0;
   return (
-    <div className="directory-layout">
+    <div>
+      <section className="explore-visual-filters" aria-labelledby="browse-category-title">
+        <div className="section-heading compact-heading">
+          <div><p className="eyebrow">Browse visually</p><h2 id="browse-category-title">Start with what you are looking for</h2></div>
+          <button className="text-link" onClick={() => { setQuery(""); setCategory("All categories"); }} type="button">Clear category search</button>
+        </div>
+        <div className="explore-category-rail">
+          {VISUAL_CATEGORIES.map((item) => (
+            <button aria-pressed={query === item.query} className="explore-category-tile grain-image" key={item.label} onClick={() => { setQuery(item.query); setCategory("All categories"); }} type="button">
+              <Image alt="" fill sizes="220px" src={item.image} />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="market-switcher" aria-labelledby="market-switcher-title">
+        <div><p className="eyebrow">Nationwide market view</p><h2 id="market-switcher-title">Move between legal markets without losing the signal</h2><p>Use the complete state selector or jump into a featured prototype market. California and Michigan show how cross-state learning can work without claiming live market coverage.</p></div>
+        <div className="market-pills" role="group" aria-label="Featured markets">
+          {FEATURED_MARKETS.map((market) => <button aria-pressed={state === market} className={state === market ? "button primary" : "button secondary"} key={market} onClick={() => setState(market)} type="button">{market}</button>)}
+        </div>
+        <div className="market-connection" aria-label="Illustrative California to Michigan market connection">
+          <div><strong>California</strong><span>Genetics · cultivation · emerging formats</span></div>
+          <span aria-hidden="true">→</span>
+          <div><strong>Michigan</strong><span>Retail planning · testing · distribution</span></div>
+        </div>
+      </section>
+
+      <div className="directory-layout">
       <aside className="filter-panel">
         <label htmlFor="explore-q">Search</label>
         <input id="explore-q" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Brand, strain, service…" />
@@ -85,13 +122,14 @@ export function ExploreClient() {
           </div>
         )}
         {!noSampleForState && results.length === 0 && (
-          <div className="empty-state"><h3>No matches</h3><p>Try clearing filters or switching off Favorites only.</p></div>
+          <div className="empty-state"><h3>No matches</h3><p>Try a simpler term, clear the category, or switch off Favorites only.</p></div>
         )}
         <div className="card-grid two">
           {results.map((profile) => {
             const fav = favorites.includes(profile.slug);
             return (
               <article key={profile.slug} className="profile-card">
+                {profile.imageSrc && <div className="grain-image profile-card-image"><Image alt={profile.imageAlt ?? ""} fill sizes="(max-width: 720px) 100vw, 50vw" src={profile.imageSrc} /></div>}
                 <div className="card-topline"><span className="avatar">{profile.initials}</span><StatusChip verified={profile.verified} /></div>
                 <h3>{profile.name}</h3>
                 <p className="muted">{profile.role} · {profile.location}</p>
@@ -107,6 +145,7 @@ export function ExploreClient() {
           })}
         </div>
         <p className="form-hint" role="status" aria-live="polite">{introStatus || "Introduction requests are permissioned — this prototype does not auto-disclose protected contacts."}</p>
+      </div>
       </div>
     </div>
   );
