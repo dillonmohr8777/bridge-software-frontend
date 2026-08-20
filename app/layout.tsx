@@ -4,8 +4,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { DEFAULT_THEME, lockedTheme } from "@/lib/direction-lock";
 
 export const metadata: Metadata = {
-  title: "Bridge — Cannabis industry connections",
-  description: "Discovery prototype for a verified cannabis industry directory and professional network.",
+  title: "Bridge: The cannabis industry, connected",
+  description: "A verified cannabis industry network for discovering businesses, following market activity, and reaching the right people.",
   icons: { icon: "/bridge-mark.svg" },
   // Staging previews must not be indexed.
   robots: lockedTheme ? { index: false, follow: false } : undefined,
