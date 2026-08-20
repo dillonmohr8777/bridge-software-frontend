@@ -70,7 +70,11 @@ export class HttpPhase3Client implements Phase3Client {
       return undefined as T;
     }
 
-    return (await response.json()) as T;
+    try {
+      return (await response.json()) as T;
+    } catch (cause) {
+      throw new Phase3Error("unavailable", userMessageFor("unavailable"), cause);
+    }
   }
 
   getSession() {

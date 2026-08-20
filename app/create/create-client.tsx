@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Phase3Error,
   audienceCatalog,
@@ -45,6 +45,7 @@ export function CreateClient() {
   const [unverifiedOrg, setUnverifiedOrg] = useState(false);
   const [publishedId, setPublishedId] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostRecord[]>([]);
+  const uploadRequestId = useRef(0);
 
   const effectiveAudiences = useMemo(
     () => resolveEffectiveAudiences(selected, protectedDetail),
@@ -80,7 +81,27 @@ export function CreateClient() {
     };
   }, [client]);
 
+  async function requestUpload(next: File) {
+    const requestId = ++uploadRequestId.current;
+    setUpload(null);
+    setUploadStatus("pending");
+    setFileError(null);
+    try {
+      applySimulatedFailure(client, simulateFailure);
+      if (simulateFailure) setSimulateFailure(false);
+      const intent = await client.createUploadIntent(next);
+      if (requestId !== uploadRequestId.current) return;
+      setUpload(intent);
+      setUploadStatus("accepted");
+    } catch (error: unknown) {
+      if (requestId !== uploadRequestId.current) return;
+      setUploadStatus("error");
+      setFileError(error instanceof Phase3Error ? error.userMessage : "The upload could not be accepted.");
+    }
+  }
+
   async function onFile(next: File | null) {
+    uploadRequestId.current += 1;
     setFileError(null);
     setFileMeta(null);
     setFile(null);
@@ -94,16 +115,7 @@ export function CreateClient() {
     }
     setFile(next);
     setFileMeta({ name: next.name, size: next.size });
-    setUploadStatus("pending");
-    try {
-      applySimulatedFailure(client, simulateFailure);
-      const intent = await client.createUploadIntent(next);
-      setUpload(intent);
-      setUploadStatus("accepted");
-    } catch (error: unknown) {
-      setUploadStatus("error");
-      setFileError(error instanceof Phase3Error ? error.userMessage : "The upload could not be accepted.");
-    }
+    await requestUpload(next);
   }
 
   function toggleAudience(id: string) {
@@ -112,6 +124,7 @@ export function CreateClient() {
   }
 
   function resetComposer() {
+    uploadRequestId.current += 1;
     setContentType("Promotion");
     setMessage("");
     setProtectedDetail(false);
@@ -146,6 +159,7 @@ export function CreateClient() {
     setPublishError(null);
     try {
       applySimulatedFailure(client, simulateFailure);
+      if (simulateFailure) setSimulateFailure(false);
       const post = await client.createPost({
         contentType,
         message,
@@ -154,8 +168,13 @@ export function CreateClient() {
         protectedDetail,
       });
       setPublishedId(post.postId);
-      setPosts(await client.listPosts());
+      setPosts((current) => [post, ...current.filter((item) => item.postId !== post.postId)]);
       setStatus("success");
+      try {
+        setPosts(await client.listPosts());
+      } catch {
+        setPublishError("Promotion published, but the promotion list could not refresh. Do not publish it again; refresh the page instead.");
+      }
     } catch (error: unknown) {
       setStatus("error");
       setPublishError(error instanceof Phase3Error ? error.userMessage : "The promotion could not be published.");
@@ -192,7 +211,7 @@ export function CreateClient() {
           value={contentType}
           onChange={(event) => setContentType(event.target.value as ContentType)}
         >
-          {contentTypes.map((type) => <option key={type}>{type}</option>)}
+          {contentTypes.filter((type) => type === "Promotion").map((type) => <option key={type}>{type}</option>)}
         </select>
         <label htmlFor="message">Message</label>
         <textarea
@@ -215,6 +234,11 @@ export function CreateClient() {
         {uploadStatus === "pending" && <p className="form-hint" aria-busy="true">Requesting upload intent…</p>}
         {upload && <p className="form-hint">Upload intent accepted: {upload.uploadId}</p>}
         {fileError && <p className="form-error" role="alert">{fileError}</p>}
+        {uploadStatus === "error" && file && (
+          <button className="button secondary" type="button" onClick={() => void requestUpload(file)}>
+            Retry upload intent
+          </button>
+        )}
         <fieldset className="audience-fieldset">
           <legend>Audiences</legend>
           {audienceCatalog.map((audience) => {

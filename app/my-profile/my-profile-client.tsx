@@ -82,6 +82,7 @@ export function MyProfileClient() {
     setSaveError(null);
     try {
       applySimulatedFailure(client, simulateFailure);
+      if (simulateFailure) setSimulateFailure(false);
       const next = await client.updateContacts({
         organizationId: profile.organizationId,
         contacts: draftContacts,
@@ -101,9 +102,17 @@ export function MyProfileClient() {
     setConfirmError(null);
     try {
       applySimulatedFailure(client, simulateFailure);
-      await client.confirmContacts({ organizationId: profile.organizationId });
-      const next = await client.getProfileProjection(mode);
-      setProfile(next);
+      if (simulateFailure) setSimulateFailure(false);
+      const confirmation = await client.confirmContacts({ organizationId: profile.organizationId });
+      setProfile((current) => current ? {
+        ...current,
+        confirmation: {
+          status: "confirmed",
+          confirmedAt: confirmation.confirmedAt,
+          nextDue: confirmation.nextDue,
+          actorUserId: confirmation.actorUserId,
+        },
+      } : current);
       setConfirmStatus("idle");
     } catch (error: unknown) {
       setConfirmStatus("error");

@@ -97,6 +97,22 @@ test("mock promotion slice rejects an empty message", async () => {
   );
 });
 
+test("promotion permission cannot publish Update or Event content", async () => {
+  const client = new MockPhase3Client();
+  for (const contentType of ["Update", "Event"] as const) {
+    await assert.rejects(
+      () => client.createPost({
+        contentType,
+        message: `${contentType} cannot use the Promotion-only Phase 3 slice`,
+        uploadId: null,
+        audienceIds: ["retailers"],
+        protectedDetail: false,
+      }),
+      (error: unknown) => error instanceof Phase3Error && error.code === "validation",
+    );
+  }
+});
+
 test("unverified organization cannot upload or publish", async () => {
   const client = new MockPhase3Client({
     claims: { ...mockHarborClaims, organizationVerificationState: "unverified" },
@@ -267,5 +283,18 @@ test("http client returns JSON from a successful session read", async () => {
     const client = new HttpPhase3Client("https://api.example.invalid");
     const session = await client.getSession();
     assert.equal(session.userId, "user-harbor-owner");
+  });
+});
+
+test("http client maps malformed success JSON to a retryable unavailable error", async () => {
+  await withMockFetch(async () => new Response("not-json", {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  }), async () => {
+    const client = new HttpPhase3Client("https://api.example.invalid");
+    await assert.rejects(
+      () => client.getSession(),
+      (error: unknown) => error instanceof Phase3Error && error.code === "unavailable",
+    );
   });
 });

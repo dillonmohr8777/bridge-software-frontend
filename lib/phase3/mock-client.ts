@@ -139,6 +139,9 @@ export class MockPhase3Client implements Phase3Client {
     if (!canCreatePromotion(this.claims)) {
       throw new Phase3Error("forbidden", "This account cannot publish promotions.");
     }
+    if (input.contentType !== "Promotion") {
+      throw new Phase3Error("validation", "This Phase 3 slice supports Promotion publishing only.");
+    }
     if (!input.message.trim()) {
       throw new Phase3Error("validation", "Add a message before publishing.");
     }
@@ -205,8 +208,9 @@ export class MockPhase3Client implements Phase3Client {
     if (input.organizationId !== this.claims.organizationId) {
       throw new Phase3Error("forbidden", "Contact confirmation is limited to your organization.");
     }
-    const confirmedAt = iso(this.now());
-    const nextDue = iso(addDays(this.now(), 90));
+    const now = this.now();
+    const confirmedAt = iso(now);
+    const nextDue = iso(addDays(now, 90));
     this.confirmation = {
       status: "confirmed",
       confirmedAt,

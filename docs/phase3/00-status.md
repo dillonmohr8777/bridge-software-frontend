@@ -43,6 +43,9 @@ Promotion create requires an active membership, a verified organization, and `cr
 - Upload intent is requested when a valid file is selected, not only at publish
 - Protected wholesale detail cannot target Adults 21+
 - Publish requires a message and at least one remaining eligible audience
+- This vertical slice publishes Promotion records only; Update and Event remain outside the active permission contract
+- Stale upload-intent responses are ignored, and failed intents can be retried without reselecting the file
+- A successful publish is never reported as failed just because the subsequent list refresh fails
 - Published posts persist on the organization; Public view hides protected promotions
 - Public projection never includes sales/accounting contacts
 - Contacts can be updated, then confirmed; confirmation records actor, time, and next-due (+90 days)
