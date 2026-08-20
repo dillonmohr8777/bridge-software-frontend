@@ -3,9 +3,9 @@ export default function CreatePage() {
   return (
     <div className="page shell">
       <div className="page-heading">
-        <p className="eyebrow">Create · Phase 3 slice</p>
-        <h1>Build a targeted promotion</h1>
-        <p className="lede small">Upload PNG, JPEG, WebP, or PDF up to 25 MB. Upload intent is requested on file select. Choose eligible audiences. Protected business detail removes public targeting.</p>
+        <p className="eyebrow">Create · Cannabis Promotion</p>
+        <h1>Reach the right cannabis industry audience</h1>
+        <p className="lede small">Build a promotion for consumers, verified operators, or selected business roles. Upload PNG, JPEG, WebP, or PDF up to 25 MB. Protected business details automatically remove public targeting.</p>
       </div>
       <CreateClient />
     </div>
