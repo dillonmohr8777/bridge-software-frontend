@@ -1,137 +1,113 @@
 import Link from "next/link";
-import { ProfileCard } from "@/components/ProfileCard";
-import { profiles } from "@/lib/data";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <>
-      <section className="home-hero">
-        <div className="hero shell hero-compact">
-          <div className="hero-copy">
-            <p className="eyebrow">Verified cannabis industry network</p>
-            <h1 className="home-title">The cannabis industry, connected.</h1>
-            <p className="lede">
-              Bridge brings brands, dispensaries, cultivators, sales teams, and service partners into one trusted network. Discover businesses, follow market activity, and reach the right people faster.
-            </p>
-            <div className="button-row hero-actions">
-              <Link className="button primary" href="/explore">Explore verified businesses</Link>
-              <Link className="hero-secondary-link" href="/community">
-                View community news <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-            <div className="home-audience" aria-label="Who Bridge is for">
-              <span>Built for</span>
-              <strong>Brands</strong>
-              <strong>Dispensaries</strong>
-              <strong>Cultivators</strong>
-              <strong>Sales teams</strong>
-              <strong>Service partners</strong>
-            </div>
-            <p className="form-hint home-hint">Review prototype with illustrative sample data.</p>
-          </div>
+    <div className="bridge-home">
+      <nav className="landing-nav" aria-label="Landing navigation">
+        <Link className="landing-logo" href="/" aria-label="Bridge home">
+          <Image src="/bridge-mark.svg" alt="" height={48} priority width={76} />
+          <span>BRIDGE</span>
+        </Link>
+        <div className="landing-links">
+          <Link className="button ghost" href="#suite">Explore the platform</Link>
+          <Link className="button primary" href="/explore">Get on the Bridge</Link>
+        </div>
+      </nav>
 
-          <div className="network-preview" aria-label="Illustrative Bridge network activity">
-            <div className="network-preview-heading">
-              <div>
-                <span className="network-live"><i aria-hidden="true" /> Network preview</span>
-                <h2>Find your next cannabis connection.</h2>
-              </div>
-              <span className="preview-note">Sample data</span>
-            </div>
-            <div className="network-activity">
-              {profiles.slice(0, 3).map((profile) => (
-                <Link className="network-activity-row" href={`/profile/${profile.slug}`} key={profile.slug}>
-                  <span className="avatar" aria-hidden="true">{profile.initials}</span>
-                  <span className="network-identity">
-                    <small>{profile.role}</small>
-                    <strong>{profile.name}</strong>
-                    <span>{profile.location}</span>
-                  </span>
-                  <span className="network-action">View <span aria-hidden="true">→</span></span>
-                </Link>
-              ))}
-            </div>
-            <Link className="network-preview-footer" href="/explore">
-              Search by market, business type, specialty, and verification status
-              <span aria-hidden="true">→</span>
-            </Link>
+      <section className="landing-hero" aria-labelledby="hero-title">
+        <div className="landing-copy">
+          <p className="hero-label">Verified cannabis community and market intelligence</p>
+          <h1 id="hero-title">One industry.<br />One network.<br /><span>One Bridge.</span></h1>
+          <p>
+            Connect cannabis brands, dispensaries, cultivators, sales teams, and service partners. Follow industry activity, discover verified operators, and build the right relationships nationwide.
+          </p>
+          <div className="landing-links landing-actions">
+            <Link className="button primary" href="/explore">Explore cannabis businesses <span aria-hidden="true">→</span></Link>
+            <Link className="button ghost" href="/community">Open Community News</Link>
           </div>
+          <div className="landing-stats" aria-label="Bridge capabilities">
+            <div><strong>04</strong><span>Connected spaces</span></div>
+            <div><strong>50</strong><span>State discovery</span></div>
+            <div><strong>B2B</strong><span>Protected access</span></div>
+          </div>
+        </div>
+
+        <div className="signal-visual" aria-label="Bridge connects the cannabis community, businesses, campaigns, and market discovery">
+          <div className="signal-orbit" />
+          <div className="signal-orbit" />
+          <div className="signal-orbit" />
+          <Link className="signal-node one" href="/community"><span><strong>Community</strong><small>Industry activity</small></span></Link>
+          <Link className="signal-node two" href="/my-profile"><span><strong>Businesses</strong><small>Verified profiles</small></span></Link>
+          <Link className="signal-node three" href="/create"><span><strong>Campaigns</strong><small>Targeted promotion</small></span></Link>
+          <Link className="signal-node four" href="/explore"><span><strong>Explore</strong><small>Markets and services</small></span></Link>
+          <Link className="signal-core" href="/explore"><span><strong>Connected<br />cannabis</strong><small>Trusted by design</small></span></Link>
         </div>
       </section>
 
-      <section className="section shell home-path-section">
-        <div className="section-heading home-path-heading">
-          <div>
-            <p className="eyebrow">Start with what you need</p>
-            <h2>Four clear ways into Bridge.</h2>
-          </div>
-          <p>Explore the industry, follow current activity, publish a promotion, or manage your verified business presence.</p>
+      <section className="visual-story" aria-labelledby="visual-story-title">
+        <div className="visual-story-copy">
+          <span>Bridge in motion</span>
+          <h2 id="visual-story-title">Find the signal. Meet the people. Move the cannabis industry forward.</h2>
+          <p>One nationwide home for cannabis news, promotions, verified profiles, products, and industry services.</p>
         </div>
-        <div className="home-moments" aria-label="Product spaces">
-          <Link className="moment-card moment-card-primary moment-card-media explore-media" href="/explore">
-            <span className="moment-label">Explore</span>
-            <strong>Find cannabis businesses nationwide</strong>
-            <span className="muted">Search markets, roles, specialties, and verification status</span>
-          </Link>
-          <Link className="moment-card moment-card-media community-media" href="/community">
-            <span className="moment-label">Community News</span>
-            <strong>See what the industry is doing now</strong>
-            <span className="muted">Follow new products, promotions, events, and announcements</span>
-          </Link>
-          <Link className="moment-card" href="/create">
-            <span className="moment-label">Create</span>
-            <strong>Publish a targeted promotion</strong>
-            <span className="muted">Choose the right audience and protect business details</span>
-          </Link>
-          <Link className="moment-card" href="/my-profile">
-            <span className="moment-label">My Profile</span>
-            <strong>Keep your business easy to reach</strong>
-            <span className="muted">Manage public information and verified business contacts</span>
-          </Link>
+        <div className="visual-story-track" aria-label="Bridge product moments">
+          <Link className="visual-story-card network" href="/community"><span>Community News</span><strong>A visual feed for useful cannabis industry discovery.</strong></Link>
+          <Link className="visual-story-card markets" href="/explore"><span>Nationwide Explore</span><strong>Filter legal markets, products, brands, and services.</strong></Link>
+          <Link className="visual-story-card identity" href="/my-profile"><span>Verified identity</span><strong>Know who is current before the introduction.</strong></Link>
         </div>
       </section>
 
-      <section className="section shell">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Inside the network</p>
-            <h2>Meet cannabis businesses across the country.</h2>
-          </div>
-          <Link className="text-link" href="/explore">Explore the directory <span aria-hidden="true">→</span></Link>
+      <nav className="entry-rail" aria-label="Enter the Bridge platform">
+        <div className="entry-rail-copy">
+          <span>Inside Bridge</span>
+          <strong>One account. Four connected spaces.</strong>
         </div>
-        <div className="card-grid">
-          {profiles.slice(0, 3).map((profile) => (
-            <ProfileCard key={profile.slug} profile={profile} />
-          ))}
+        <div className="entry-rail-links">
+          <Link href="/community"><strong>Community News</strong><span>Follow people, products, events, and daily signals</span></Link>
+          <Link href="/create"><strong>Create</strong><span>Publish targeted cannabis promotions</span></Link>
+          <Link href="/my-profile"><strong>My Profile</strong><span>Manage identity, contacts, and access</span></Link>
+          <Link href="/explore"><strong>Explore</strong><span>Search markets, businesses, products, and services</span></Link>
+        </div>
+      </nav>
+
+      <section className="suite-section" id="suite" aria-labelledby="suite-title">
+        <div className="suite-heading">
+          <p>Built for the legal cannabis industry</p>
+          <h2 id="suite-title">Four spaces. One connected Bridge.</h2>
+          <span>Move from industry activity to trusted business discovery without leaving the platform.</span>
+        </div>
+        <div className="suite-grid">
+          <article className="suite-card">
+            <div className="arc" />
+            <span className="number">Community News</span>
+            <h3>See what the cannabis industry is doing now.</h3>
+            <p>Follow launches, promotions, events, announcements, and community activity in a visual feed built for fast discovery.</p>
+            <Link className="button ghost" href="/community">Open Community News <span aria-hidden="true">→</span></Link>
+          </article>
+          <article className="suite-card">
+            <div className="arc" />
+            <span className="number">Create</span>
+            <h3>Publish cannabis promotions to the right audience.</h3>
+            <p>Create targeted promotions while keeping public and protected business information separate.</p>
+            <Link className="button ghost" href="/create">Open Create</Link>
+          </article>
+          <article className="suite-card">
+            <div className="arc" />
+            <span className="number">My Profile</span>
+            <h3>A verified home base for your cannabis business.</h3>
+            <p>Manage public information, business contacts, protected fields, and the details partners need before they connect.</p>
+            <Link className="button ghost" href="/my-profile">Open My Profile</Link>
+          </article>
+          <article className="suite-card">
+            <div className="arc" />
+            <span className="number">Explore</span>
+            <h3>Search the legal cannabis industry nationwide.</h3>
+            <p>Find brands, dispensaries, cultivators, sales teams, service partners, products, and specialties across legal markets.</p>
+            <Link className="button ghost" href="/explore">Open Explore <span aria-hidden="true">→</span></Link>
+          </article>
         </div>
       </section>
-      <section className="section value-section">
-        <div className="shell">
-          <div className="section-heading narrow">
-            <div>
-              <p className="eyebrow">Built for cannabis business</p>
-              <h2>Discovery with the right information and the right boundaries.</h2>
-            </div>
-          </div>
-          <div className="value-grid">
-            <article>
-              <span className="number">01</span>
-              <h3>Know who you are meeting</h3>
-              <p>Verification and business roles make every profile easier to understand before you connect.</p>
-            </article>
-            <article>
-              <span className="number">02</span>
-              <h3>Share with the right audience</h3>
-              <p>Public updates and protected business information stay separate by design.</p>
-            </article>
-            <article>
-              <span className="number">03</span>
-              <h3>See beyond your local market</h3>
-              <p>Nationwide discovery helps the industry learn, collaborate, and grow across state lines.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-    </>
+    </div>
   );
 }

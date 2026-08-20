@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DEFAULT_THEME, lockedTheme } from "@/lib/direction-lock";
+
+const bridgeDisplay = Poppins({
+  subsets: ["latin"],
+  variable: "--font-bridge",
+  weight: ["700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Bridge: The cannabis industry, connected",
@@ -26,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script dangerouslySetInnerHTML={{ __html: unifiedThemeScript }} />
       </head>
-      <body>
+      <body className={bridgeDisplay.variable}>
         {!lockedTheme && <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />}
         <a className="skip-link" href="#main">Skip to content</a>
         <SiteHeader />
