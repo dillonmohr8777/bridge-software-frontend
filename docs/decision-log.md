@@ -1,5 +1,12 @@
 # Bridge decision log
 
+## Adult entry requirement restored — 2026-08-21
+
+| Item | Recorded decision | Evidence boundary |
+|---|---|---|
+| 21+ entry gate | Require an explicit 21+ confirmation before any Bridge route, retain the under-21 blocked state, and remember an affirmative confirmation on that device | Restores the earlier product requirement without changing the Connected purple design. This front-end gate is not a substitute for Miraj's production authentication and age-eligibility claims. |
+| Unified review deployment | Update the existing `bridge-connected-signal` Netlify site in place | Published as deploy `6a88e3ac3974a1b866ed5383`; previous deploy `6a8734af6ddd51415f88bbb7` remains the rollback point. The safety duplicate was not changed. |
+
 ## Tori feedback reconciliation — 2026-08-20
 
 | Item | Recorded decision | Evidence boundary |

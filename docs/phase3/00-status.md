@@ -1,8 +1,9 @@
 # Phase 3 — Promotion, protected profile, and Tori feedback reconciliation
 
 **Opened:** 2026-08-19  
-**Expanded:** 2026-08-20
-**Status:** FRONTEND REVIEW BUILD COMPLETE LOCALLY — typed contract, mock adapter, Create / My Profile journeys, transcript feedback surfaces, and contract tests are in. Live `/api/v1` bind waits on Miraj's inspectable staging origin. Netlify and client send stay gated.
+**Expanded:** 2026-08-20  
+**Entry requirement restored:** 2026-08-21  
+**Status:** FRONTEND REVIEW BUILD LIVE — the required 21+ entry gate was restored to the existing Connected purple review URL on 2026-08-21. The typed contract, mock adapter, Create / My Profile journeys, transcript feedback surfaces, and contract tests remain in place. Live `/api/v1` binding still waits on Miraj's inspectable staging origin.
 
 ## August 20 feedback pass
 
@@ -17,6 +18,7 @@ The Connected purple direction, existing typography, exact Bridge mark, and core
 7. A required first login and monthly sales and accounting contact confirmation gate
 8. Clearly labeled pricing and Bridge League concept pages for Tori's review
 9. Grain animation and slow editorial image movement inspired by the approved Align HCM industry page treatment, with reduced motion support
+10. A global 21+ entry confirmation that blocks underage access before any route and remembers an affirmative confirmation on that device
 
 Full transcript reconciliation: `docs/phase3/03-tori-feedback-reconciliation.md`.
 Unsent communication drafts: `docs/phase3/04-message-drafts.md`.
@@ -79,4 +81,4 @@ npm run build
 
 Internal walkthrough: `docs/phase3/02-dillon-deliverable.md`.
 
-Do not deploy this slice to the unified review URL until Dillon approves the Netlify update. Do not bind a live API origin without Miraj's inspectable staging URL. Do not Slack or email the client from this slice.
+The approved 21+ gate restoration is deployed at `https://bridge-connected-signal.netlify.app` as Netlify deploy `6a88e3ac3974a1b866ed5383`. Do not bind a live API origin without Miraj's inspectable staging URL. Do not Slack or email the client from this slice without separate approval.

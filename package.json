@@ -13,7 +13,7 @@
     "build:staging:network": "node scripts/build-staging-one.mjs network",
     "build:staging:botanical": "node scripts/build-staging-one.mjs botanical",
     "test:staging": "node scripts/verify-staging.mjs",
-    "test:phase3": "node --test --experimental-strip-types lib/phase3/phase3.test.ts lib/direction-lock.test.ts"
+    "test:phase3": "node --test --experimental-strip-types lib/phase3/phase3.test.ts lib/direction-lock.test.ts lib/age-gate.test.ts"
   },
   "dependencies": {
     "next": "16.3.1",

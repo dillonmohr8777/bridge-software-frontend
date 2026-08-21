@@ -2,7 +2,7 @@
 
 **Source reviewed:** Full 39 minute platform development strategy transcript plus the written feedback available for this review cycle
 **Build state:** Implemented and tested locally on 2026-08-20
-**Delivery boundary:** Not deployed and no client message sent
+**Delivery boundary:** The approved 21+ entry gate restoration was deployed to the existing review URL on 2026-08-21. No client message was sent from this change.
 
 ## Instituted in the review build
 
@@ -43,6 +43,10 @@
 8. Select the first external providers for menus, ordering, maps, and social channels, and decide whether launch uses links or live integrations.
 9. Define editorial contributors, moderation, review, and whether paid placement will ever be allowed in Community News.
 10. Approve the realistic cannabis imagery with the purple grain and slow motion treatment.
+
+## Restored entry requirement
+
+On 2026-08-21, the earlier Bridge product requirement for an adult entry gate was restored across every route. The review build now requires an explicit 21+ confirmation before entry, blocks the under-21 path, and remembers an affirmative confirmation on that device. This is a front-end review safeguard only; production identity and age-eligibility enforcement still require Miraj's authentication and claims integration.
 
 ## Production dependencies
 

@@ -13,6 +13,7 @@ Connect Claude to the public GitHub repository `dillonmohr8777/bridge-discovery-
 Phase 2 five-route product (2026-08-16 actual-work report), in Connected purple:
 
 - `/` Home, `/community` Community News (News Grid + Classic), `/create` Create, `/my-profile` My Profile, `/explore` Explore
+- Global 21+ entry confirmation before any route, with an under-21 blocked state and device-local affirmative persistence
 - Legacy redirects: `/studio` → Create, `/business` → My Profile, `/signal` → Explore
 - Create: PNG/JPEG/WebP/PDF up to 25 MB, multi-audience, protected-detail guardrail
 - My Profile: Public vs verified-business, sales/accounting contacts, 90-day confirmation
