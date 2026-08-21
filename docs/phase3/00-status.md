@@ -1,8 +1,11 @@
 # Phase 3 — Promotion, protected profile, and Tori feedback reconciliation
 
-**Opened:** 2026-08-19  
-**Expanded:** 2026-08-20  
-**Entry requirement restored:** 2026-08-21  
+**Opened:** 2026-08-19
+
+**Expanded:** 2026-08-20
+
+**Entry requirement restored:** 2026-08-21
+
 **Status:** FRONTEND REVIEW BUILD LIVE — the required 21+ entry gate was restored to the existing Connected purple review URL on 2026-08-21. The typed contract, mock adapter, Create / My Profile journeys, transcript feedback surfaces, and contract tests remain in place. Live `/api/v1` binding still waits on Miraj's inspectable staging origin.
 
 ## August 20 feedback pass
