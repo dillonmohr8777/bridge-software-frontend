@@ -1,22 +1,27 @@
-# Bridge frontend
+# Bridge frontend integration source
 
-Canonical integration source for Greencubes. This is the live Next.js frontend currently published at https://bridge-connected-signal.netlify.app.
+Canonical private integration source for Greencubes. This is the Next.js frontend published at https://bridge-connected-signal.netlify.app.
 
-Pipeline, branch rules, and deploy URLs: `docs/INTEGRATION-PIPELINE.md`.
+Start here:
 
-- Push `development` for preview deploys.
-- Merge `production` for live deploys.
-- Keep the current visual design. Wire APIs into existing screens.
+- Pipeline, branch rules, access, and deploy URLs: `docs/INTEGRATION-PIPELINE.md`
+- Exact frontend API adapter and onboarding Steps 1–4 contract: `docs/INTEGRATION-API-CONTRACT.md`
+- Contribution and verification workflow: `CONTRIBUTING.md`
 
-# Bridge discovery prototype
+- Branch from and merge daily work into `development`; Netlify deploys it to the preview site.
+- Open a pull request from `development` to `production` only after preview QA; Netlify deploys `production` live.
+- Keep the current Connected purple visual design and wire APIs into the existing screens.
+- Set `NEXT_PUBLIC_BRIDGE_API_BASE` only after Greencubes provides an inspectable versioned API origin. Until then the frontend intentionally uses the in-memory adapter.
+
+# Product and prototype history
 
 A decision-ready front-end prototype for Monday's product session with Tori. It is built in Next.js, React, and TypeScript and uses mock data only.
 
 > **Project identity:** This is the Bridge software-development project for Tori's cannabis-industry professional network. It is not Bridge of Hope OTC, an SEO audit, or the user's general client-meeting workspace. Claude should read `CLAUDE.md` before using external memory or asking discovery questions.
 
-## Starting a Claude session
+## Starting an implementation session
 
-Connect Claude to the public GitHub repository `dillonmohr8777/bridge-discovery-prototype`, then paste the prompt in `CLAUDE_SESSION_PROMPT.md`. Claude should confirm the repository, branch, and current commit before planning or editing. The complete implementation order, approval gates, route requirements, backend boundary, test plan, and definition of done are in `CLAUDE_BUILD_SPEC.md`.
+Connect the implementation tool to the private repository `dillonmohr8777/bridge-software-frontend`. Start feature work from `development`, not from the historical public prototype. `CLAUDE_SESSION_PROMPT.md` contains a current integration prompt; `CLAUDE_BUILD_SPEC.md` remains historical product-definition context and does not override the integration pipeline or API contract.
 
 ## What is included
 
@@ -73,7 +78,7 @@ Rebuild all three with `./scripts/build-staging.sh` (outputs to `staging/<direct
 
 ## Status and boundaries
 
-Phase 3 frontend lock is complete on the Promotion + protected-profile slice. `/create` and `/my-profile` use typed claims, upload-intent, post, projection, and contact adapters in `lib/phase3/`. The default visual direction is Modern Network (Connected purple). A live `/api/v1` bind requires `NEXT_PUBLIC_BRIDGE_API_BASE` plus Miraj's inspectable staging origin. Do not send this slice to the client until Dillon asks. Republishing `https://bridge-connected-signal.netlify.app` must keep Modern Network, not Trusted Current navy/teal.
+Phase 3 frontend lock is complete on the Promotion + protected-profile slice. `/create` and `/my-profile` use typed claims, upload-intent, post, projection, and contact adapters in `lib/phase3/`. The default visual direction is Modern Network (Connected purple). A live `/api/v1` bind requires `NEXT_PUBLIC_BRIDGE_API_BASE` plus Miraj's inspectable staging origin. Republishing `https://bridge-connected-signal.netlify.app` must keep Modern Network, not Trusted Current navy/teal.
 
 There is still no production Supabase session, email delivery, or real license verification. All profiles and metrics are fictional. The brand identity is provisional.
 

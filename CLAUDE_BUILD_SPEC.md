@@ -1,11 +1,13 @@
 # Claude execution specification: Bridge MVP
 
+> Historical product-build specification. For current Greencubes integration work, `docs/INTEGRATION-PIPELINE.md`, `docs/INTEGRATION-API-CONTRACT.md`, and `CONTRIBUTING.md` are authoritative when this file conflicts with them.
+
 This document converts the four status screenshots into an executable build plan. The screenshots are **not four UI mockups**. They describe the current Bridge prototype, the remaining product work, ownership boundaries, and the required quality bar.
 
 ## 1. Confirm the project before doing anything
 
-- Repository: `dillonmohr8777/bridge-discovery-prototype`
-- Branch: use the branch named in the session prompt; default to `main`
+- Repository: `dillonmohr8777/bridge-software-frontend`
+- Branch: create feature branches from `development`; promote reviewed work to `production`
 - Product: Tori's cannabis-industry directory and professional network
 - Front end: Next.js App Router, React, strict TypeScript, semantic CSS tokens
 - Current data: fictional mock data only

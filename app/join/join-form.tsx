@@ -124,9 +124,9 @@ export function JoinForm() {
       <div aria-live="polite" role="status">
         {showBoundaryNote && (
           <p className="boundary-note">
-            Steps 2–4 — {selected.nextTitle.toLowerCase()}, verification evidence, and review — are built after
-            Monday&rsquo;s decisions. Save and resume needs member accounts, which are part of Miraj&rsquo;s backend
-            contract.
+            Steps 2–4 — {selected.nextTitle.toLowerCase()}, verification evidence, and review — require an
+            authenticated member account, a saved organization draft, protected evidence uploads, and the
+            verification review API. This preview stays at Step 1 until Miraj&rsquo;s backend contract is connected.
           </p>
         )}
       </div>
