@@ -37,13 +37,12 @@ photograph in multiple editorial slots is prohibited. Shared interface assets,
 such as the Bridge mark, are excluded because they are identity primitives
 rather than editorial photography.
 
-The image direction adapts the installed Align HCM Image Gen workflow's
-documentary realism, controlled grain, practical lighting, and anti-stock-photo
-composition to Bridge's verified dark Connected-purple identity. It does not
-apply Align branding to Bridge.
+The image direction uses documentary realism, controlled grain, practical
+lighting, and anti-stock-photo composition within Bridge's verified dark
+Connected-purple identity.
 
 The generated asset set and source assignments are recorded in
-`public/bridge-editorial/ALIGN-IMAGE-PROVENANCE.json`. Run
+`public/bridge-editorial/BRIDGE-IMAGE-PROVENANCE.json`. Run
 `npm run test:images` to verify that:
 
 - all 44 generated editorial assets have distinct binary hashes;

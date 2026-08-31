@@ -20,7 +20,7 @@ The Connected purple direction, existing typography, exact Bridge mark, and core
 6. Three purple creative directions, local draft and library actions, review routing, and PNG preview export
 7. A required first login and monthly sales and accounting contact confirmation gate
 8. Clearly labeled pricing and Bridge League concept pages for Tori's review
-9. Grain animation and slow editorial image movement inspired by the approved Align HCM industry page treatment, with reduced motion support
+9. Grain animation and slow editorial image movement using the approved Bridge editorial treatment, with reduced motion support
 10. A global 21+ entry confirmation that blocks underage access before any route and remembers an affirmative confirmation on that device
 
 Full transcript reconciliation: `docs/phase3/03-tori-feedback-reconciliation.md`.
