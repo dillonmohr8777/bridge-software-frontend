@@ -21,9 +21,13 @@ const sheets = [
   { id: "sheet-09", prompt: "Nationwide market discovery; verified business introduction; promotion creator workflow; public-versus-protected profile review.", assets: ["home-nationwide-markets.webp", "home-verified-identity.webp", "create-promotion-studio.webp", "profile-protected-details.webp"] },
   { id: "sheet-10", prompt: "Community category thumbnails for edibles, retail, cultivation, and professional education events.", assets: ["community-category-edibles.webp", "community-category-retail.webp", "community-category-cultivation.webp", "community-category-events.webp"] },
   { id: "sheet-11", prompt: "Community category thumbnails for wellness, secure transport, facility services, and analytical testing.", assets: ["community-category-wellness.webp", "community-category-transport.webp", "community-category-services.webp", "community-category-testing.webp"] },
+  { id: "sheet-12", prompt: "Arizona retail buying session; Illinois territory planning; Massachusetts local operator meetup; Pennsylvania customer education session. Strong Bridge-purple documentary photography with visible 35mm grain and print texture.", assets: ["community-arizona-retail-planning.webp", "community-illinois-route-planning.webp", "community-massachusetts-meetup.webp", "community-pennsylvania-education.webp"] },
+  { id: "sheet-13", prompt: "Colorado craft-brand office hours; Colorado business readiness clinic; Pennsylvania compliant packaging review; Michigan production planning. Strong Bridge-purple documentary photography with visible 35mm grain and print texture.", assets: ["community-colorado-office-hours.webp", "community-colorado-finance-clinic.webp", "community-pennsylvania-packaging.webp", "community-michigan-production.webp"] },
+  { id: "sheet-14", prompt: "New York operator interview; California cultivation field notes; California water-efficiency workshop; Oregon retailer sample-kit production. Strong Bridge-purple documentary photography with visible 35mm grain and print texture.", assets: ["community-new-york-interview.webp", "community-california-field-notes.webp", "community-california-water-workshop.webp", "community-oregon-sample-kit.webp"] },
 ];
 
 const promptByAsset = new Map(sheets.flatMap((sheet) => sheet.assets.map((asset) => [asset, sheet.id])));
+const expandedCommunitySheetIds = new Set(["sheet-12", "sheet-13", "sheet-14"]);
 
 function routeFor(file) {
   if (file.startsWith("community-")) return "/community";
@@ -38,16 +42,17 @@ const files = (await readdir(assetDirectory)).filter((file) => file.endsWith(".w
 const assets = [];
 for (const file of files) {
   const bytes = await readFile(path.join(assetDirectory, file));
+  const promptId = promptByAsset.get(file);
   assets.push({
     file,
     publicPath: `/bridge-editorial/${file}`,
     businessRoute: "bridge-software",
     appRoute: routeFor(file),
     slot: file.replace(/\.webp$/, ""),
-    promptId: promptByAsset.get(file),
+    promptId,
     model: "OpenAI image_gen tool",
-    sourceDimensions: "1536x1024 contact sheet",
-    dimensions: "760x504",
+    sourceDimensions: expandedCommunitySheetIds.has(promptId) ? "1448x1086 contact sheet" : "1536x1024 contact sheet",
+    dimensions: expandedCommunitySheetIds.has(promptId) ? "724x543" : "760x504",
     format: "WebP",
     sha256: createHash("sha256").update(bytes).digest("hex"),
   });
@@ -58,7 +63,7 @@ const manifest = {
   generatedAt: new Date().toISOString(),
   businessRoute: "bridge-software",
   visualContract,
-  intentionalReuseExceptions: ["/bridge-mark.svg"],
+  intentionalReuseExceptions: ["/bridge-mark.svg", "/textures/bridge-film-grain.webp"],
   sheets,
   assets,
 };
