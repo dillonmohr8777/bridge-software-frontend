@@ -1,3 +1,13 @@
+# Bridge frontend
+
+Canonical integration source for Greencubes. This is the live Next.js frontend currently published at https://bridge-connected-signal.netlify.app.
+
+Pipeline, branch rules, and deploy URLs: `docs/INTEGRATION-PIPELINE.md`.
+
+- Push `development` for preview deploys.
+- Merge `production` for live deploys.
+- Keep the current visual design. Wire APIs into existing screens.
+
 # Bridge discovery prototype
 
 A decision-ready front-end prototype for Monday's product session with Tori. It is built in Next.js, React, and TypeScript and uses mock data only.
