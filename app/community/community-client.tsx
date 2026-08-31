@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { US_STATE_OPTIONS } from "@/lib/states";
 
 type FeedItem = {
   id: string;
@@ -19,18 +20,28 @@ type FeedItem = {
 };
 
 const items: FeedItem[] = [
-  { id: "1", type: "Promotion", title: "Fall wholesale calendar is open", org: "Cascade Canna Co.", audience: "Verified retailers", body: "Regional partners can request menus and education support through August 31.", state: "Oregon", category: "Edibles", image: "/bridge-industry-products.png", imageAlt: "Cannabis products arranged for a wholesale presentation", age: "2 hours ago" },
-  { id: "2", type: "Market signal", title: "Michigan buyers are planning fall shelf resets", org: "Northstar Sales Group", audience: "Industry professionals", body: "Multi-location retailers are asking for dependable restock schedules and staff education.", state: "Michigan", category: "Retail", image: "/bridge-industry-networking.png", imageAlt: "Cannabis professionals discussing retail partnerships", age: "4 hours ago" },
-  { id: "3", type: "Industry news", title: "What California operators are testing now", org: "Signal Desk Media", audience: "All Bridge members", body: "A practical look at genetics, production efficiency, and product formats moving between legal markets.", state: "California", category: "Cultivation", image: "/bridge-cultivation-lab.png", imageAlt: "Cannabis cultivation and laboratory quality control", age: "Today" },
-  { id: "4", type: "Event", title: "Community education night with Maryland brands", org: "Harbor Dispensary", audience: "Adults 21+", body: "A public safe education event connecting customers with verified regional operators.", state: "Maryland", category: "Events", image: "/bridge-industry-networking.png", imageAlt: "Adults attending a professional cannabis industry event", age: "Tomorrow" },
-  { id: "5", type: "Promotion", title: "New lab verified tincture line", org: "Greenline Goods", audience: "Verified retailers", body: "Wholesale samples and education materials are available for approved retail partners.", state: "New Jersey", category: "Wellness", image: "/bridge-industry-products.png", imageAlt: "Premium cannabis wellness products in a dispensary setting", age: "Yesterday" },
-  { id: "6", type: "Service update", title: "Two secure transport routes opened", org: "Purple Route Logistics", audience: "Verified businesses", body: "New Southwest Michigan pickup windows are available for retailers, laboratories, and manufacturers.", state: "Michigan", category: "Transport", image: "/bridge-industry-networking.png", imageAlt: "Cannabis logistics partners coordinating routes", age: "Yesterday" },
-  { id: "7", type: "Market signal", title: "Facility teams are booking fall maintenance", org: "Evergreen Facility Group", audience: "Industry professionals", body: "Cultivators are scheduling HVAC, electrical, and environmental control work before winter.", state: "Ohio", category: "Services", image: "/bridge-cultivation-lab.png", imageAlt: "Controlled cannabis cultivation facility systems", age: "2 days ago" },
-  { id: "8", type: "Industry news", title: "Testing teams publish new sample intake windows", org: "Great Lakes Analytics", audience: "Verified businesses", body: "Current intake contacts and scheduling guidance are now available to Michigan operators.", state: "Michigan", category: "Testing", image: "/bridge-cultivation-lab.png", imageAlt: "Cannabis testing laboratory and sample review", age: "3 days ago" },
+  { id: "1", type: "Promotion", title: "Fall wholesale calendar is open", org: "Cascade Canna Co.", audience: "Verified retailers", body: "Regional partners can request menus and education support through August 31.", state: "Oregon", category: "Edibles", image: "/bridge-editorial/community-oregon-edibles.webp", imageAlt: "Small-batch edible products prepared for an Oregon wholesale presentation", age: "2 hours ago" },
+  { id: "2", type: "Market signal", title: "Michigan buyers are planning fall shelf resets", org: "Northstar Sales Group", audience: "Industry professionals", body: "Multi-location retailers are asking for dependable restock schedules and staff education.", state: "Michigan", category: "Retail", image: "/bridge-editorial/community-michigan-retail.webp", imageAlt: "Michigan retail buyers planning a cannabis shelf reset", age: "4 hours ago" },
+  { id: "3", type: "Industry news", title: "What California operators are testing now", org: "Signal Desk Media", audience: "All Bridge members", body: "A practical look at genetics, production efficiency, and product formats moving between legal markets.", state: "California", category: "Cultivation", image: "/bridge-editorial/community-california-cultivation.webp", imageAlt: "California cultivation team inspecting healthy plants and environmental controls", age: "Today" },
+  { id: "4", type: "Event", title: "Community education night with Maryland brands", org: "Harbor Dispensary", audience: "Adults 21+", body: "A public safe education event connecting customers with verified regional operators.", state: "Maryland", category: "Events", image: "/bridge-editorial/community-maryland-education.webp", imageAlt: "Adults attending a professional cannabis education event in Maryland", age: "Tomorrow" },
+  { id: "5", type: "Promotion", title: "New lab verified tincture line", org: "Greenline Goods", audience: "Verified retailers", body: "Wholesale samples and education materials are available for approved retail partners.", state: "New Jersey", category: "Wellness", image: "/bridge-editorial/community-new-jersey-wellness.webp", imageAlt: "Wellness tinctures arranged for a New Jersey wholesale review", age: "Yesterday" },
+  { id: "6", type: "Service update", title: "Two secure transport routes opened", org: "Purple Route Logistics", audience: "Verified businesses", body: "New Southwest Michigan pickup windows are available for retailers, laboratories, and manufacturers.", state: "Michigan", category: "Transport", image: "/bridge-editorial/community-michigan-logistics.webp", imageAlt: "Licensed Michigan transport coordinator planning secure routes", age: "Yesterday" },
+  { id: "7", type: "Market signal", title: "Facility teams are booking fall maintenance", org: "Evergreen Facility Group", audience: "Industry professionals", body: "Cultivators are scheduling HVAC, electrical, and environmental control work before winter.", state: "Ohio", category: "Services", image: "/bridge-editorial/community-ohio-facility.webp", imageAlt: "Ohio facility technician servicing cultivation climate controls", age: "2 days ago" },
+  { id: "8", type: "Industry news", title: "Testing teams publish new sample intake windows", org: "Great Lakes Analytics", audience: "Verified businesses", body: "Current intake contacts and scheduling guidance are now available to Michigan operators.", state: "Michigan", category: "Testing", image: "/bridge-editorial/community-michigan-testing.webp", imageAlt: "Michigan analytical laboratory team receiving sealed samples", age: "3 days ago" },
 ];
 
 const categories = ["All", ...Array.from(new Set(items.map((item) => item.category)))];
-const states = ["All states", ...Array.from(new Set(items.map((item) => item.state))).sort()];
+const categoryImageByName: Record<string, string> = {
+  All: "/bridge-network-night.webp",
+  Edibles: "/bridge-editorial/community-category-edibles.webp",
+  Retail: "/bridge-editorial/community-category-retail.webp",
+  Cultivation: "/bridge-editorial/community-category-cultivation.webp",
+  Events: "/bridge-editorial/community-category-events.webp",
+  Wellness: "/bridge-editorial/community-category-wellness.webp",
+  Transport: "/bridge-editorial/community-category-transport.webp",
+  Services: "/bridge-editorial/community-category-services.webp",
+  Testing: "/bridge-editorial/community-category-testing.webp",
+};
 const FAVORITE_KEY = "bridge-community-favorites";
 
 export function CommunityClient() {
@@ -40,6 +51,10 @@ export function CommunityClient() {
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
+  const sampleStates = useMemo(
+    () => Array.from(new Set(items.map((item) => item.state))).sort(),
+    [],
+  );
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -69,6 +84,7 @@ export function CommunityClient() {
     }),
     [category, favorites, favoritesOnly, state],
   );
+  const noSampleForState = state !== "All states" && !sampleStates.includes(state) && visibleItems.length === 0;
 
   function toggleFavorite(id: string) {
     setFavorites((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
@@ -77,9 +93,9 @@ export function CommunityClient() {
   return (
     <div>
       <div className="visual-category-rail" aria-label="Filter Community News by cannabis category">
-        {categories.map((item, index) => (
+        {categories.map((item) => (
           <button aria-pressed={category === item} className="visual-category" key={item} onClick={() => setCategory(item)} type="button">
-            <span className={`category-thumb category-thumb-${index % 3}`} aria-hidden="true" />
+            <span className="category-thumb" aria-hidden="true" style={{ backgroundImage: `linear-gradient(rgba(9,6,13,.08),rgba(9,6,13,.5)), url(${categoryImageByName[item]})` }} />
             <strong>{item}</strong>
           </button>
         ))}
@@ -93,13 +109,15 @@ export function CommunityClient() {
         <label className="compact-control" htmlFor="community-state">
           Market
           <select id="community-state" value={state} onChange={(event) => setState(event.target.value)}>
-            {states.map((item) => <option key={item}>{item}</option>)}
+            {US_STATE_OPTIONS.map((item) => <option key={item}>{item}</option>)}
           </select>
         </label>
         <label className="check-row favorites-control"><input checked={favoritesOnly} onChange={(event) => setFavoritesOnly(event.target.checked)} type="checkbox" /><span>Favorites only</span></label>
       </div>
 
-      {visibleItems.length === 0 ? (
+      {noSampleForState ? (
+        <div className="empty-state"><h3>No sample posts for {state}</h3><p>The Community filter covers all 50 states plus D.C. This review build only includes illustrative posts for {sampleStates.join(", ")}. Empty here means no sample content, not an empty market.</p></div>
+      ) : visibleItems.length === 0 ? (
         <div className="empty-state"><h3>No saved signals here yet</h3><p>Change the market or category, or save posts you want to keep close.</p></div>
       ) : (
         <div className={layout === "grid" ? "news-grid editorial-feed" : "news-classic editorial-feed"} data-layout={layout}>
@@ -126,7 +144,7 @@ export function CommunityClient() {
           })}
         </div>
       )}
-      <p className="form-hint">Illustrative member activity for product review. No paid feed placement and no live market claims.</p>
+      <p className="form-hint">Nationwide filter: 50 states + D.C. Sample posts currently illustrate {sampleStates.join(", ")}. No paid feed placement and no live market claims.</p>
     </div>
   );
 }

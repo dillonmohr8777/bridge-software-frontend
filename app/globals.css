@@ -208,8 +208,6 @@ nav a[aria-current="page"] { color: var(--text); }
 .moment-card-media::before { background: linear-gradient(180deg, rgba(7, 7, 14, .08), rgba(7, 7, 14, .9)); content: ""; inset: 0; position: absolute; z-index: -1; }
 .moment-card-media .moment-label { color: #e2c9ff; }
 .moment-card-media .muted { color: rgba(255, 255, 255, .78); }
-.community-media { background-image: url("/bridge-network-night.webp"); }
-.explore-media { background-image: url("/bridge-midatlantic-3d-v1.webp"); }
 
 .feed-toolbar { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start; margin-bottom: 28px; }
 .feed-toolbar .form-hint { flex: 1 1 280px; }
@@ -496,9 +494,9 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .bridge-home .visual-story-track { display: grid; gap: 14px; grid-template-columns: repeat(12,minmax(0,1fr)); }
 .bridge-home .visual-story-card { background-position: center; background-size: cover; border: 1px solid rgba(218,190,252,.2); border-radius: 16px; box-shadow: 0 24px 55px rgba(0,0,0,.3); display: flex; flex-direction: column; gap: 8px; isolation: isolate; justify-content: flex-end; min-height: 270px; overflow: hidden; padding: 24px; position: relative; }
 .bridge-home .visual-story-card::before { background: linear-gradient(180deg,rgba(7,5,11,.08),rgba(7,5,11,.9)); content: ""; inset: 0; position: absolute; z-index: -1; }
-.bridge-home .visual-story-card.network { background-image: url("/bridge-network-night.webp"); grid-column: span 5; }
-.bridge-home .visual-story-card.markets { background-image: url("/bridge-midatlantic-3d-v1.webp"); grid-column: span 4; }
-.bridge-home .visual-story-card.identity { background-image: linear-gradient(145deg,#5f00a2,#180022); grid-column: span 3; }
+.bridge-home .visual-story-card.network { background-image: url("/bridge-editorial/home-community-network.webp"); grid-column: span 5; }
+.bridge-home .visual-story-card.markets { background-image: url("/bridge-editorial/home-nationwide-markets.webp"); grid-column: span 4; }
+.bridge-home .visual-story-card.identity { background-image: url("/bridge-editorial/home-verified-identity.webp"); grid-column: span 3; }
 .bridge-home .visual-story-card span { color: #d5b0ff; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .bridge-home .visual-story-card strong { color: #fff; font-family: var(--font-bridge), "Segoe UI", sans-serif; font-size: 18px; line-height: 1.25; }
 .bridge-home .entry-rail { align-items: stretch; background: linear-gradient(135deg,#100b15,#09060d); border-block: 2px solid rgba(185,131,255,.14); display: grid; grid-template-columns: minmax(210px,.7fr) minmax(0,2.3fr); padding: 0 clamp(24px,6vw,86px); }
@@ -594,14 +592,14 @@ body:has(.bridge-home) > .site-footer { display: none; }
   z-index: 2;
 }
 .grain-image img { animation: bridge-image-drift 18s ease-in-out infinite alternate; object-fit: cover; }
+.page-heading-with-media { align-items: center; display: grid; gap: clamp(28px, 5vw, 64px); grid-template-columns: minmax(0, 1.08fr) minmax(300px, .72fr); max-width: none; }
+.page-heading-with-media > div:first-child { max-width: 850px; }
+.page-heading-media { aspect-ratio: 3 / 2; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
 
 .visual-category-rail { display: flex; gap: 11px; margin-bottom: 24px; overflow-x: auto; padding: 4px 2px 12px; scrollbar-width: thin; }
 .visual-category { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; color: var(--muted); cursor: pointer; display: grid; flex: 0 0 130px; gap: 9px; min-height: 118px; overflow: hidden; padding: 8px; text-align: left; }
 .visual-category[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); color: var(--text); }
 .category-thumb { background-position: center; background-size: cover; border-radius: 10px; display: block; height: 66px; }
-.category-thumb-0 { background-image: linear-gradient(rgba(9,6,13,.1),rgba(9,6,13,.45)),url("/bridge-industry-networking.png"); }
-.category-thumb-1 { background-image: linear-gradient(rgba(9,6,13,.1),rgba(9,6,13,.45)),url("/bridge-industry-products.png"); }
-.category-thumb-2 { background-image: linear-gradient(rgba(9,6,13,.1),rgba(9,6,13,.45)),url("/bridge-cultivation-lab.png"); }
 .visual-category strong { font-size: .78rem; line-height: 1.25; }
 .feed-toolbar { align-items: end; }
 .layout-toggle { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -695,7 +693,6 @@ body:has(.bridge-home) > .site-footer { display: none; }
 
 .bridge-home .signal-node { pointer-events: none; }
 .bridge-home .signal-node:hover { border-color: rgba(222,197,255,.23); transform: none; }
-.bridge-home .visual-story-card.identity { background-image: url("/bridge-industry-networking.png"); }
 .bridge-home .visual-story-card { animation: bridge-story-drift 20s ease-in-out infinite alternate; background-size: 108%; }
 .bridge-home .visual-story-card::after {
   animation: bridge-grain-shift .42s steps(2, end) infinite;
@@ -716,6 +713,8 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .bridge-home .bridge-growth-model .button { margin-top: 10px; }
 
 @media (max-width: 980px) {
+  .page-heading-with-media { grid-template-columns: 1fr; }
+  .page-heading-media { max-width: 720px; width: 100%; }
   .explore-category-rail { grid-template-columns: repeat(3,1fr); }
   .market-switcher, .private-recognition, .league-dashboard { grid-template-columns: 1fr; }
   .market-pills { justify-content: start; }
