@@ -62,9 +62,15 @@ for (const viewport of [
       const categoryBackgrounds = await page.locator(".category-thumb").evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).backgroundImage));
       check(new Set(categoryBackgrounds).size === categoryBackgrounds.length && categoryBackgrounds.length === 9, `${viewport.name} Community category art is unique`, `found ${new Set(categoryBackgrounds).size}/${categoryBackgrounds.length}`);
       const articleImages = (await page.locator(".news-card img").evaluateAll((images) => images.map((image) => image.getAttribute("src") ?? ""))).map(editorialPath);
-      check(new Set(articleImages).size === articleImages.length && articleImages.length === 8, `${viewport.name} Community post art is unique`, `found ${new Set(articleImages).size}/${articleImages.length}`);
+      check(new Set(articleImages).size === articleImages.length && articleImages.length === 20, `${viewport.name} Community post art is unique`, `found ${new Set(articleImages).size}/${articleImages.length}`);
+      const postTypes = await page.locator(".news-card .status-chip").allTextContents();
+      for (const requiredType of ["Product introduction", "Vendor announcement", "Promotion", "Event"]) {
+        check(postTypes.includes(requiredType), `${viewport.name} Community includes ${requiredType} samples`);
+      }
+      check(await page.getByText("20 illustrative stories shown · 12 sample markets · 52 nationwide filter options").isVisible(), `${viewport.name} Community labels sample-feed depth`);
       await page.locator("#community-state").selectOption("Alabama");
       check(await page.getByRole("heading", { name: "No sample posts for Alabama" }).isVisible(), `${viewport.name} Community distinguishes nationwide scope from sample coverage`);
+      await page.locator("#community-state").selectOption("All states");
     }
 
     if (route === "/explore") {
@@ -76,6 +82,7 @@ for (const viewport of [
       check(new Set(profileImages).size === profileImages.length && profileImages.length === 18, `${viewport.name} Explore profile art is unique`, `found ${new Set(profileImages).size}/${profileImages.length}`);
       await page.locator("#explore-state").selectOption("Alabama");
       check(await page.getByRole("heading", { name: "No sample records for Alabama" }).isVisible(), `${viewport.name} Explore distinguishes nationwide scope from sample coverage`);
+      await page.locator("#explore-state").selectOption("All states");
     }
 
     if ((viewport.name === "desktop" && ["/", "/community", "/explore", "/create", "/my-profile"].includes(route)) || (viewport.name === "mobile" && ["/community", "/explore"].includes(route))) {

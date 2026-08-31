@@ -74,13 +74,24 @@ for (const relative of ["app/community/community-client.tsx", "app/explore/explo
   if (!source.includes("US_STATE_OPTIONS.map")) failures.push(`${relative} does not use the shared nationwide selector`);
 }
 
+const communitySource = await readFile(path.join(root, "app", "community", "community-client.tsx"), "utf8");
+const communityPostImages = [...communitySource.matchAll(/image:\s*"\/bridge-editorial\/community-[a-z0-9-]+\.webp"/g)];
+if (communityPostImages.length !== 20) failures.push(`Community must contain 20 image-led sample posts; found ${communityPostImages.length}`);
+for (const requiredType of ["Product introduction", "Vendor announcement", "Promotion", "Event"]) {
+  if (!communitySource.includes(`type: "${requiredType}"`)) failures.push(`Community is missing Tori-requested sample post type: ${requiredType}`);
+}
+const globalCss = await readFile(path.join(root, "app", "globals.css"), "utf8");
+if (globalCss.includes("feTurbulence")) failures.push("Inline synthetic SVG turbulence remains; use the reusable raster film-grain texture");
+await readFile(path.join(root, "public", "textures", "bridge-film-grain.webp"));
+
 const report = {
   passed: failures.length === 0,
   editorialAssets: files.length,
   assignedEditorialPaths: usage.size,
   uniqueBinaryHashes: hashToFiles.size,
   nationwideOptions: states.length,
-  intentionalReuseExceptions: ["/bridge-mark.svg"],
+  communitySamplePosts: communityPostImages.length,
+  intentionalReuseExceptions: ["/bridge-mark.svg", "/textures/bridge-film-grain.webp"],
   failures,
 };
 console.log(JSON.stringify(report, null, 2));
