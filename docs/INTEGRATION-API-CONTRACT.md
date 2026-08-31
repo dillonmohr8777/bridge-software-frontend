@@ -1,6 +1,6 @@
 # Bridge frontend integration API contract
 
-Date: 2026-08-31  
+Date: 2026-08-31
 Audience: Greencubes engineering and Bridge product/QA
 
 This document maps the existing frontend to the backend work Miraj described in Milestone 3. It is the current integration handoff, not a claim that unverified product-policy decisions are final.
