@@ -56,7 +56,7 @@ for (const [hash, matches] of hashToFiles) {
   if (matches.length > 1) failures.push(`Duplicate binary hash ${hash}: ${matches.join(", ")}`);
 }
 
-const manifest = JSON.parse(await readFile(path.join(assetDirectory, "ALIGN-IMAGE-PROVENANCE.json"), "utf8"));
+const manifest = JSON.parse(await readFile(path.join(assetDirectory, "BRIDGE-IMAGE-PROVENANCE.json"), "utf8"));
 if (manifest.assets.length !== files.length) failures.push(`Provenance has ${manifest.assets.length} assets; filesystem has ${files.length}`);
 for (const asset of manifest.assets) {
   const matches = hashToFiles.get(asset.sha256) ?? [];

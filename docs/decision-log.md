@@ -14,7 +14,7 @@
 | Visual identity | Preserve Connected purple, the existing typography, and the exact Bridge mark across the review build | Dillon direction plus Tori's positive reaction to the dark purple direction in the full transcript; Tori's written production acceptance is still pending |
 | First impression | State legal cannabis audience and nationwide network value immediately, with Join as the primary action and Explore as the secondary action | Mac feedback and Dillon approval |
 | Content depth | Expand the review build across Community News, Explore, profiles, Create, pricing, and Bridge League concepts | Tori transcript; all records and market signals remain fictional prototype content |
-| Motion treatment | Apply purple grain and slow editorial image movement to realistic cannabis industry imagery | Dillon direction based on the Align HCM industry page treatment; reduced motion is supported |
+| Motion treatment | Apply purple grain and slow editorial image movement to realistic cannabis industry imagery | Approved Bridge editorial treatment; reduced motion is supported |
 | Production boundary | Represent unapproved pricing, rewards, ordering, and integrations as explicit concepts or pending connections | No billing, live provider connection, external send, or deployment was authorized in this pass |
 
 Full mapping: `docs/phase3/03-tori-feedback-reconciliation.md`.
