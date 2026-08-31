@@ -564,13 +564,6 @@ body:has(.bridge-home) > .site-footer { display: none; }
 }
 
 /* Transcript reconciliation: media, discovery, profile utility, and review depth. */
-@keyframes bridge-grain-shift {
-  0% { transform: translate3d(-2%, -2%, 0); }
-  25% { transform: translate3d(2%, 1%, 0); }
-  50% { transform: translate3d(-1%, 2%, 0); }
-  75% { transform: translate3d(1%, -1%, 0); }
-  100% { transform: translate3d(2%, 2%, 0); }
-}
 @keyframes bridge-image-drift {
   from { transform: scale(1.015) translate3d(-.35%, 0, 0); }
   to { transform: scale(1.055) translate3d(.35%, -.4%, 0); }
@@ -581,12 +574,12 @@ body:has(.bridge-home) > .site-footer { display: none; }
 }
 .grain-image { isolation: isolate; overflow: hidden; position: relative; }
 .grain-image::after {
-  animation: bridge-grain-shift .38s steps(2, end) infinite;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' seed='7'/><feColorMatrix values='0 0 0 0 .48 0 0 0 0 .18 0 0 0 0 .66 0 0 0 .34 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-image: url("/textures/bridge-film-grain.webp");
+  background-size: 256px 256px;
   content: "";
-  inset: -8%;
+  inset: 0;
   mix-blend-mode: soft-light;
-  opacity: .24;
+  opacity: .34;
   pointer-events: none;
   position: absolute;
   z-index: 2;
@@ -602,6 +595,8 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .category-thumb { background-position: center; background-size: cover; border-radius: 10px; display: block; height: 66px; }
 .visual-category strong { font-size: .78rem; line-height: 1.25; }
 .feed-toolbar { align-items: end; }
+.feed-sample-summary { color: var(--muted); font-size: .8rem; margin: -5px 0 24px; }
+.feed-sample-summary strong { color: var(--text); }
 .layout-toggle { display: flex; flex-wrap: wrap; gap: 10px; }
 .compact-control { display: grid; font-size: .75rem; font-weight: 800; gap: 5px; min-width: 190px; }
 .compact-control select { min-height: 46px; }
@@ -613,6 +608,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .news-image { aspect-ratio: 16 / 9; border-bottom: 1px solid var(--border); }
 .news-card-copy { padding: 22px; }
 .news-card-copy .card-topline { margin-bottom: 16px; }
+.editorial-feed.news-grid .news-card-summary { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .news-actions { align-items: center; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; margin-top: 20px; padding-top: 15px; }
 .news-actions button { background: transparent; border: 0; cursor: pointer; padding: 0; }
 .news-actions .is-favorite { color: var(--signal); }
@@ -695,12 +691,12 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .bridge-home .signal-node:hover { border-color: rgba(222,197,255,.23); transform: none; }
 .bridge-home .visual-story-card { animation: bridge-story-drift 20s ease-in-out infinite alternate; background-size: 108%; }
 .bridge-home .visual-story-card::after {
-  animation: bridge-grain-shift .42s steps(2, end) infinite;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' seed='11'/><feColorMatrix values='0 0 0 0 .48 0 0 0 0 .18 0 0 0 0 .66 0 0 0 .32 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-image: url("/textures/bridge-film-grain.webp");
+  background-size: 256px 256px;
   content: "";
-  inset: -8%;
+  inset: 0;
   mix-blend-mode: soft-light;
-  opacity: .22;
+  opacity: .3;
   pointer-events: none;
   position: absolute;
   z-index: 0;
