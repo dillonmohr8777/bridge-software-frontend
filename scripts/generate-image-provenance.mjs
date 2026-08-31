@@ -5,9 +5,9 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const assetDirectory = path.join(root, "public", "bridge-editorial");
-const manifestPath = path.join(assetDirectory, "ALIGN-IMAGE-PROVENANCE.json");
+const manifestPath = path.join(assetDirectory, "BRIDGE-IMAGE-PROVENANCE.json");
 
-const visualContract = "Bridge editorial documentary realism using the Align HCM Image Gen composition discipline: tactile detail, asymmetric framing, directional light, crisp professional color grade, and a separate web grain treatment. Adapted to Bridge's verified Connected identity with deep aubergine, near-black, restrained violet practical light, subtle coral structure, and warm neutral highlights. No text, logos, watermarks, visible consumption, smoke, glossy rendering, or stock-photo posing.";
+const visualContract = "Bridge editorial documentary realism: tactile detail, asymmetric framing, directional light, crisp professional color grade, and a separate web grain treatment. Built around Bridge's verified Connected identity with deep aubergine, near-black, restrained violet practical light, subtle coral structure, and warm neutral highlights. No text, logos, watermarks, visible consumption, smoke, glossy rendering, or stock-photo posing.";
 
 const sheets = [
   { id: "sheet-01", prompt: "Oregon edible wholesale presentation; Michigan retail shelf planning; California cultivation and genetics inspection; Maryland professional education event.", assets: ["community-oregon-edibles.webp", "community-michigan-retail.webp", "community-california-cultivation.webp", "community-maryland-education.webp"] },
