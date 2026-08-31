@@ -6,14 +6,14 @@ It is **not** Bridge of Hope OTC, an SEO client, a marketing audit, or a generic
 
 The correct repository is:
 
-- GitHub: `dillonmohr8777/bridge-discovery-prototype`
-- Default branch: `main`
+- GitHub: `dillonmohr8777/bridge-software-frontend`
+- Default branch: `production`; integration work starts from `development`
 - Application stack: Next.js + React + TypeScript
-- Primary work: product discovery, UX/UI, front-end implementation, and Monday's Tori meeting
+- Primary work: Greencubes API integration into the approved Bridge frontend, preview QA, and controlled production promotion
 
 If you cannot read this repository, stop and say exactly: `The Bridge GitHub repository is not connected to this session.` Do not search memory for another Bridge.
 
-# Claude handoff: Bridge discovery prototype
+# Claude handoff: Bridge frontend integration
 
 ## Mission
 
@@ -25,15 +25,17 @@ Bridge is a browser-based cannabis industry directory and professional network f
 
 Read these files before changing code:
 
-1. `CLAUDE_BUILD_SPEC.md`
-2. `.agents/marketing-context.md`
-3. `docs/product-definition.md`
-4. `docs/decision-log.md`
-5. `docs/source-and-asset-audit.md`
-6. `brand/bridge-provisional-brand-kit.md`
-7. `docs/monday-meeting-prep.md`
+1. `docs/INTEGRATION-PIPELINE.md`
+2. `docs/INTEGRATION-API-CONTRACT.md`
+3. `CONTRIBUTING.md`
+4. `CLAUDE_BUILD_SPEC.md`
+5. `.agents/marketing-context.md`
+6. `docs/product-definition.md`
+7. `docs/decision-log.md`
+8. `docs/source-and-asset-audit.md`
+9. `brand/bridge-provisional-brand-kit.md`
 
-The repository contains a decision prototype, not production software. All member data and dashboard metrics are fictional.
+The repository is the canonical integration frontend. It still uses fictional member data and the in-memory API adapter until `NEXT_PUBLIC_BRIDGE_API_BASE` is configured with an inspectable Greencubes origin.
 
 ## Commands
 
@@ -66,7 +68,7 @@ and artifact verification commands to pass.
 - Reusable presentational components in `components/`
 - No production Supabase, authentication, or real verification yet
 
-Miraj owns the future Supabase/PostgreSQL/auth/storage contracts. Do not invent production database or authorization behavior without an inspectable staging origin.
+Miraj owns the Supabase/PostgreSQL/auth/storage contracts and API implementation. Use the checked-in frontend contract, flag mismatches, and do not invent production database or authorization behavior without an inspectable staging origin.
 
 ## Routes
 

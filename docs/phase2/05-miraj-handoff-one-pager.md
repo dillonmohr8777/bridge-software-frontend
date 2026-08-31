@@ -1,6 +1,7 @@
 # Bridge — Miraj Handoff (Phase 2 → Phase 3 contract input)
 
-**Date:** 2026-08-06  
+**Original date:** 2026-08-06
+**Integration route refreshed:** 2026-08-31
 **From:** Dillon (product / UX / front-end)  
 **To:** Miraj (backend / platform)
 
@@ -9,7 +10,7 @@
 - Product definition (route map, role/visibility matrix, journeys + acceptance, backlog, this contract) is complete and lives in this repo under `docs/phase2/`.
 - The **reviewable interactive prototype** (five routes with feed comparison, Create upload + multi-audience + protected guard, Public/B2B profile + contacts, Explore filters/favorites) is live at:
   **https://bridge-connected-signal.netlify.app** (noindex,nofollow).
-- The unified URL now serves the canonical Next.js Trusted Current application from `dillonmohr8777/bridge-discovery-prototype`.
+- The unified URL serves the canonical Next.js Connected purple application from the private integration repository `dillonmohr8777/bridge-software-frontend`.
 - The validated Kimi static suite remains historical product and visual evidence. It is no longer the deployed frontend owner.
 - `/studio`, `/business`, and `/signal` remain compatible links and redirect to `/create`, `/my-profile`, and `/explore`.
 
@@ -53,5 +54,7 @@ Live marketplace data, production billing, HR module, final legal policy text, r
 5. Provide current `/health` and `/version` evidence and the first staging vertical-slice availability or delivery date.
 6. Identify any contract mismatch or blocker rather than treating this checklist as acceptance.
 
-Full product contract: `docs/phase2/phase2-product-contract.md`  
-Status note: `docs/phase2/00-status-and-reconciliation.md`
+Full product contract: `docs/phase2/phase2-product-contract.md`
+Current pipeline: `docs/INTEGRATION-PIPELINE.md`
+Current API and onboarding contract: `docs/INTEGRATION-API-CONTRACT.md`
+Historical status note: `docs/phase2/00-status-and-reconciliation.md`

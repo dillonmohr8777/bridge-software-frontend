@@ -286,6 +286,26 @@ test("http client returns JSON from a successful session read", async () => {
   });
 });
 
+test("http client sends credentialed requests to the versioned API origin", async () => {
+  let requestUrl = "";
+  let requestInit: RequestInit | undefined;
+
+  await withMockFetch(async (input, init) => {
+    requestUrl = String(input);
+    requestInit = init;
+    return new Response(JSON.stringify(mockHarborClaims), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }, async () => {
+    const client = new HttpPhase3Client("https://api.example.invalid/");
+    await client.getSession();
+  });
+
+  assert.equal(requestUrl, "https://api.example.invalid/api/v1/session");
+  assert.equal(requestInit?.credentials, "include");
+});
+
 test("http client maps malformed success JSON to a retryable unavailable error", async () => {
   await withMockFetch(async () => new Response("not-json", {
     status: 200,
