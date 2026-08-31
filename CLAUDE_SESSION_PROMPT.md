@@ -1,57 +1,55 @@
-# Copy-paste prompt for Claude
+# Copy-paste prompt for an integration coding session
 
-Paste everything below into a **new Claude session after attaching the public GitHub repository** `dillonmohr8777/bridge-discovery-prototype`.
+Paste everything below into a new coding session after attaching the private GitHub repository `dillonmohr8777/bridge-software-frontend`.
 
 ---
 
-Use only the public GitHub repository `dillonmohr8777/bridge-discovery-prototype` on branch `main` for this task.
+Use only the private GitHub repository `dillonmohr8777/bridge-software-frontend` for this task.
 
-This is the **Bridge software-development project** for Tori: a cannabis-industry directory and professional-network web application. It is not Bridge of Hope OTC, not an SEO engagement, and not a generic client-meeting-prep task. Do not search external memory or the Dillon OS vault for another project named Bridge.
+This is the Bridge software-development project for Tori: a cannabis-industry directory and professional-network web application. It is not Bridge of Hope OTC, an SEO engagement, or a generic client-meeting-prep task.
 
-First, prove you have the correct repository by reporting:
+First report:
 
-1. Repository name
-2. Current branch and latest commit
-3. The first heading in `CLAUDE.md`
-4. The application stack from `package.json`
-5. The routes currently present under `app/`
+1. Repository name.
+2. Current branch and commit.
+3. Whether the work branch started from `development`.
+4. The first heading in `CLAUDE.md`.
+5. The application stack from `package.json`.
 
-If you cannot read those files, stop and say exactly: `The Bridge GitHub repository is not connected to this session.` Do not substitute another project and do not ask me SEO/marketing deliverable questions.
+If you cannot read those files, stop and say: `The Bridge integration repository is not connected to this session.` Do not substitute the historical public prototype.
 
-After confirming access, read these files completely in this order:
+Read these files completely before editing:
 
 1. `CLAUDE.md`
-2. `CLAUDE_BUILD_SPEC.md`
-3. `.agents/marketing-context.md`
-4. `README.md`
-5. `docs/source-and-asset-audit.md`
-6. `docs/product-definition.md`
-7. `docs/decision-log.md`
-8. `brand/bridge-provisional-brand-kit.md`
-9. `docs/monday-meeting-prep.md`
-10. `docs/claude-workflow.md`
+2. `docs/INTEGRATION-PIPELINE.md`
+3. `docs/INTEGRATION-API-CONTRACT.md`
+4. `CONTRIBUTING.md`
+5. `README.md`
+6. `lib/phase3/types.ts`
+7. `lib/phase3/http-client.ts`
+8. the affected route and component files
 
-Important current state:
+Current state:
 
-- The working Next.js + React + TypeScript prototype is already built.
-- The directory, onboarding, member profile, contact request, member dashboard, admin verification, design directions, and design-system routes already exist.
-- The Bridge identity and three visual directions are provisional because Tori has not provided an approved brand kit or downloadable original Claude prototype.
-- The green/gold proposal styling is Momentum branding, not Bridge branding.
-- We are preparing for the Tori product meeting and future implementation—not starting an SEO audit.
-- Do not rebuild the prototype from scratch.
+- `development` automatically deploys to `https://bridge-connected-signal-dev.netlify.app`.
+- `production` automatically deploys to `https://bridge-connected-signal.netlify.app`.
+- Miraj owns backend APIs and wiring them into the existing frontend.
+- Dillon owns the canonical frontend, UX, preview QA, and production promotion.
+- The current Connected purple UI is preserved during integration.
+- The app intentionally uses a mock adapter until `NEXT_PUBLIC_BRIDGE_API_BASE` points to an inspectable Greencubes API origin.
+- `/join` implements role selection as Step 1 of 4. Steps 2–4 require authenticated draft persistence, protected evidence upload/scan state, and verification review/submit behavior. The required capability map is in `docs/INTEGRATION-API-CONTRACT.md`.
 
-The four screenshots are a status summary, not four UI layouts. `CLAUDE_BUILD_SPEC.md` is the executable implementation plan. Do not rebuild working routes from scratch.
+Do not rebuild the app, rename routes, restyle screens, invent backend security behavior, or commit secrets. If the Greencubes route table differs from the checked-in adapter, make the smallest typed adapter change and document the mapping.
 
-Your first response should contain only:
+For each change:
 
-- `Correct Bridge repository confirmed` or the exact connection failure sentence above
-- A concise summary of what is already built
-- The five highest-priority decisions for the Tori meeting
-- The next three implementation slices after those decisions
-- Any contradiction you found between the repository and this prompt
+1. Identify the backend branch/commit and staging API origin.
+2. State the routes, roles, states, and API types affected.
+3. Implement the smallest coherent vertical slice.
+4. Run `npm run test:phase3`, `npm run typecheck`, `npm run lint`, and `npm run build`.
+5. Push to a feature branch based on `development` and verify the preview deploy.
+6. Do not promote to `production` until Dillon has reviewed the preview.
 
-After that report, begin Phase 0 in `CLAUDE_BUILD_SPEC.md`. Continue through the safe work in Phase 1, then stop at the Tori decision gate. For each change, implement the smallest complete slice, run the required checks, update traceability, and report evidence. Do not invent Tori's approvals or Miraj's backend/security contracts.
-
-Do not ask me to choose between an SEO report, strategy deck, meeting one-pager, or vault setup. Those are unrelated options from the wrong project context.
+Your first response should contain only the repository/branch confirmation, a concise integration status, the exact contract mismatch or next slice, and any blocker that requires Dillon or Miraj.
 
 ---

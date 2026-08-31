@@ -51,6 +51,7 @@ export class HttpPhase3Client implements Phase3Client {
     try {
       response = await fetch(this.endpoint(path), {
         ...init,
+        credentials: "include",
         headers: {
           Accept: "application/json",
           ...(init?.body ? { "Content-Type": "application/json" } : {}),
