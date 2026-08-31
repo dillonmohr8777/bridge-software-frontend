@@ -3,16 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { profiles } from "@/lib/data";
+import { US_STATE_OPTIONS } from "@/lib/states";
 import { StatusChip } from "@/components/StatusChip";
-const STATES = ["All states","Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Cultivator","Manufacturer","Lab","Transport","Bank","Service","Media","Hydroponics"];
 const FEATURED_MARKETS = ["All states", "California", "Michigan", "Maryland", "Colorado", "Pennsylvania"];
 const VISUAL_CATEGORIES = [
-  { label: "Flower and genetics", query: "genetics", image: "/bridge-cultivation-lab.png" },
-  { label: "Pre rolls and vapes", query: "pre rolls", image: "/bridge-industry-products.png" },
-  { label: "Edibles and wellness", query: "wellness", image: "/bridge-industry-products.png" },
-  { label: "Testing and compliance", query: "testing", image: "/bridge-cultivation-lab.png" },
-  { label: "Industry services", query: "service", image: "/bridge-industry-networking.png" },
+  { label: "Flower and genetics", query: "genetics", image: "/bridge-editorial/category-flower-genetics.webp" },
+  { label: "Pre rolls and vapes", query: "pre rolls", image: "/bridge-editorial/category-prerolls-vapes.webp" },
+  { label: "Edibles and wellness", query: "wellness", image: "/bridge-editorial/category-edibles-wellness.webp" },
+  { label: "Testing and compliance", query: "testing", image: "/bridge-editorial/category-testing-compliance.webp" },
+  { label: "Industry services", query: "service", image: "/bridge-editorial/category-industry-services.webp" },
 ];
 const FAVORITES_STORAGE_KEY = "bridge-phase2-favorites";
 const DEFAULT_FAVORITES = ["harbor-dispensary"];
@@ -107,7 +107,7 @@ export function ExploreClient() {
         <label htmlFor="explore-q">Search</label>
         <input id="explore-q" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Brand, strain, service…" />
         <label htmlFor="explore-state">State</label>
-        <select id="explore-state" value={state} onChange={(e) => setState(e.target.value)}>{STATES.map((s) => <option key={s} value={s}>{s}</option>)}</select>
+        <select id="explore-state" value={state} onChange={(e) => setState(e.target.value)}>{US_STATE_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}</select>
         <label htmlFor="explore-cat">Category</label>
         <select id="explore-cat" value={category} onChange={(e) => setCategory(e.target.value)}>{CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}</select>
         <label className="check-row"><input type="checkbox" checked={favoritesOnly} onChange={(e) => setFavoritesOnly(e.target.checked)} /><span>Favorites only</span></label>

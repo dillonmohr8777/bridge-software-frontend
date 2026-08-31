@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "images:provenance": "node scripts/generate-image-provenance.mjs",
+    "test:images": "node scripts/verify-editorial-images.mjs",
     "build:staging": "node scripts/build-staging.mjs",
     "build:staging:current": "node scripts/build-staging-one.mjs current",
     "build:staging:network": "node scripts/build-staging-one.mjs network",
