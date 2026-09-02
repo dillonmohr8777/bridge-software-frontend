@@ -2,13 +2,15 @@ import { JoinForm } from "./join-form";
 
 export default function JoinPage() {
   return (
-    <section className="page shell form-page">
-      <div className="page-heading">
-        <p className="eyebrow">Step 1 of 4</p>
-        <h1>How do you work in cannabis?</h1>
-        <p className="lede">Your role shapes profile fields, verification requirements, and the dashboard experience.</p>
+    <div className="page shell auth-page">
+      <div className="join-auth-layout">
+        <header className="join-auth-heading">
+          <p className="eyebrow">Create your account</p>
+          <h1>Join the network.</h1>
+          <p className="lede">Create your Bridge account to connect with verified cannabis businesses, retailers, brands, and industry professionals.</p>
+        </header>
+        <JoinForm />
       </div>
-      <JoinForm />
-    </section>
+    </div>
   );
 }

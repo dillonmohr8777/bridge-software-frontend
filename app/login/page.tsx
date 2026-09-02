@@ -2,17 +2,22 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 
 function LoginForm() {
-  const { login } = useAuth();
+  const { login, status, isAdmin } = useAuth();
   const router = useRouter();
   const search = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (status === "authenticated") router.replace(isAdmin ? "/admin/dashboard" : "/my-profile");
+  }, [status, isAdmin, router]);
+
   async function submit(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError("");
     try {
@@ -22,6 +27,8 @@ function LoginForm() {
       router.replace(safeNext ?? (identity.isAdmin ? "/admin/dashboard" : "/my-profile"));
     } catch { setError("We could not sign you in. Check your email and password, then try again."); setBusy(false); }
   }
+  if (status !== "unauthenticated") return <p>Checking your session…</p>;
+
   return <section className="auth-card">
     <p className="eyebrow">Secure access</p><h1>Welcome back.</h1>
     <p className="lede">Sign in to your Bridge account.</p>

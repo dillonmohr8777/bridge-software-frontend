@@ -9,7 +9,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 const navigation = [
   { href: "/admin/dashboard", label: "Dashboard", icon: "▦" },
   { href: "/admin/verification", label: "Verification", icon: "✓" },
-  { href: "/admin/users/new", label: "User accounts", icon: "+" },
+  { href: "/admin/users", label: "Users", icon: "+" },
   { href: "/admin/settings", label: "Settings", icon: "⚙", exact: true },
   { href: "/admin/settings/password", label: "Password", icon: "◇" },
 ];

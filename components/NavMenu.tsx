@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const links = [
   { href: "/", label: "Home", match: (p: string) => p === "/" },
@@ -10,13 +11,20 @@ const links = [
   { href: "/create", label: "Create", match: (p: string) => p.startsWith("/create") },
   { href: "/my-profile", label: "My Profile", match: (p: string) => p.startsWith("/my-profile") },
   { href: "/explore", label: "Explore", match: (p: string) => p.startsWith("/explore") || p.startsWith("/directory") },
-  { href: "/login", label: "Sign in", match: (p: string) => p === "/login" || p.startsWith("/auth/") },
 ] as const;
 
 export function NavMenu() {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { status, isAdmin, logout } = useAuth();
+
+  function signOut() {
+    logout();
+    setOpen(false);
+    router.replace("/login");
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -53,6 +61,9 @@ export function NavMenu() {
             {link.label}
           </Link>
         ))}
+        {status === "unauthenticated" && <Link aria-current={pathname === "/login" || pathname.startsWith("/auth/") ? "page" : undefined} href="/login" onClick={() => setOpen(false)}>Sign in</Link>}
+        {status === "authenticated" && isAdmin && <Link aria-current={pathname.startsWith("/admin") ? "page" : undefined} href="/admin/dashboard" onClick={() => setOpen(false)}>Admin dashboard</Link>}
+        {status === "authenticated" && <button className="nav-sign-out" onClick={signOut} type="button">Sign out</button>}
       </nav>
     </>
   );
