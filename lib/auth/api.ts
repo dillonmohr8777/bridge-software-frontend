@@ -13,7 +13,7 @@ export class AuthApiError extends Error {
 async function request<T>(path: string, init: RequestInit = {}, accessToken?: string): Promise<T> {
   const response = await fetch(`${apiBase}${path}`, {
     ...init,
-    credentials: "include",
+    // credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
