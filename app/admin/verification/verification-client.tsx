@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { authApi } from "@/lib/auth/api";
-import { authStorage } from "@/lib/auth/storage";
+import { getPhase3Client } from "@/lib/phase3";
 
 type QueueRow = {
   id: string;
@@ -57,6 +56,7 @@ function label(value: string) {
 }
 
 export function VerificationQueue() {
+  const client = useMemo(() => getPhase3Client(), []);
   const [payload, setPayload] = useState<unknown>(null);
   const [status, setStatus] = useState("");
   const [itemType, setItemType] = useState("");
@@ -68,21 +68,15 @@ export function VerificationQueue() {
     let active = true;
     queueMicrotask(() => {
       if (!active) return;
-      const session = authStorage.get();
-      if (!session) {
-        setError("Your admin session is unavailable. Please sign in again.");
-        setLoading(false);
-        return;
-      }
       setLoading(true);
       setError("");
-      authApi.verificationQueue(session.accessToken, { status: status || undefined, itemType: itemType || undefined, limit: 50 })
+      client.getVerificationQueue({ status: status || undefined, itemType: itemType || undefined, limit: 50 })
         .then((response) => { if (active) setPayload(response); })
         .catch((caught: unknown) => { if (active) setError(caught instanceof Error ? caught.message : "The verification queue could not be loaded."); })
         .finally(() => { if (active) setLoading(false); });
     });
     return () => { active = false; };
-  }, [status, itemType, reload]);
+  }, [client, status, itemType, reload]);
 
   const rows = useMemo(() => normalizeQueue(payload), [payload]);
 

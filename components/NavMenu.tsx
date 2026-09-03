@@ -20,8 +20,8 @@ export function NavMenu() {
   const router = useRouter();
   const { status, isAdmin, logout } = useAuth();
 
-  function signOut() {
-    logout();
+  async function signOut() {
+    await logout();
     setOpen(false);
     router.replace("/login");
   }
@@ -63,7 +63,7 @@ export function NavMenu() {
         ))}
         {status === "unauthenticated" && <Link aria-current={pathname === "/login" || pathname.startsWith("/auth/") ? "page" : undefined} href="/login" onClick={() => setOpen(false)}>Sign in</Link>}
         {status === "authenticated" && isAdmin && <Link aria-current={pathname.startsWith("/admin") ? "page" : undefined} href="/admin/dashboard" onClick={() => setOpen(false)}>Admin dashboard</Link>}
-        {status === "authenticated" && <button className="nav-sign-out" onClick={signOut} type="button">Sign out</button>}
+        {status === "authenticated" && <button className="nav-sign-out" onClick={() => void signOut()} type="button">Sign out</button>}
       </nav>
     </>
   );

@@ -1,9 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { authApi } from "@/lib/auth/api";
-import { authStorage } from "@/lib/auth/storage";
-import type { CurrentUser, OrganizationMembership } from "@/lib/auth/types";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { getPhase3Client } from "@/lib/phase3";
+import type { CurrentUser, OrganizationMembership } from "@/lib/phase3";
 
 type AuthContextValue = {
   status: "loading" | "authenticated" | "unauthenticated";
@@ -11,36 +10,35 @@ type AuthContextValue = {
   memberships: OrganizationMembership[];
   isAdmin: boolean;
   login(email: string, password: string): Promise<{ isAdmin: boolean }>;
-  logout(): void;
+  logout(): Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const client = useMemo(() => getPhase3Client(), []);
   const [status, setStatus] = useState<AuthContextValue["status"]>("loading");
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [memberships, setMemberships] = useState<OrganizationMembership[]>([]);
 
   useEffect(() => {
-    const session = authStorage.get();
-    if (!session) { queueMicrotask(() => setStatus("unauthenticated")); return; }
-    authApi.me(session.accessToken).then((result) => {
+    client.getCurrentUser().then((result) => {
       setUser(result.user); setMemberships(result.memberships); setStatus("authenticated");
-    }).catch(() => { authStorage.clear(); setStatus("unauthenticated"); });
-  }, []);
+    }).catch(() => { setStatus("unauthenticated"); });
+  }, [client]);
 
-  async function login(email: string, password: string) {
-    const result = await authApi.login(email, password);
-    const session = { accessToken: result.accessToken, refreshToken: result.refreshToken,
-      expiresAt: result.expiresAt, expiresIn: result.expiresIn, tokenType: result.tokenType };
-    const identity = await authApi.me(result.accessToken);
-    authStorage.set(session); setUser(identity.user); setMemberships(identity.memberships); setStatus("authenticated");
+  const login = useCallback(async (email: string, password: string) => {
+    const identity = await client.login(email, password);
+    setUser(identity.user); setMemberships(identity.memberships); setStatus("authenticated");
     return { isAdmin: identity.user.platformRoles.includes("admin") };
-  }
+  }, [client]);
 
-  function logout() { authStorage.clear(); setUser(null); setMemberships([]); setStatus("unauthenticated"); }
+  const logout = useCallback(async () => {
+    try { await client.logout(); }
+    finally { setUser(null); setMemberships([]); setStatus("unauthenticated"); }
+  }, [client]);
   const value = useMemo(() => ({ status, user, memberships,
-    isAdmin: user?.platformRoles.includes("admin") ?? false, login, logout }), [status, user, memberships]);
+    isAdmin: user?.platformRoles.includes("admin") ?? false, login, logout }), [status, user, memberships, login, logout]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { AuthApiError, authApi } from "@/lib/auth/api";
+import { FormEvent, useMemo, useState } from "react";
+import { getPhase3Client } from "@/lib/phase3";
 import { parseMemberRole } from "@/lib/onboarding/roles";
 
 export function AccountForm() {
+  const client = useMemo(() => getPhase3Client(), []);
   const requestedRole = useSearchParams().get("role");
   const selectedRole = parseMemberRole(requestedRole);
   const [displayName, setDisplayName] = useState("");
@@ -23,10 +24,9 @@ export function AccountForm() {
     if (password !== confirmPassword) return setError("Enter the same password in both fields.");
     if (password.length < 12 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password) || !/[^A-Za-z0-9]/.test(password)) return setError("Use at least 12 characters with uppercase, lowercase, a number, and a special character.");
     setBusy(true);
-    try { await authApi.register(email.trim(), password, displayName.trim()); setComplete(true); }
+    try { await client.register(email.trim(), password, displayName.trim()); setComplete(true); }
     catch (caught) {
-      if (caught instanceof AuthApiError && caught.status === 409) setError("An account already exists for this email. Sign in or reset your password.");
-      else setError(caught instanceof AuthApiError ? caught.message : "Your account could not be created. Please try again.");
+      setError(caught instanceof Error ? caught.message : "Your account could not be created. Please try again.");
     } finally { setBusy(false); }
   }
 

@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { authApi } from "@/lib/auth/api";
-import { authStorage } from "@/lib/auth/storage";
+import { getPhase3Client } from "@/lib/phase3";
 
 export default function AdminDashboardPage() {
   const { user, memberships } = useAuth();
@@ -13,12 +12,9 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     let mounted = true;
-    const session = authStorage.get();
-    if (session) {
-      authApi.adminUsers(session.accessToken, 1, 1)
+    getPhase3Client().listAdminUsers(1, 1)
         .then((response) => { if (mounted) setUserTotal(response.pagination.total); })
         .catch(() => { if (mounted) setUserTotal(null); });
-    }
     return () => { mounted = false; };
   }, []);
 

@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { authApi } from "@/lib/auth/api";
-import { authStorage } from "@/lib/auth/storage";
-import type { AdminUser, AdminUsersResponse } from "@/lib/auth/types";
+import { getPhase3Client } from "@/lib/phase3";
+import type { AdminUser, AdminUsersResponse } from "@/lib/phase3";
 
 const PAGE_SIZE = 50;
 
@@ -13,6 +12,7 @@ function userName(user: AdminUser) {
 }
 
 export default function AdminUsersPage() {
+  const client = useMemo(() => getPhase3Client(), []);
   const [data, setData] = useState<AdminUsersResponse | null>(null);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
@@ -26,22 +26,15 @@ export default function AdminUsersPage() {
     let active = true;
     queueMicrotask(() => {
       if (!active) return;
-      const session = authStorage.get();
-      if (!session) {
-        setError("Your admin session is unavailable. Please sign in again.");
-        setLoading(false);
-        return;
-      }
-
       setLoading(true);
       setError("");
-      authApi.adminUsers(session.accessToken, page, PAGE_SIZE)
+      client.listAdminUsers(page, PAGE_SIZE)
         .then((response) => { if (active) setData(response); })
         .catch((caught: unknown) => { if (active) setError(caught instanceof Error ? caught.message : "Users could not be loaded."); })
         .finally(() => { if (active) setLoading(false); });
     });
     return () => { active = false; };
-  }, [page, reload]);
+  }, [client, page, reload]);
 
   const users = useMemo(() => {
     const search = query.trim().toLowerCase();
