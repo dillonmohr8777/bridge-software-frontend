@@ -745,7 +745,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
 }
 
 /* ---------------------------------------------------------------------------
-   Auth surfaces and Phase 5 state views.
+   Auth surfaces and build-spec Phase 5 state views.
    Every value below is a semantic token. Bridge has one visual system.
    --------------------------------------------------------------------------- */
 .nav-sign-out { background: transparent; border: 0; color: var(--muted); cursor: pointer; font-size: .94rem; font-weight: 650; padding: 0; }

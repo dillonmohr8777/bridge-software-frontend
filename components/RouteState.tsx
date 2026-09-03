@@ -1,7 +1,8 @@
 import { Phase3Error, type Phase3ErrorCode } from "@/lib/phase3";
 
 /**
- * Phase 5 required states, in one place so every route says the same thing the same way.
+ * Build-spec Phase 5 required states (CLAUDE_BUILD_SPEC.md, not the contract's Phase 5), in
+ * one place so every route says the same thing the same way.
  *
  * Nothing here ever renders a raw Error. `safeMessage` only lets a Phase3Error's curated
  * userMessage through; anything else — a TypeError, a stack, a backend string — collapses
@@ -22,7 +23,7 @@ export function safeMessage(error: unknown, fallback: string): string {
   return error instanceof Phase3Error ? error.userMessage : fallback;
 }
 
-/** Maps a caught value to a Phase 5 state kind. */
+/** Maps a caught value to a build-spec Phase 5 state kind. */
 export function stateKindFor(error: unknown): RouteStateKind {
   if (!(error instanceof Phase3Error)) return "error";
   const byCode: Record<Phase3ErrorCode, RouteStateKind> = {
