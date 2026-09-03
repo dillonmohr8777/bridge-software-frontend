@@ -1,16 +1,41 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Caveat, Inter, Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
 import { AgeGate } from "@/components/AgeGate";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DEFAULT_THEME, lockedTheme } from "@/lib/direction-lock";
 import { AGE_GATE_CONFIRMED_VALUE, AGE_GATE_STORAGE_KEY } from "@/lib/age-gate";
 
+// Client brand kit, 2026-07-20 Tori source package: Poppins headlines,
+// Montserrat SemiBold subheads, Inter body. Caveat is the marginalia hand
+// from the Field Notes companion, used for accents only.
 const bridgeDisplay = Poppins({
   subsets: ["latin"],
   variable: "--font-bridge",
-  weight: ["700", "800"],
+  weight: ["600", "700", "800"],
 });
+
+const bridgeSubhead = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-bridge-subhead",
+  weight: ["600", "700"],
+});
+
+const bridgeBody = Inter({
+  subsets: ["latin"],
+  variable: "--font-bridge-body",
+  weight: ["400", "500", "600"],
+});
+
+const bridgeHand = Caveat({
+  subsets: ["latin"],
+  variable: "--font-bridge-hand",
+  weight: ["700"],
+});
+
+const fontVariables = [bridgeDisplay, bridgeSubhead, bridgeBody, bridgeHand]
+  .map((font) => font.variable)
+  .join(" ");
 
 export const metadata: Metadata = {
   title: "Bridge: The cannabis industry, connected",
@@ -32,7 +57,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: unifiedThemeScript }} />
         <script dangerouslySetInnerHTML={{ __html: ageGateScript }} />
       </head>
-      <body className={bridgeDisplay.variable}>
+      <body className={fontVariables}>
         <AgeGate>
           <a className="skip-link" href="#main">Skip to content</a>
           <SiteHeader />
