@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Phase3Error,
   audienceCatalog,
+  reachCatalog,
+  reachLabel,
   audienceLabel,
   applySimulatedFailure,
   applyUnverifiedOrganization,
@@ -46,6 +48,7 @@ export function CreateClient() {
   const [publishedId, setPublishedId] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostRecord[]>([]);
   const [creativeDirection, setCreativeDirection] = useState<"Signal" | "Product" | "Editorial">("Signal");
+  const [reach, setReach] = useState<string>("everyone");
   const [workflowMessage, setWorkflowMessage] = useState("");
   const uploadRequestId = useRef(0);
 
@@ -149,6 +152,7 @@ export function CreateClient() {
       message,
       protectedDetail,
       audienceIds: effectiveAudiences,
+      reach,
       fileName: fileMeta?.name ?? null,
       creativeDirection,
       savedAt: new Date().toISOString(),
@@ -326,7 +330,18 @@ export function CreateClient() {
           </button>
         )}
         <fieldset className="audience-fieldset">
-          <legend>Audiences</legend>
+          <legend>Who do you want to see this?</legend>
+          {reachCatalog.map((item) => (
+            <label key={item.id} className="check-row">
+              <input type="radio" name="post-reach" checked={reach === item.id} disabled={!eligible || status === "pending" || status === "success"} onChange={() => setReach(item.id)} />
+              <span>{item.label} <span className="muted">· {item.hint}</span></span>
+            </label>
+          ))}
+          <p className="form-hint">Reach is who you are talking to. The 21+ and verified-access rules below still apply on top of it.</p>
+        </fieldset>
+
+        <fieldset className="audience-fieldset">
+          <legend>Access rules</legend>
           {audienceCatalog.map((audience) => {
             const disabled = !eligible || status === "pending" || status === "success" || (protectedDetail && audience.id === "adults");
             const checked = effectiveAudiences.includes(audience.id);
@@ -399,7 +414,7 @@ export function CreateClient() {
         <p className="status-chip">{creativeDirection} direction</p>
         <p>{message || "Message preview appears here."}</p>
         {fileMeta && <p className="muted">Asset: {fileMeta.name}</p>}
-        <p className="muted">Access level: {protectedDetail ? "Verified audiences only" : "As selected"}</p>
+        <p className="muted">Reach: {reachLabel(reach)} · Access level: {protectedDetail ? "Verified audiences only" : "As selected"}</p>
         <div className="tag-row">
           {effectiveAudiences.length === 0
             ? <span className="tag">No eligible audience</span>

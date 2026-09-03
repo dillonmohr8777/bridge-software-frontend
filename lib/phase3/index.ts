@@ -1,5 +1,7 @@
 export {
   audienceCatalog,
+  reachCatalog,
+  reachLabel,
   audienceLabel,
   allowedUploadTypes,
   canConfirmContacts,
