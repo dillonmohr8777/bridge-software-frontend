@@ -23,10 +23,10 @@
   transform: translate3d(0, 34%, 0) scale(0.94);
   transition:
     opacity 0.5s var(--ease, ease-out),
-    /* A little overshoot reads as character on a cartoon mascot, but the
-       companion's --ease-snap overshoots hard enough to look springy. This
-       settles once and stops. */
-    transform 0.9s cubic-bezier(0.22, 1.12, 0.32, 1);
+    /* Exponential ease-out. She decelerates into place rather than
+       overshooting - the rise reads as confident without the springiness
+       that dates a design. */
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
 
