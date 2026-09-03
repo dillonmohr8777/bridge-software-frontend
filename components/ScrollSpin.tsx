@@ -48,17 +48,22 @@ export function ScrollSpin({
     let running = false;
     let queued = 0;
 
+    // Cached so the scroll path stays pure arithmetic and never reads layout.
+    let top = 0;
+    let travel = 1;
+
     function fit() {
       const rs = Math.max(
         0.46,
         Math.min(1, (window.innerWidth - 48) / 350, (window.innerHeight - 220) / 500),
       );
       rig!.style.setProperty("--bridge-spin-scale", rs.toFixed(3));
+      top = track!.getBoundingClientRect().top + window.scrollY;
+      travel = Math.max(1, track!.offsetHeight - window.innerHeight);
     }
 
     function readProgress() {
-      const travel = Math.max(1, track!.offsetHeight - window.innerHeight);
-      return clamp((window.scrollY - track!.offsetTop) / travel);
+      return clamp((window.scrollY - top) / travel);
     }
 
     function paint() {
