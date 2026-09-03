@@ -26,6 +26,14 @@
   --font-body: var(--font-bridge-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-hand: var(--font-bridge-hand), ui-serif, cursive;
 
+  /* Liquid glass. The background is a gradient, not a flat rgba, so the
+     surface reads as a sheet catching light rather than flat frosting. */
+  --glass: linear-gradient(158deg, color-mix(in srgb, var(--surface) 72%, transparent), color-mix(in srgb, var(--surface-alt) 52%, transparent) 58%, color-mix(in srgb, var(--brand) 16%, transparent));
+  --glass-edge: color-mix(in srgb, var(--accent) 26%, transparent);
+  --glass-blur: blur(16px) saturate(1.1);
+  --glass-shadow: 0 24px 54px rgba(0, 0, 0, 0.34), 0 14px 34px color-mix(in srgb, var(--brand) 16%, transparent);
+  --glass-sheen: inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent);
+
   /* Easing, lifted from the Field Notes companion. */
   --ease: cubic-bezier(.22, .68, .24, 1);
   --ease-heavy: cubic-bezier(.17, .84, .31, 1);
@@ -134,6 +142,27 @@ p { color: var(--muted); }
 .age-gate-action { width: 100%; }
 .age-gate-note { border-top: 1px solid var(--border); font-size: .82rem !important; margin: 26px 0 0; padding-top: 18px; }
 
+/* One glass recipe, applied by the surfaces below. Blur is capped to the
+   handful of surfaces that earn it - backdrop-filter is expensive. */
+.glass, .profile-card, .content-card, .contact-card, .metric-card, .filter-panel,
+.moment-card, .suite-card, .market-switcher, .pricing-plan, .site-header, .feed-toolbar {
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass, .profile-card, .content-card, .contact-card, .metric-card, .filter-panel,
+  .moment-card, .suite-card, .market-switcher, .pricing-plan, .site-header, .feed-toolbar {
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+}
+
+/* Handwritten marginalia, from the Field Notes companion. Always rotated -
+   that tilt is the whole trick. Accent only, never a heading face. */
+.handwrite { color: var(--accent); font-family: var(--font-hand); font-size: 1.42rem; font-weight: 700; line-height: 1.28; transform: rotate(-1.6deg); }
+
 .site-header { backdrop-filter: blur(14px); background: color-mix(in srgb, var(--canvas) 88%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--border) 82%, transparent); position: sticky; top: 0; z-index: 50; }
 .header-inner { align-items: center; display: flex; gap: 28px; min-height: 76px; }
 .brand-mark { align-items: center; display: inline-flex; font-size: 1.2rem; font-weight: 800; gap: 10px; letter-spacing: -.03em; margin-right: auto; }
@@ -185,7 +214,7 @@ nav a[aria-current="page"] { color: var(--text); }
 .text-link { color: var(--accent); font-weight: 780; }
 .card-grid { display: grid; gap: 20px; grid-template-columns: repeat(3, 1fr); }
 .card-grid.two { grid-template-columns: repeat(2, 1fr); }
-.profile-card, .content-card, .contact-card, .metric-card, .filter-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 8px 24px color-mix(in srgb, var(--brand) 5%, transparent); }
+.profile-card, .content-card, .contact-card, .metric-card, .filter-panel { border-radius: var(--radius); }
 .profile-card { display: flex; flex-direction: column; min-height: 380px; padding: 24px; }
 .profile-card h3 { font-size: 1.5rem; margin: .2rem 0 .35rem; }
 .profile-card .text-link { margin-top: auto; padding-top: 1.2rem; }
@@ -209,7 +238,7 @@ nav a[aria-current="page"] { color: var(--text); }
 .home-title { font-size: clamp(2.6rem, 5.4vw, 4.9rem); max-width: 760px; }
 .home-hint { margin-top: 18px; }
 .home-moments { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.moment-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 7px; justify-content: end; min-height: 190px; overflow: hidden; padding: 24px; position: relative; transition: border-color .18s ease-out, box-shadow .18s ease-out, transform .18s ease-out; }
+.moment-card { border-radius: 16px; display: flex; flex-direction: column; gap: 7px; justify-content: end; min-height: 190px; overflow: hidden; padding: 24px; position: relative; transition: border-color .18s ease-out, box-shadow .18s ease-out, transform .18s ease-out; }
 .moment-card:hover, .moment-card:focus-visible { border-color: color-mix(in srgb, var(--accent) 48%, var(--border)); box-shadow: 0 24px 52px color-mix(in srgb, var(--brand) 18%, transparent); transform: translateY(-4px); }
 .moment-label { color: var(--accent); font-size: .73rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
 .moment-card strong { font-size: 1.15rem; line-height: 1.3; }
@@ -481,22 +510,8 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .bridge-home .landing-stats { display: flex; gap: 28px; margin-top: 32px; }
 .bridge-home .landing-stats strong { color: #f4e9ff; display: block; font-family: var(--font-display); font-size: 25px; font-weight: 800; line-height: 1; text-shadow: 0 8px 24px rgba(124,58,237,.3); }
 .bridge-home .landing-stats span { color: rgba(255,255,255,.7); font-size: 12px; line-height: 1.4; }
-.bridge-home .signal-visual { background: radial-gradient(circle at 50% 44%, rgba(124,58,237,.18), transparent 34%), linear-gradient(180deg, rgba(7,5,11,.06), rgba(7,5,11,.84)), url("/bridge-network-night.webp") center/cover no-repeat; border: 2px solid rgba(206,170,250,.26); border-radius: 24px; box-shadow: 0 32px 90px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 70px rgba(75,0,130,.15); isolation: isolate; min-height: 500px; overflow: hidden; position: relative; z-index: 2; }
-.bridge-home .signal-visual::before { background: radial-gradient(circle at 50% 50%, rgba(157,92,255,.17), rgba(7,5,11,.52) 73%); content: ""; inset: 0; pointer-events: none; position: absolute; z-index: 1; }
-.bridge-home .signal-orbit { border: 2px solid rgba(255,255,255,.13); border-radius: 50%; box-shadow: 0 0 32px rgba(124,58,237,.08); inset: 4% 3%; position: absolute; transform: rotate(-8deg); }
-.bridge-home .signal-orbit:nth-child(2) { border-color: rgba(124,58,237,.55); inset: 16% 14%; transform: rotate(12deg); }
-.bridge-home .signal-orbit:nth-child(3) { border-color: rgba(75,0,130,.85); border-width: 10px; inset: 28% 25%; }
-.bridge-home .signal-node { background: linear-gradient(145deg,rgba(29,21,36,.94),rgba(11,8,14,.96)); border: 2px solid rgba(222,197,255,.23); border-radius: 18px; box-shadow: 0 20px 42px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.12); display: grid; height: 82px; padding: 12px; place-items: center; position: absolute; text-align: center; transition: transform .18s ease, border-color .18s ease; width: 110px; z-index: 3; }
-.bridge-home .signal-node:hover { border-color: rgba(185,131,255,.72); transform: translateY(-3px); }
-.bridge-home .signal-node strong { color: #fff; display: block; font-size: 12px; line-height: 1.3; }
-.bridge-home .signal-node small { color: rgba(255,255,255,.7); font-size: 11px; line-height: 1.4; }
-.bridge-home .signal-node.one { left: 0; top: 25%; }
-.bridge-home .signal-node.two { right: 0; top: 8%; }
-.bridge-home .signal-node.three { bottom: 7%; right: 3%; }
-.bridge-home .signal-node.four { bottom: 0; left: 15%; }
-.bridge-home .signal-core { background: linear-gradient(145deg,#7900c9,#4b0082 58%,#320057); border: 2px solid rgba(237,220,255,.34); border-radius: 22px; box-shadow: 0 34px 88px rgba(75,0,130,.58), inset 0 2px 0 rgba(255,255,255,.25); display: grid; height: 150px; left: 50%; place-items: center; position: absolute; text-align: center; top: 50%; transform: translate(-50%,-50%); width: 150px; z-index: 4; }
-.bridge-home .signal-core strong { color: #fff; font-family: var(--font-display); font-size: 18px; line-height: 1.15; }
-.bridge-home .signal-core small { color: rgba(255,255,255,.76); display: block; font-size: 12px; line-height: 1.35; margin-top: 7px; }
+.bridge-home .signal-visual { border: 1px solid var(--glass-edge); border-radius: 24px; box-shadow: 0 32px 90px rgba(0,0,0,.48), var(--glass-sheen); isolation: isolate; min-height: 500px; overflow: hidden; position: relative; z-index: 2; }
+.bridge-home .signal-film { display: block; height: 100%; left: 0; object-fit: cover; position: absolute; top: 0; width: 100%; }
 .bridge-home .visual-story { align-items: center; background: radial-gradient(circle at 78% 20%,rgba(124,58,237,.16),transparent 28rem),#0a070e; border-top: 1px solid rgba(201,151,255,.14); display: grid; gap: clamp(28px,5vw,72px); grid-template-columns: minmax(250px,.72fr) minmax(0,1.28fr); padding: 72px clamp(24px,6vw,86px); }
 .bridge-home .visual-story-copy > span, .bridge-home .suite-heading > p { color: #c995ff; font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
 .bridge-home .visual-story-copy h2, .bridge-home .suite-heading h2 { color: #fff; font-family: var(--font-display); font-size: clamp(30px,3.2vw,48px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin: 12px 0 16px; }
@@ -521,7 +536,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .bridge-home .suite-section { background: radial-gradient(circle at 12% 12%,rgba(124,58,237,.2),transparent 28rem),radial-gradient(circle at 88% 70%,rgba(75,0,130,.22),transparent 31rem),linear-gradient(145deg,#0a070e,#120919 52%,#08060c); color: #fff; padding: 84px clamp(24px,6vw,86px); }
 .bridge-home .suite-heading { max-width: 760px; }
 .bridge-home .suite-grid { display: grid; gap: 16px; grid-template-columns: repeat(12,1fr); margin-top: 32px; }
-.bridge-home .suite-card { background: linear-gradient(145deg,rgba(31,20,39,.96),rgba(10,7,14,.98)); border: 1px solid rgba(205,169,248,.2); border-radius: 18px; box-shadow: 0 28px 70px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.11); color: #fff; grid-column: span 5; min-height: 310px; overflow: hidden; padding: 28px; position: relative; }
+.bridge-home .suite-card { border-radius: 18px; box-shadow: 0 28px 70px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.11); color: #fff; grid-column: span 5; min-height: 310px; overflow: hidden; padding: 28px; position: relative; }
 .bridge-home .suite-card:nth-child(1), .bridge-home .suite-card:nth-child(4) { grid-column: span 7; }
 .bridge-home .suite-card:nth-child(2) { background: linear-gradient(145deg,#2a0b3f,#110817 72%); }
 .bridge-home .suite-card:nth-child(3) { background: linear-gradient(145deg,#15101c,#230a35); }
@@ -552,15 +567,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
   .bridge-home .landing-stats { gap: 0; justify-content: space-between; }
   .bridge-home .landing-stats > div { min-width: 0; padding: 0 10px; }
   .bridge-home .landing-stats > div:first-child { padding-left: 0; }
-  .bridge-home .signal-visual { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; min-height: 470px; padding: 18px; }
-  .bridge-home .signal-node { height: auto; min-height: 76px; position: relative; width: auto; }
-  .bridge-home .signal-node.one, .bridge-home .signal-node.two, .bridge-home .signal-node.three, .bridge-home .signal-node.four { inset: auto; }
-  .bridge-home .signal-node.one { grid-column: 1; grid-row: 1; }
-  .bridge-home .signal-node.two { grid-column: 2; grid-row: 1; }
-  .bridge-home .signal-node.three { grid-column: 2; grid-row: 3; }
-  .bridge-home .signal-node.four { grid-column: 1; grid-row: 3; }
-  .bridge-home .signal-core { grid-column: 1 / -1; grid-row: 2; height: 138px; inset: auto; margin: auto; position: relative; transform: none; width: 138px; }
-  .bridge-home .visual-story { padding: 52px 18px; }
+                .bridge-home .visual-story { padding: 52px 18px; }
   .bridge-home .visual-story-track { grid-template-columns: 1fr; }
   .bridge-home .visual-story-card.network, .bridge-home .visual-story-card.markets, .bridge-home .visual-story-card.identity { grid-column: auto; min-height: 220px; }
   .bridge-home .entry-rail { padding: 0 18px; }
@@ -633,7 +640,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .explore-category-tile::before { background: linear-gradient(180deg, transparent 28%, rgba(9,6,13,.9)); content: ""; inset: 0; position: absolute; z-index: 1; }
 .explore-category-tile[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
 .explore-category-tile span { bottom: 15px; color: var(--text); font-size: .82rem; font-weight: 850; left: 15px; line-height: 1.25; position: absolute; right: 15px; text-align: left; z-index: 3; }
-.market-switcher { background: linear-gradient(145deg, color-mix(in srgb,var(--brand) 38%,var(--surface)),var(--surface)); border: 1px solid var(--border); border-radius: 24px; display: grid; gap: 22px; grid-template-columns: 1fr 1fr; margin-bottom: 34px; overflow: hidden; padding: 28px; }
+.market-switcher { border-radius: 24px; display: grid; gap: 22px; grid-template-columns: 1fr 1fr; margin-bottom: 34px; overflow: hidden; padding: 28px; }
 .market-switcher h2 { font-size: clamp(1.8rem,3vw,2.8rem); }
 .market-pills { align-content: center; display: flex; flex-wrap: wrap; gap: 9px; justify-content: end; }
 .market-connection { align-items: center; background: color-mix(in srgb,var(--canvas) 70%,transparent); border: 1px solid var(--border); border-radius: 16px; display: grid; gap: 16px; grid-column: 1 / -1; grid-template-columns: 1fr auto 1fr; padding: 18px; text-align: center; }
@@ -673,7 +680,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
 
 .pricing-page, .league-page { padding-bottom: 90px; }
 .pricing-grid { align-items: stretch; display: grid; gap: 16px; grid-template-columns: repeat(3,1fr); }
-.pricing-plan { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; padding: 27px; }
+.pricing-plan { border-radius: 20px; display: flex; flex-direction: column; padding: 27px; }
 .pricing-plan.featured { border-color: var(--accent); box-shadow: 0 26px 70px color-mix(in srgb,var(--brand) 24%,transparent); transform: translateY(-10px); }
 .price-line { display: grid; gap: 5px; margin: 12px 0 22px; }
 .price-line strong { font-size: 2.8rem; line-height: 1; }
@@ -697,8 +704,6 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .join-pricing-note { align-items: center; background: var(--accent-soft); border: 1px solid var(--border); border-radius: 14px; display: flex; gap: 20px; justify-content: space-between; margin-top: 18px; padding: 18px; }
 .join-pricing-note p { margin-bottom: 4px; }
 
-.bridge-home .signal-node { pointer-events: none; }
-.bridge-home .signal-node:hover { border-color: rgba(222,197,255,.23); transform: none; }
 .bridge-home .visual-story-card { animation: bridge-story-drift 20s ease-in-out infinite alternate; background-size: 108%; }
 .bridge-home .visual-story-card::after {
   background-image: url("/textures/bridge-film-grain.webp");
@@ -752,9 +757,23 @@ body:has(.bridge-home) > .site-footer { display: none; }
 }
 
 /* Tori 2026-09-03: frozen feed controls + Fiverr-style aligned rows */
-.feed-toolbar { background: var(--surface, #0d0912); position: sticky; top: 0; z-index: 20; padding: 10px 0; }
+.feed-toolbar { border-radius: 14px; padding: 10px 14px; position: sticky; top: 82px; z-index: 20; }
 .news-aligned { align-items: start; display: grid; gap: 16px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
 @media (max-width: 1200px) { .news-aligned { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .news-aligned { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .news-aligned { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: no-preference) { .feed-toolbar { transition: box-shadow .2s ease; } }
+
+/* Etched duotone, after the Align HCM treatment Tori pointed at: desaturate
+   the photograph, push contrast, then recolour it into the brand purple and
+   lay grain over the top. No new assets - this restyles the existing 56. */
+.grain-image, .news-image, .visual-story-card, .page-heading-media, .explore-category-tile { position: relative; }
+.grain-image img, .news-image img, .page-heading-media img { filter: grayscale(1) contrast(1.16) brightness(1.06); }
+.grain-image::after, .news-image::after, .page-heading-media::after {
+  background: linear-gradient(168deg, color-mix(in srgb, var(--accent) 88%, transparent), color-mix(in srgb, var(--brand) 92%, transparent) 62%, color-mix(in srgb, var(--canvas) 90%, transparent));
+  content: ""; inset: 0; mix-blend-mode: color; opacity: .5; pointer-events: none; position: absolute; z-index: 1;
+}
+.grain-image::before, .news-image::before, .page-heading-media::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  content: ""; inset: 0; mix-blend-mode: overlay; opacity: .16; pointer-events: none; position: absolute; z-index: 2;
+}

@@ -32,15 +32,21 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="signal-visual" aria-label="Bridge connects the cannabis community, businesses, campaigns, and market discovery">
-          <div className="signal-orbit" />
-          <div className="signal-orbit" />
-          <div className="signal-orbit" />
-          <div className="signal-node one"><span><strong>Community</strong><small>Industry activity</small></span></div>
-          <div className="signal-node two"><span><strong>Businesses</strong><small>Verified profiles</small></span></div>
-          <div className="signal-node three"><span><strong>Campaigns</strong><small>Targeted promotion</small></span></div>
-          <div className="signal-node four"><span><strong>Explore</strong><small>Markets and services</small></span></div>
-          <div className="signal-core"><span><strong>Connected<br />cannabis</strong><small>Trusted by design</small></span></div>
+        {/* Launch video slot. Tori asked for the orbit graphic to become the
+            launch film; this is the interim plate until her cut is finished.
+            Swap the two paths below and nothing else changes. */}
+        <div className="signal-visual">
+          <video
+            aria-label="Bridge launch film: the Bridge mark painted on a city wall"
+            autoPlay
+            className="signal-film"
+            loop
+            muted
+            playsInline
+            poster="/bridge-launch-poster.webp"
+          >
+            <source src="/bridge-launch.mp4" type="video/mp4" />
+          </video>
         </div>
       </section>
 

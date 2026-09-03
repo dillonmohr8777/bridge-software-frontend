@@ -52,12 +52,12 @@ const ageGateScript = `(function(){try{if(localStorage.getItem(${JSON.stringify(
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme={lockedTheme ?? DEFAULT_THEME} suppressHydrationWarning>
+    <html lang="en" className={fontVariables} data-theme={lockedTheme ?? DEFAULT_THEME} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: unifiedThemeScript }} />
         <script dangerouslySetInnerHTML={{ __html: ageGateScript }} />
       </head>
-      <body className={fontVariables}>
+      <body>
         <AgeGate>
           <a className="skip-link" href="#main">Skip to content</a>
           <SiteHeader />
