@@ -6,7 +6,7 @@ export default function CommunityPage() {
         <div>
           <p className="eyebrow">Cannabis Community News</p>
           <h1>Find out what the cannabis WORLD is working on now</h1>
-          <p className="lede small">Scan launches, promotions, events, and member updates across all 50 states and D.C. The review feed uses clearly labeled sample activity while the nationwide filter, Visual News, and Classic Feed behaviors stay fully testable. The default view remains pending Tori’s decision.</p>
+          <p className="lede small">Launches, promotions, events and what operators are telling each other, across all 50 states and D.C.</p>
         </div>
       </div>
       <CommunityClient />
