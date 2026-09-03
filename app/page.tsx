@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { HomeAccountLink } from "@/components/HomeAccountLink";
 
 export default function Home() {
   return (
@@ -10,7 +11,7 @@ export default function Home() {
           <span>BRIDGE</span>
         </Link>
         <div className="landing-links">
-          <Link className="button primary" href="/join">Join the Bridge</Link>
+          <HomeAccountLink className="button primary" signedOutLabel="Join the Bridge" authenticatedLabel="My Profile" />
         </div>
       </nav>
 
@@ -22,7 +23,7 @@ export default function Home() {
             Connect cannabis brands, dispensaries, cultivators, sales teams, and service partners. Follow industry activity, discover verified operators, and build the right relationships nationwide.
           </p>
           <div className="landing-links landing-actions">
-            <Link className="button primary" href="/join">Join the verified network <span aria-hidden="true">→</span></Link>
+            <HomeAccountLink className="button primary" signedOutLabel="Join the verified network" authenticatedLabel="Open Bridge" showArrow />
             <Link className="button ghost" href="/explore">Explore cannabis businesses</Link>
           </div>
           <div className="landing-stats" aria-label="Bridge capabilities">
