@@ -56,16 +56,16 @@
  * standing up from behind it. right: 21% lands her over that fourth tile.
  */
 .bridge-mascot-explore {
-  bottom: calc(100% - 58px);
-  right: 21%;
-  width: clamp(120px, 12.5vw, 176px);
+  bottom: calc(100% - 74px);
+  right: 19%;
+  width: clamp(178px, 19vw, 268px);
 }
 
 @media (max-width: 900px) {
   .bridge-mascot-explore {
-    bottom: calc(100% - 42px);
-    right: 8%;
-    width: 116px;
+    bottom: calc(100% - 52px);
+    right: 6%;
+    width: 150px;
   }
 }
 

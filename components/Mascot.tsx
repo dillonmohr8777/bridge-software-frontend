@@ -47,10 +47,10 @@ export function Mascot({ className = "", alt = "" }: MascotProps) {
         aria-hidden={alt ? undefined : true}
         className="bridge-mascot-art"
         decoding="async"
-        height={900}
+        height={1000}
         loading="lazy"
         src="/mascot/bridget.webp"
-        width={569}
+        width={736}
       />
     </div>
   );
