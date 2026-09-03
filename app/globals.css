@@ -33,7 +33,9 @@
   --glass-blur: blur(16px) saturate(1.1);
   --glass-shadow: 0 24px 54px rgba(0, 0, 0, 0.34), 0 14px 34px color-mix(in srgb, var(--brand) 16%, transparent);
   --glass-sheen: 0 0 0 1px color-mix(in srgb, #fff 8%, transparent);
-  --glass-ring: 2.5px solid color-mix(in srgb, #fff 88%, var(--accent));
+  /* A lit edge, not a white outline. The near-white ring read as a sticker
+     border around every image and around the header. */
+  --glass-ring: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
 
   /* Easing, lifted from the Field Notes companion. */
   --ease: cubic-bezier(.22, .68, .24, 1);
@@ -146,7 +148,7 @@ p { color: var(--muted); }
 /* One glass recipe, applied by the surfaces below. Blur is capped to the
    handful of surfaces that earn it - backdrop-filter is expensive. */
 .glass, .profile-card, .content-card, .contact-card, .metric-card, .filter-panel,
-.moment-card, .suite-card, .market-switcher, .pricing-plan, .site-header, .feed-toolbar {
+.moment-card, .suite-card, .market-switcher, .pricing-plan, .feed-toolbar {
   background: var(--glass);
   border: var(--glass-ring);
   box-shadow: var(--glass-shadow);

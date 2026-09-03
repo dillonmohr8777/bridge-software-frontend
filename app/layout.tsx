@@ -66,8 +66,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <TabBar />
           <footer className="site-footer">
             <div className="shell footer-inner">
-              <span>Bridge discovery prototype</span>
-              <span>Provisional identity · pending Tori approval</span>
+              <span>Bridge</span>
+              <span>The cannabis industry, connected</span>
             </div>
           </footer>
         </AgeGate>

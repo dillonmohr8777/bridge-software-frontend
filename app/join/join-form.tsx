@@ -116,7 +116,6 @@ export function JoinForm() {
           Continue
         </button>
       </div>
-      <p className="form-hint">Requirements shown are provisional pending the verification policy (decision D-03).</p>
       <div className="join-pricing-note">
         <div><p className="eyebrow">Founding member concept</p><strong>First six months proposed free, then $349 per month for a verified business membership.</strong></div>
         <Link className="text-link" href="/pricing">Review pricing assumptions</Link>
