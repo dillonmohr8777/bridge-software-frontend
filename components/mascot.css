@@ -63,26 +63,26 @@
 
 @media (max-width: 900px) {
   .bridge-mascot-explore {
-    bottom: calc(100% - 48px);
-    right: 4%;
-    width: 148px;
+    bottom: calc(100% - 150px);
+    right: -3%;
+    width: 240px;
   }
 }
 
-/* Bridge is a mobile-first product, so she ships on phones too - scaled to
-   the row and tucked to the edge so she never crowds the tiles. */
+/* Bridge is a mobile-first product and she is its personality, so she ships
+   at roughly double the size she started at on phones. */
 @media (max-width: 620px) {
   .bridge-mascot-explore {
-    bottom: calc(100% - 76px);
-    right: 0;
-    width: 112px;
+    bottom: calc(100% - 142px);
+    right: -5%;
+    width: 218px;
   }
 }
 
 @media (max-width: 420px) {
   .bridge-mascot-explore {
-    bottom: calc(100% - 72px);
-    width: 96px;
+    bottom: calc(100% - 128px);
+    width: 196px;
   }
 }
 

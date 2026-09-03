@@ -19,7 +19,6 @@ type MascotProps = {
  */
 export function Mascot({ className = "", alt = "" }: MascotProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [risen, setRisen] = useState(false);
   const [motion, setMotion] = useState(false);
 
@@ -48,45 +47,21 @@ export function Mascot({ className = "", alt = "" }: MascotProps) {
     return () => io.disconnect();
   }, []);
 
-  useEffect(() => {
-    const node = videoRef.current;
-    if (!node) return;
-    node.load();
-    void node.play().catch(() => {});
-  }, [risen, motion]);
-
   return (
     <div className={`bridge-mascot ${className}`} data-risen={risen} ref={ref}>
-      {/* The still is the baseline and the only thing phones ever pay for.
-          Her loop is fetched and played only once she has risen into view. */}
-      {risen && motion ? (
-        <video
-          aria-hidden={alt ? undefined : true}
-          aria-label={alt || undefined}
-          className="bridge-mascot-art"
-          height={1000}
-          loop
-          muted
-          playsInline
-          poster="/mascot/bridget.webp"
-          preload="none"
-          ref={videoRef}
-          width={736}
-        >
-          <source src="/mascot/bridget-loop.webm" type="video/webm" />
-        </video>
-      ) : (
-        <img
-          alt={alt}
-          aria-hidden={alt ? undefined : true}
-          className="bridge-mascot-art"
-          decoding="async"
-          height={1000}
-          loading="lazy"
-          src="/mascot/bridget.webp"
-          width={736}
-        />
-      )}
+      {/* Animated WebP, not a video: iOS Safari has no alpha support in
+          WebM, so a <video> renders her on an opaque block. WebP alpha works
+          everywhere, and it is a plain <img> so there is nothing to play. */}
+      <img
+        alt={alt}
+        aria-hidden={alt ? undefined : true}
+        className="bridge-mascot-art"
+        decoding="async"
+        height={518}
+        loading="lazy"
+        src={risen && motion ? "/mascot/bridget-loop.webp" : "/mascot/bridget.webp"}
+        width={400}
+      />
     </div>
   );
 }
