@@ -792,6 +792,10 @@ body:has(.bridge-home) > .site-footer { display: none; }
    tiles sit above her. */
 .explore-visual-filters { position: relative; }
 .explore-rail-wrap { position: relative; }
+/* The mascot deliberately overhangs the right edge; clip her there so she
+   does not widen the document, which would stretch the fixed tab bar past
+   the viewport. */
+.explore-visual-filters { overflow-x: clip; }
 .explore-category-tile { position: relative; z-index: 1; }
 
 /* Give the film a visible, keyboard-reachable pause control. */
@@ -812,7 +816,10 @@ body:has(.bridge-home) > .site-footer { display: none; }
 /* Phones: stack the browse heading so the clear-search control sits left and
    the mascot owns the right edge of the row without colliding with it. */
 @media (max-width: 620px) {
+  /* Cap the heading so the copy wraps before it reaches the mascot rather
+     than relying on her position alone to avoid a collision. */
   .explore-visual-filters .section-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .explore-visual-filters .section-heading h2 { max-width: 60%; }
   .explore-visual-filters .section-heading button { padding-left: 0; text-align: left; }
   .explore-rail-wrap { margin-top: 34px; }
 }

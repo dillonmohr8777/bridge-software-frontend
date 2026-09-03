@@ -64,7 +64,7 @@
 @media (max-width: 900px) {
   .bridge-mascot-explore {
     bottom: calc(100% - 150px);
-    right: -3%;
+    right: -9%;
     width: 240px;
   }
 }
@@ -74,7 +74,7 @@
 @media (max-width: 620px) {
   .bridge-mascot-explore {
     bottom: calc(100% - 142px);
-    right: -5%;
+    right: -13%;
     width: 218px;
   }
 }
