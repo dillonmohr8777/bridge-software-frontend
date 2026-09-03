@@ -780,3 +780,12 @@ body:has(.bridge-home) > .site-footer { display: none; }
 
 /* One review-build notice instead of the word "fictional" in twenty posts. */
 .review-notice { background: color-mix(in srgb, var(--signal) 12%, transparent); border-left: 3px solid var(--signal); border-radius: 0 10px 10px 0; color: var(--text); font-size: .92rem; margin: 0 0 18px; padding: 12px 16px; }
+
+/* Background-image art cannot take the img filter, so it gets the same
+   duotone via background-blend-mode: the photo supplies luminosity and the
+   colour beneath supplies hue. Same look, no extra elements. */
+.bridge-home .visual-story-card, .category-thumb, .explore-category-tile {
+  background-blend-mode: luminosity;
+  background-color: color-mix(in srgb, var(--brand) 62%, var(--accent));
+}
+.bridge-home .visual-story-card::after, .bridge-home .visual-story-card::before { z-index: 0; }
