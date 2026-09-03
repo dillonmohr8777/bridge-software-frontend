@@ -21,8 +21,8 @@
   --radius: 18px;
 
   /* Brand type. Loaded in app/layout.tsx; these stacks are direction-agnostic. */
-  --font-display: var(--font-display);
-  --font-subhead: var(--font-bridge-subhead), var(--font-display);
+  --font-display: var(--font-bridge), "Segoe UI", sans-serif;
+  --font-subhead: var(--font-bridge-subhead), var(--font-bridge), "Segoe UI", sans-serif;
   --font-body: var(--font-bridge-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-hand: var(--font-bridge-hand), ui-serif, cursive;
 
@@ -793,3 +793,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .explore-visual-filters { position: relative; }
 .explore-category-rail { position: relative; }
 .explore-category-tile { position: relative; z-index: 1; }
+
+/* Give the film a visible, keyboard-reachable pause control. */
+.signal-film-toggle { background: color-mix(in srgb, var(--canvas) 82%, transparent); border: 1px solid var(--glass-edge); border-radius: 999px; bottom: 14px; color: var(--text); cursor: pointer; font-family: var(--font-subhead); font-size: .72rem; letter-spacing: .04em; padding: 7px 14px; position: absolute; right: 14px; text-transform: uppercase; z-index: 5; }
+.signal-film-toggle:hover { background: color-mix(in srgb, var(--brand) 40%, var(--canvas)); }

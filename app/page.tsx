@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { HeroFilm } from "@/components/HeroFilm";
 
 export default function Home() {
   return (
@@ -35,18 +36,14 @@ export default function Home() {
         {/* Launch video slot. Tori asked for the orbit graphic to become the
             launch film; this is the interim plate until her cut is finished.
             Swap the two paths below and nothing else changes. */}
+        {/* Launch video slot. Interim plate until Tori's cut is finished;
+            swap the two paths and nothing else changes. */}
         <div className="signal-visual">
-          <video
-            aria-label="Bridge launch film: the Bridge mark painted on a city wall"
-            autoPlay
-            className="signal-film"
-            loop
-            muted
-            playsInline
+          <HeroFilm
+            label="Bridge launch film: the Bridge mark painted on a city wall"
             poster="/bridge-launch-poster.webp"
-          >
-            <source src="/bridge-launch.mp4" type="video/mp4" />
-          </video>
+            src="/bridge-launch.mp4"
+          />
         </div>
       </section>
 
