@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { profiles } from "@/lib/data";
 import { US_STATE_OPTIONS } from "@/lib/states";
 import { StatusChip } from "@/components/StatusChip";
+import { Mascot } from "@/components/Mascot";
 const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Cultivator","Manufacturer","Lab","Transport","Bank","Service","Media","Hydroponics"];
 const FEATURED_MARKETS = ["All states", "California", "Michigan", "Maryland", "Colorado", "Pennsylvania"];
 const VISUAL_CATEGORIES = [
@@ -81,6 +82,7 @@ export function ExploreClient() {
           <button className="text-link" onClick={() => { setQuery(""); setCategory("All categories"); }} type="button">Clear category search</button>
         </div>
         <div className="explore-category-rail">
+          <Mascot className="bridge-mascot-explore" />
           {VISUAL_CATEGORIES.map((item) => (
             <button aria-pressed={query === item.query} className="explore-category-tile grain-image" key={item.label} onClick={() => { setQuery(item.query); setCategory("All categories"); }} type="button">
               <Image alt="" fill sizes="220px" src={item.image} />

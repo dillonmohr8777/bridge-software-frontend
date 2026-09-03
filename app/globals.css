@@ -791,3 +791,9 @@ body:has(.bridge-home) > .site-footer { display: none; }
   background-color: color-mix(in srgb, var(--brand) 44%, var(--accent));
 }
 .bridge-home .visual-story-card::after, .bridge-home .visual-story-card::before { z-index: 0; }
+
+/* The mascot stands behind the tiles, so the section anchors her and the
+   tiles sit above her. */
+.explore-visual-filters { position: relative; }
+.explore-category-rail { position: relative; }
+.explore-category-tile { position: relative; z-index: 1; }

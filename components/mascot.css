@@ -1,0 +1,84 @@
+/*
+ * Bridge mascot placement and idle.
+ *
+ * She is decorative and must never block a control, so the whole element is
+ * pointer-events: none and sits at a z-index below the category tiles - that
+ * is what makes her read as standing *behind* them.
+ */
+
+.bridge-mascot {
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.bridge-mascot-art {
+  display: block;
+  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.55));
+  height: auto;
+  width: 100%;
+
+  /* Start tucked down behind the row, then rise once. */
+  opacity: 0;
+  transform: translate3d(0, 34%, 0) scale(0.94);
+  transition:
+    opacity 0.5s var(--ease, ease-out),
+    transform 0.9s var(--ease-snap, cubic-bezier(0.2, 1.5, 0.4, 1));
+  will-change: transform;
+}
+
+.bridge-mascot[data-risen="true"] .bridge-mascot-art {
+  animation: bridge-mascot-idle 6.5s ease-in-out 0.9s infinite;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Weight shift, not a bounce - she is leaning, not jumping. */
+@keyframes bridge-mascot-idle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  35% {
+    transform: translate3d(0, -6px, 0) rotate(-0.7deg);
+  }
+  70% {
+    transform: translate3d(0, -2px, 0) rotate(0.5deg);
+  }
+}
+
+/*
+ * Anchored to the tile row: her bottom sits 58px INSIDE the row, so her boots
+ * are hidden behind the "Testing and compliance" tile and she reads as
+ * standing up from behind it. right: 21% lands her over that fourth tile.
+ */
+.bridge-mascot-explore {
+  bottom: calc(100% - 58px);
+  right: 21%;
+  width: clamp(120px, 12.5vw, 176px);
+}
+
+@media (max-width: 900px) {
+  .bridge-mascot-explore {
+    bottom: calc(100% - 42px);
+    right: 8%;
+    width: 116px;
+  }
+}
+
+/* She is charm, not content. Below tablet she costs more than she gives. */
+@media (max-width: 620px) {
+  .bridge-mascot {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bridge-mascot-art,
+  .bridge-mascot[data-risen="true"] .bridge-mascot-art {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
