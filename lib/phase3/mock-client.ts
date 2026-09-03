@@ -10,7 +10,9 @@ import {
   Phase3Error,
   type ConfirmContactsInput,
   type ConfirmContactsResult,
+  type AdminUsersResponse,
   type CreatePostInput,
+  type CurrentUserResponse,
   type Phase3Client,
   type ProfileProjection,
   type ResponsibleContact,
@@ -71,6 +73,7 @@ export class MockPhase3Client implements Phase3Client {
   private readonly now: () => Date;
   private uploadCount = 0;
   private postCount = 0;
+  private authenticated = true;
 
   constructor(options?: {
     claims?: SessionClaims;
@@ -110,8 +113,60 @@ export class MockPhase3Client implements Phase3Client {
     throw new Phase3Error("unavailable", "The request could not be completed. Your work is still here — try again.");
   }
 
+  async register() {
+    this.maybeFail();
+  }
+
+  async login(): Promise<CurrentUserResponse> {
+    this.maybeFail();
+    this.authenticated = true;
+    return this.getCurrentUser();
+  }
+
+  async logout() {
+    this.maybeFail();
+    this.authenticated = false;
+  }
+
+  async getCurrentUser(): Promise<CurrentUserResponse> {
+    this.maybeFail();
+    if (!this.authenticated) throw new Phase3Error("unauthenticated", "Sign in to continue.");
+    return {
+      user: {
+        id: this.claims.userId,
+        email: "member@example.invalid",
+        accountType: "standard",
+        platformRoles: this.claims.adminScope ? ["admin"] : [],
+        profile: { displayName: "Harbor Member", phone: null },
+      },
+      memberships: this.claims.organizationId ? [{
+        organizationId: this.claims.organizationId,
+        organizationName: "Harbor Dispensary",
+        organizationType: "dispensary",
+        role: "owner",
+        status: "active",
+      }] : [],
+    };
+  }
+
+  async forgotPassword() { this.maybeFail(); }
+  async resendVerification() { this.maybeFail(); }
+  async resetPassword() { this.maybeFail(); }
+  async establishRecoverySession() { this.maybeFail(); this.authenticated = true; }
+
+  async listAdminUsers(page: number, pageSize: number): Promise<AdminUsersResponse> {
+    this.maybeFail();
+    return { users: [], pagination: { page, pageSize, total: 0 } };
+  }
+
+  async getVerificationQueue(): Promise<unknown> {
+    this.maybeFail();
+    return { entries: [] };
+  }
+
   async getSession(): Promise<SessionClaims> {
     this.maybeFail();
+    if (!this.authenticated) throw new Phase3Error("unauthenticated", "Sign in to continue.");
     return structuredClone(this.claims);
   }
 

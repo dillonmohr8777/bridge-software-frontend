@@ -2,7 +2,9 @@ import {
   Phase3Error,
   type ConfirmContactsInput,
   type ConfirmContactsResult,
+  type AdminUsersResponse,
   type CreatePostInput,
+  type CurrentUserResponse,
   type Phase3Client,
   type Phase3ErrorCode,
   type ProfileProjection,
@@ -78,6 +80,65 @@ export class HttpPhase3Client implements Phase3Client {
     }
   }
 
+  async register(email: string, password: string, displayName: string) {
+    await this.request<unknown>(this.endpointPath.register, {
+      method: "POST",
+      body: JSON.stringify({ email, password, displayName }),
+    });
+  }
+
+  async login(email: string, password: string) {
+    await this.request<unknown>(this.endpointPath.login, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+    return this.getCurrentUser();
+  }
+
+  async logout() {
+    await this.request<void>(this.endpointPath.logout, { method: "POST" });
+  }
+
+  getCurrentUser() {
+    return this.request<CurrentUserResponse>(this.endpointPath.me);
+  }
+
+  async forgotPassword(email: string) {
+    await this.request<unknown>(this.endpointPath.forgotPassword, {
+      method: "POST", body: JSON.stringify({ email }),
+    });
+  }
+
+  async resendVerification(email: string) {
+    await this.request<unknown>(this.endpointPath.resendVerification, {
+      method: "POST", body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(newPassword: string) {
+    await this.request<unknown>(this.endpointPath.resetPassword, {
+      method: "POST", body: JSON.stringify({ newPassword }),
+    });
+  }
+
+  async establishRecoverySession(accessToken: string, refreshToken: string) {
+    await this.request<void>(this.endpointPath.recoverySession, {
+      method: "POST", body: JSON.stringify({ accessToken, refreshToken }),
+    });
+  }
+
+  listAdminUsers(page: number, pageSize: number) {
+    return this.request<AdminUsersResponse>(`${this.endpointPath.adminUsers}?page=${page}&pageSize=${pageSize}`);
+  }
+
+  getVerificationQueue(filters?: { status?: string; itemType?: string; limit?: number }) {
+    const query = new URLSearchParams();
+    if (filters?.status) query.set("status", filters.status);
+    if (filters?.itemType) query.set("itemType", filters.itemType);
+    query.set("limit", String(filters?.limit ?? 50));
+    return this.request<unknown>(`${this.endpointPath.verificationQueue}?${query.toString()}`);
+  }
+
   getSession() {
     return this.request<SessionClaims>(this.endpointPath.session);
   }
@@ -123,6 +184,16 @@ export class HttpPhase3Client implements Phase3Client {
   }
 
   private readonly endpointPath = {
+    register: "/api/v1/auth/register",
+    login: "/api/v1/auth/login",
+    logout: "/api/v1/auth/logout",
+    me: "/api/v1/auth/me",
+    forgotPassword: "/api/v1/auth/forgot-password",
+    resendVerification: "/api/v1/auth/resend-verification",
+    resetPassword: "/api/v1/auth/reset-password",
+    recoverySession: "/api/v1/auth/recovery-session",
+    adminUsers: "/api/v1/admin/users",
+    verificationQueue: "/api/v1/admin/verification-queue",
     session: "/api/v1/session",
     uploads: "/api/v1/uploads/intent",
     posts: "/api/v1/posts",
