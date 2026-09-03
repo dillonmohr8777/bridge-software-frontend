@@ -63,16 +63,26 @@
 
 @media (max-width: 900px) {
   .bridge-mascot-explore {
-    bottom: calc(100% - 52px);
-    right: 6%;
-    width: 150px;
+    bottom: calc(100% - 48px);
+    right: 4%;
+    width: 148px;
   }
 }
 
-/* She is charm, not content. Below tablet she costs more than she gives. */
+/* Bridge is a mobile-first product, so she ships on phones too - scaled to
+   the row and tucked to the edge so she never crowds the tiles. */
 @media (max-width: 620px) {
-  .bridge-mascot {
-    display: none;
+  .bridge-mascot-explore {
+    bottom: calc(100% - 76px);
+    right: 0;
+    width: 112px;
+  }
+}
+
+@media (max-width: 420px) {
+  .bridge-mascot-explore {
+    bottom: calc(100% - 72px);
+    width: 96px;
   }
 }
 

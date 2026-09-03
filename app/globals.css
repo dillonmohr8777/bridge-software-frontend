@@ -791,9 +791,28 @@ body:has(.bridge-home) > .site-footer { display: none; }
 /* The mascot stands behind the tiles, so the section anchors her and the
    tiles sit above her. */
 .explore-visual-filters { position: relative; }
-.explore-category-rail { position: relative; }
+.explore-rail-wrap { position: relative; }
 .explore-category-tile { position: relative; z-index: 1; }
 
 /* Give the film a visible, keyboard-reachable pause control. */
 .signal-film-toggle { background: color-mix(in srgb, var(--canvas) 82%, transparent); border: 1px solid var(--glass-edge); border-radius: 999px; bottom: 14px; color: var(--text); cursor: pointer; font-family: var(--font-subhead); font-size: .72rem; letter-spacing: .04em; padding: 7px 14px; position: absolute; right: 14px; text-transform: uppercase; z-index: 5; }
 .signal-film-toggle:hover { background: color-mix(in srgb, var(--brand) 40%, var(--canvas)); }
+
+/* Bridge is a mobile app experience: every control clears the 44px touch
+   target on phones, including the checkbox, which the browser draws at 13px. */
+@media (max-width: 900px) {
+  .brand-mark { align-items: center; display: inline-flex; min-height: 44px; }
+  .text-link { min-height: 44px; padding-block: 8px; }
+  .check-row { align-items: center; display: flex; gap: 10px; min-height: 44px; }
+  .check-row input[type="checkbox"], .check-row input[type="radio"] { block-size: 22px; flex: none; inline-size: 22px; }
+  .compact-control select, .feed-toolbar select, select { min-height: 44px; }
+  .feed-toolbar .button, .layout-toggle .button { min-height: 44px; }
+}
+
+/* Phones: stack the browse heading so the clear-search control sits left and
+   the mascot owns the right edge of the row without colliding with it. */
+@media (max-width: 620px) {
+  .explore-visual-filters .section-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .explore-visual-filters .section-heading button { padding-left: 0; text-align: left; }
+  .explore-rail-wrap { margin-top: 34px; }
+}

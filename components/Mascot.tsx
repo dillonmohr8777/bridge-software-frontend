@@ -30,8 +30,12 @@ export function Mascot({ className = "", alt = "" }: MascotProps) {
       setRisen(true);
       return;
     }
-    // The loop is charm, not content: skip it on narrow screens entirely.
-    setMotion(window.matchMedia("(min-width: 900px)").matches);
+    // Mobile-first product: she animates on phones too. The loop is a 666 KB
+    // webm fetched only after she rises, and only when the connection is not
+    // flagged as slow or data-saving.
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const thrifty = Boolean(conn && (conn.saveData || /2g/.test(conn.effectiveType ?? "")));
+    setMotion(!thrifty);
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;

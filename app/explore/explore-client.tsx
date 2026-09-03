@@ -81,14 +81,19 @@ export function ExploreClient() {
           <div><p className="eyebrow">Browse visually</p><h2 id="browse-category-title">Start with what you are looking for</h2></div>
           <button className="text-link" onClick={() => { setQuery(""); setCategory("All categories"); }} type="button">Clear category search</button>
         </div>
+        {/* The rail itself scrolls sideways on phones, so the mascot is
+            anchored to this wrapper instead - inside the scroller she ends up
+            parked off-screen at the end of the scroll. */}
+        <div className="explore-rail-wrap">
+        <Mascot className="bridge-mascot-explore" />
         <div className="explore-category-rail">
-          <Mascot className="bridge-mascot-explore" />
           {VISUAL_CATEGORIES.map((item) => (
             <button aria-pressed={query === item.query} className="explore-category-tile grain-image" key={item.label} onClick={() => { setQuery(item.query); setCategory("All categories"); }} type="button">
               <Image alt="" fill sizes="220px" src={item.image} />
               <span>{item.label}</span>
             </button>
           ))}
+        </div>
         </div>
       </section>
 
