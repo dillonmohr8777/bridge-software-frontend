@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { RouteState, safeMessage, stateKindFor, type RouteStateKind } from "@/components/RouteState";
 import {
   Phase3Error,
   audienceLabel,
@@ -37,6 +38,8 @@ export function MyProfileClient() {
   const [draftContacts, setDraftContacts] = useState<ResponsibleContact[]>([]);
   const [loadStatus, setLoadStatus] = useState<LoadStatus>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadErrorKind, setLoadErrorKind] = useState<RouteStateKind>("error");
+  const [reloadToken, setReloadToken] = useState(0);
   const [confirmStatus, setConfirmStatus] = useState<MutationStatus>("idle");
   const [confirmError, setConfirmError] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<MutationStatus>("idle");
@@ -57,12 +60,13 @@ export function MyProfileClient() {
       .catch((error: unknown) => {
         if (cancelled) return;
         setLoadStatus("error");
-        setLoadError(error instanceof Phase3Error ? error.userMessage : "The profile could not be loaded.");
+        setLoadErrorKind(stateKindFor(error));
+        setLoadError(safeMessage(error, "The profile could not be loaded."));
       });
     return () => {
       cancelled = true;
     };
-  }, [client, mode]);
+  }, [client, mode, reloadToken]);
 
   const showProtected = mode === "protected" && !!claims && canViewProtectedProfile(claims);
   const canConfirm = !!claims && canConfirmContacts(claims);
@@ -127,8 +131,21 @@ export function MyProfileClient() {
         <button type="button" className={mode === "protected" ? "button primary" : "button secondary"} aria-pressed={mode === "protected"} onClick={() => { if (mode === "protected") return; setLoadStatus("loading"); setLoadError(null); setMode("protected"); }}>B2B / verified view</button>
         <p className="form-hint toolbar-status">Showing: <strong>{mode === "public" ? "Public" : "B2B verified"}</strong></p>
       </div>
-      {loadStatus === "loading" && <p className="form-hint" aria-busy="true">Loading profile projection…</p>}
-      {loadStatus === "error" && <p className="form-error" role="alert">{loadError}</p>}
+      {loadStatus === "loading" && <RouteState kind="loading" title="Loading profile projection…" />}
+      {loadStatus === "error" && (
+        <RouteState
+          kind={loadErrorKind}
+          message={loadError ?? "The profile could not be loaded."}
+          onRetry={loadErrorKind === "forbidden" ? undefined : () => {
+            setLoadStatus("loading");
+            setLoadError(null);
+            setReloadToken((value) => value + 1);
+          }}
+          title={loadErrorKind === "forbidden"
+            ? "Protected profile details are hidden for this account"
+            : "This profile could not be loaded"}
+        />
+      )}
       {loadStatus === "ready" && profile && (
         <>
         {showProtected && profile.confirmation.status !== "confirmed" && (

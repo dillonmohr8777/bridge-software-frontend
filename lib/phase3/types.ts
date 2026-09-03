@@ -30,6 +30,29 @@ export type SessionClaims = {
   adminScope: boolean;
 };
 
+// --- Auth surface -----------------------------------------------------------
+// One client owns every Bridge API call. The auth methods below live on the same
+// Phase3Client contract as the rest of the slice so `/login` and `/join` inherit
+// the mock-mode fallback, the status mapping in mapStatus(), and Phase3Error.
+// Do not add a second HTTP client for auth.
+
+export type AuthCredentials = {
+  email: string;
+  password: string;
+};
+
+export type RegisterInput = AuthCredentials & {
+  displayName: string;
+  /** Role captured on /join Step 1. Null when the member reached signup directly. */
+  role: string | null;
+};
+
+export type RegisterResult = {
+  /** Server decides; the client never assumes an account is usable straight away. */
+  emailVerificationRequired: boolean;
+  message: string;
+};
+
 export type UploadIntent = {
   uploadId: string;
   status: "accepted" | "processing" | "rejected";
@@ -120,6 +143,9 @@ export class Phase3Error extends Error {
 }
 
 export type Phase3Client = {
+  register(input: RegisterInput): Promise<RegisterResult>;
+  login(input: AuthCredentials): Promise<SessionClaims>;
+  logout(): Promise<void>;
   getSession(): Promise<SessionClaims>;
   createUploadIntent(file: File): Promise<UploadIntent>;
   createPost(input: CreatePostInput): Promise<PostRecord>;

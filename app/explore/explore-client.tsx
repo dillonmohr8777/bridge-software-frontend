@@ -27,6 +27,7 @@ export function ExploreClient() {
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(DEFAULT_FAVORITES);
   const [favoritesReady, setFavoritesReady] = useState(false);
+  const [storageBlocked, setStorageBlocked] = useState(false);
   const [introStatus, setIntroStatus] = useState("");
 
   useEffect(() => {
@@ -37,7 +38,9 @@ export function ExploreClient() {
           setFavorites(saved);
         }
       } catch {
-        // Keep the safe illustrative default when storage is unavailable or invalid.
+        // Keep the safe illustrative default when storage is unavailable or invalid,
+        // and say so rather than failing silently.
+        setStorageBlocked(true);
       } finally {
         setFavoritesReady(true);
       }
@@ -50,7 +53,9 @@ export function ExploreClient() {
     try {
       window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
     } catch {
-      // Session state remains usable when persistent storage is unavailable.
+      // Session state remains usable when persistent storage is unavailable. The read
+      // effect above already surfaces the "storage blocked" notice; setting it here too
+      // would be a synchronous setState inside an effect body.
     }
   }, [favorites, favoritesReady]);
   const results = useMemo(() => {
@@ -110,7 +115,14 @@ export function ExploreClient() {
         <select id="explore-state" value={state} onChange={(e) => setState(e.target.value)}>{US_STATE_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}</select>
         <label htmlFor="explore-cat">Category</label>
         <select id="explore-cat" value={category} onChange={(e) => setCategory(e.target.value)}>{CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}</select>
-        <label className="check-row"><input type="checkbox" checked={favoritesOnly} onChange={(e) => setFavoritesOnly(e.target.checked)} /><span>Favorites only</span></label>
+        <label className="check-row"><input type="checkbox" checked={favoritesOnly} disabled={!favoritesReady} onChange={(e) => setFavoritesOnly(e.target.checked)} /><span>Favorites only</span></label>
+        {!favoritesReady && <p aria-busy="true" className="form-hint" role="status">Loading saved favorites…</p>}
+        {storageBlocked && (
+          <p className="form-hint" role="status">
+            Favorites cannot be saved on this device because browser storage is unavailable. Everything else on
+            this page still works.
+          </p>
+        )}
         <p className="form-hint">Geographic filter: 50 states + D.C. Sample records currently illustrate: {sampleStates.join(", ")}.</p>
       </aside>
       <div>

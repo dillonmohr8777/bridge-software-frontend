@@ -1,0 +1,44 @@
+name: CI
+
+# This repository had no CI at all, which is how a branch failing `npm run test:phase3`
+# reached a pull request. These are exactly the gates CONTRIBUTING.md already requires
+# before a preview, run automatically instead of on trust.
+on:
+  pull_request:
+    branches: [development, production]
+
+# A newer push to the same PR cancels the older run.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: test, typecheck, lint, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # `npm ci` (not `npm install`) so a lockfile that does not match package.json fails
+      # here rather than drifting silently, as it did on feature/admin-login.
+      - run: npm ci
+
+      - run: npm run test:phase3
+
+      - run: npm run typecheck
+
+      - run: npm run lint
+
+      - run: npm run build
+        env:
+          # The app must keep building in its documented default configuration: mock
+          # adapter, no backend. Never bind a real API origin in CI.
+          NEXT_PUBLIC_BRIDGE_API_BASE: ""

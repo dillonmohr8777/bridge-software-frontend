@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   canCreatePromotion,
@@ -9,6 +10,7 @@ import {
   validateUploadFile,
   visiblePostsForView,
 } from "./audiences.ts";
+import { getPhase3Client, isPhase3LiveApi } from "./client.ts";
 import { HttpPhase3Client } from "./http-client.ts";
 import { MockPhase3Client, mockHarborClaims } from "./mock-client.ts";
 import { Phase3Error, type PostRecord } from "./types.ts";
@@ -317,4 +319,194 @@ test("http client maps malformed success JSON to a retryable unavailable error",
       (error: unknown) => error instanceof Phase3Error && error.code === "unavailable",
     );
   });
+});
+
+// --- One client path -------------------------------------------------------
+// These guard the rule that auth goes through the same Phase 3 client as every other
+// call: same base URL, same status mapping, same Phase3Error, same mock-mode fallback.
+
+test("auth calls go through the same client, base URL and status mapping", async () => {
+  const seen: { url: string; method?: string; credentials?: RequestCredentials }[] = [];
+
+  await withMockFetch(async (input, init) => {
+    seen.push({ url: String(input), method: init?.method, credentials: init?.credentials });
+    if (String(input).endsWith("/auth/register")) {
+      return new Response(JSON.stringify({ emailVerificationRequired: true, message: "Check your email." }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response(JSON.stringify(mockHarborClaims), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }, async () => {
+    const client = new HttpPhase3Client("https://api.example.invalid");
+    const registered = await client.register({
+      displayName: "Harbor",
+      email: "owner@example.invalid",
+      password: "correct-horse",
+      role: "Dispensary",
+    });
+    assert.equal(registered.emailVerificationRequired, true);
+    const session = await client.login({ email: "owner@example.invalid", password: "correct-horse" });
+    assert.equal(session.userId, "user-harbor-owner");
+    await client.logout();
+  });
+
+  assert.deepEqual(seen.map((call) => call.url), [
+    "https://api.example.invalid/api/v1/auth/register",
+    "https://api.example.invalid/api/v1/auth/login",
+    "https://api.example.invalid/api/v1/auth/logout",
+  ]);
+  assert.deepEqual(seen.map((call) => call.method), ["POST", "POST", "POST"]);
+  // Cookie sessions are the default transport, so auth stays credentialed like the rest.
+  assert.deepEqual(seen.map((call) => call.credentials), ["include", "include", "include"]);
+});
+
+test("auth failures use the shared Phase3Error mapping, not a second error model", async () => {
+  const client = new HttpPhase3Client("https://api.example.invalid");
+
+  await withMockFetch(async () => new Response("no", { status: 401 }), async () => {
+    await assert.rejects(
+      () => client.login({ email: "owner@example.invalid", password: "wrong" }),
+      (error: unknown) => error instanceof Phase3Error && error.code === "unauthenticated",
+    );
+  });
+
+  await withMockFetch(async () => new Response("no", { status: 409 }), async () => {
+    await assert.rejects(
+      () => client.register({ displayName: "Harbor", email: "taken@example.invalid", password: "correct-horse", role: null }),
+      (error: unknown) => error instanceof Phase3Error && error.code === "conflict",
+    );
+  });
+
+  await withMockFetch(async () => {
+    throw new TypeError("Failed to fetch");
+  }, async () => {
+    await assert.rejects(
+      () => client.login({ email: "owner@example.invalid", password: "correct-horse" }),
+      (error: unknown) => error instanceof Phase3Error && error.code === "unavailable",
+    );
+  });
+});
+
+test("the bearer seam omits credentials and never persists a token", async () => {
+  let credentials: RequestCredentials | undefined;
+  let authorization: string | undefined;
+
+  await withMockFetch(async (input, init) => {
+    credentials = init?.credentials;
+    authorization = new Headers(init?.headers).get("Authorization") ?? undefined;
+    return new Response(JSON.stringify(mockHarborClaims), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }, async () => {
+    const client = new HttpPhase3Client("https://api.example.invalid", "bearer");
+    client.setBearerToken("token-value");
+    await client.getSession();
+  });
+
+  // A credentialed request fails outright without Access-Control-Allow-Credentials, which
+  // the Greencubes origin does not send. Bearer mode must not ask for cookies.
+  assert.equal(credentials, "omit");
+  assert.equal(authorization, "Bearer token-value");
+});
+
+test("the bearer seam is inert under the default cookie transport", async () => {
+  let authorization: string | null = "unset";
+
+  await withMockFetch(async (input, init) => {
+    authorization = new Headers(init?.headers).get("Authorization");
+    return new Response(JSON.stringify(mockHarborClaims), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }, async () => {
+    const client = new HttpPhase3Client("https://api.example.invalid");
+    client.setBearerToken("token-value");
+    await client.getSession();
+  });
+
+  assert.equal(authorization, null);
+});
+
+test("no client path writes a token to browser storage", () => {
+  // docs/INTEGRATION-PIPELINE.md forbids access tokens in browser storage. Comments are
+  // stripped first so the prohibition can still be explained in prose next to the code.
+  const withoutComments = ["./client.ts", "./http-client.ts", "./mock-client.ts"]
+    .map((file) => readFileSync(new URL(file, import.meta.url), "utf8"))
+    .join(String.fromCharCode(10))
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
+
+  assert.doesNotMatch(withoutComments, /sessionStorage|localStorage|indexedDB/i);
+});
+
+test("mock mode carries the whole auth flow with no backend configured", async () => {
+  const client = new MockPhase3Client();
+
+  const registered = await client.register({
+    displayName: "Harbor Dispensary",
+    email: "owner@example.invalid",
+    password: "correct-horse",
+    role: "Dispensary",
+  });
+  assert.equal(registered.emailVerificationRequired, true);
+
+  const member = await client.login({ email: "owner@example.invalid", password: "correct-horse" });
+  assert.equal(member.adminScope, false);
+  assert.equal(member.role, "dispensary");
+
+  const admin = await client.login({ email: "admin@example.invalid", password: "correct-horse" });
+  assert.equal(admin.adminScope, true);
+  assert.equal(admin.role, "admin");
+
+  await client.logout();
+  await assert.rejects(
+    () => client.getSession(),
+    (error: unknown) => error instanceof Phase3Error && error.code === "unauthenticated",
+  );
+
+  // Signing back in restores a usable session rather than leaving the app stuck.
+  const again = await client.login({ email: "owner@example.invalid", password: "correct-horse" });
+  assert.equal(again.userId, mockHarborClaims.userId);
+});
+
+test("mock registration and sign-in reject invalid input with typed errors", async () => {
+  const client = new MockPhase3Client();
+
+  await assert.rejects(
+    () => client.register({ displayName: "  ", email: "owner@example.invalid", password: "correct-horse", role: null }),
+    (error: unknown) => error instanceof Phase3Error && error.code === "validation",
+  );
+  await assert.rejects(
+    () => client.register({ displayName: "Harbor", email: "not-an-email", password: "correct-horse", role: null }),
+    (error: unknown) => error instanceof Phase3Error && error.code === "validation",
+  );
+  await assert.rejects(
+    () => client.register({ displayName: "Harbor", email: "owner@example.invalid", password: "short", role: null }),
+    (error: unknown) => error instanceof Phase3Error && error.code === "validation",
+  );
+  await assert.rejects(
+    () => client.login({ email: "owner@example.invalid", password: "short" }),
+    (error: unknown) => error instanceof Phase3Error && error.code === "unauthenticated",
+  );
+});
+
+test("getPhase3Client falls back to the in-memory adapter when no API base is set", () => {
+  const previous = process.env.NEXT_PUBLIC_BRIDGE_API_BASE;
+  try {
+    delete process.env.NEXT_PUBLIC_BRIDGE_API_BASE;
+    assert.equal(isPhase3LiveApi(), false);
+    assert.ok(getPhase3Client() instanceof MockPhase3Client);
+
+    process.env.NEXT_PUBLIC_BRIDGE_API_BASE = "https://api.example.invalid";
+    assert.equal(isPhase3LiveApi(), true);
+    assert.ok(getPhase3Client() instanceof HttpPhase3Client);
+  } finally {
+    if (previous === undefined) delete process.env.NEXT_PUBLIC_BRIDGE_API_BASE;
+    else process.env.NEXT_PUBLIC_BRIDGE_API_BASE = previous;
+  }
 });

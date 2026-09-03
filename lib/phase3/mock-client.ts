@@ -8,6 +8,7 @@ import {
 } from "./audiences.ts";
 import {
   Phase3Error,
+  type AuthCredentials,
   type ConfirmContactsInput,
   type ConfirmContactsResult,
   type CreatePostInput,
@@ -15,6 +16,8 @@ import {
   type ProfileProjection,
   type ResponsibleContact,
   type SessionClaims,
+  type RegisterInput,
+  type RegisterResult,
   type UpdateContactsInput,
   type UploadIntent,
   type PostRecord,
@@ -31,6 +34,21 @@ export const mockHarborClaims: SessionClaims = {
   stateLicenseEligibility: ["MD"],
   adminScope: false,
 };
+
+export const mockAdminClaims: SessionClaims = {
+  userId: "user-platform-admin",
+  ageEligible: true,
+  membershipStatus: "active",
+  organizationId: "org-bridge",
+  organizationVerificationState: "verified",
+  role: "admin",
+  delegatedPermissions: ["view_protected_profile"],
+  stateLicenseEligibility: [],
+  adminScope: true,
+};
+
+/** Minimum password length the mock enforces so the client-side rule is exercised. */
+export const MOCK_MIN_PASSWORD_LENGTH = 8;
 
 const harborPublicDescription =
   "Community-first dispensary seeking premium regional partners. Public-safe description stays visible in both modes.";
@@ -68,6 +86,7 @@ export class MockPhase3Client implements Phase3Client {
   private contacts: ResponsibleContact[];
   private posts: PostRecord[];
   private failNext: boolean;
+  private signedOut = false;
   private readonly now: () => Date;
   private uploadCount = 0;
   private postCount = 0;
@@ -94,6 +113,45 @@ export class MockPhase3Client implements Phase3Client {
     this.failNext = value;
   }
 
+  /**
+   * Mock authentication. There is no credential store and no security value here: any
+   * syntactically valid email plus an 8-character password succeeds. An email containing
+   * "admin" returns admin claims so role-aware routing can be exercised with no backend.
+   * Authorization is always the server's job — see the comment in components/auth/RequireAuth.tsx.
+   */
+  async register(input: RegisterInput): Promise<RegisterResult> {
+    this.maybeFail();
+    if (!input.displayName.trim()) {
+      throw new Phase3Error("validation", "Add the name other members will see.");
+    }
+    if (!input.email.includes("@")) {
+      throw new Phase3Error("validation", "Enter a valid email address.");
+    }
+    if (input.password.length < MOCK_MIN_PASSWORD_LENGTH) {
+      throw new Phase3Error("validation", `Use at least ${MOCK_MIN_PASSWORD_LENGTH} characters.`);
+    }
+    return {
+      emailVerificationRequired: true,
+      message: "Check your email to confirm the address, then sign in.",
+    };
+  }
+
+  async login(input: AuthCredentials): Promise<SessionClaims> {
+    this.maybeFail();
+    if (!input.email.includes("@") || input.password.length < MOCK_MIN_PASSWORD_LENGTH) {
+      throw new Phase3Error("unauthenticated", "Sign in to continue.");
+    }
+    this.claims = input.email.toLowerCase().includes("admin")
+      ? { ...mockAdminClaims, delegatedPermissions: [...mockAdminClaims.delegatedPermissions] }
+      : { ...mockHarborClaims, delegatedPermissions: [...mockHarborClaims.delegatedPermissions] };
+    this.signedOut = false;
+    return structuredClone(this.claims);
+  }
+
+  async logout(): Promise<void> {
+    this.signedOut = true;
+  }
+
   setClaims(patch: Partial<SessionClaims>) {
     this.claims = {
       ...this.claims,
@@ -112,6 +170,9 @@ export class MockPhase3Client implements Phase3Client {
 
   async getSession(): Promise<SessionClaims> {
     this.maybeFail();
+    if (this.signedOut) {
+      throw new Phase3Error("unauthenticated", "Sign in to continue.");
+    }
     return structuredClone(this.claims);
   }
 
