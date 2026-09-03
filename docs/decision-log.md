@@ -109,3 +109,5 @@ All Phase 1 work repaired existing defects without pre-approving product or bran
 | D-06 | Is AWS a hard hosting requirement or a proposal-level direction? | Miraj/Mac | Architecture review |
 | D-07 | What is the first geographic market and priority user role? | Tori/Melissa | Launch plan |
 | D-08 | Who approves design and scope between live sessions? | Tori/Mac | Monday close |
+| D-09 | Is `getonthebridge0-max/thebridge` the canonical Bridge frontend repository, replacing `dillonmohr8777/bridge-software-frontend`? | Dillon/Mac | Before merging `feature/admin-login` |
+| D-10 | Does Bridge auth use httpOnly cookie sessions (contract as written) or pure bearer tokens in web storage (as implemented on `feature/admin-login`)? | Dillon/Miraj | Before production auth lock |
