@@ -19,7 +19,7 @@ export default function Home() {
           <p className="hero-label">Verified cannabis community and market intelligence</p>
           <h1 id="hero-title">One industry.<br />One network.<br /><span>One Bridge.</span></h1>
           <p>
-            Connect cannabis brands, dispensaries, cultivators, sales teams, and service partners. Follow industry activity, discover verified operators, and build the right relationships nationwide.
+            A space to promote yourself, have others help promote you, advertise your movement, and let people know what you are doing. A space to connect, a space to build, a space to keep in touch.
           </p>
           <div className="landing-links landing-actions">
             <Link className="button primary" href="/join">Join the verified network <span aria-hidden="true">→</span></Link>
@@ -47,7 +47,7 @@ export default function Home() {
       <section className="visual-story" aria-labelledby="visual-story-title">
         <div className="visual-story-copy">
           <span>Bridge in motion</span>
-          <h2 id="visual-story-title">Find the signal. Meet the people. Move the cannabis industry forward.</h2>
+          <h2 id="visual-story-title">Stay connected with the world. Move the industry forward.</h2>
           <p>One nationwide home for cannabis news, promotions, verified profiles, products, and industry services.</p>
         </div>
         <div className="visual-story-track" aria-label="Bridge product moments">

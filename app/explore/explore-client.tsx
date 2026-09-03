@@ -91,7 +91,7 @@ export function ExploreClient() {
       </section>
 
       <section className="market-switcher" aria-labelledby="market-switcher-title">
-        <div><p className="eyebrow">Nationwide market view</p><h2 id="market-switcher-title">Move between legal markets without losing the signal</h2><p>Use the complete state selector or jump into a featured prototype market. California and Michigan show how cross-state learning can work without claiming live market coverage.</p></div>
+        <div><p className="eyebrow">Nationwide market view</p><h2 id="market-switcher-title">Stay in signal with how other states are moving. Browse the movement.</h2><p>Use the complete state selector or jump into a featured prototype market. California and Michigan show how cross-state learning can work without claiming live market coverage.</p></div>
         <div className="market-pills" role="group" aria-label="Featured markets">
           {FEATURED_MARKETS.map((market) => <button aria-pressed={state === market} className={state === market ? "button primary" : "button secondary"} key={market} onClick={() => setState(market)} type="button">{market}</button>)}
         </div>

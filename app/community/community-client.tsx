@@ -57,7 +57,7 @@ const categoryImageByName: Record<string, string> = {
 const FAVORITE_KEY = "bridge-community-favorites";
 
 export function CommunityClient() {
-  const [layout, setLayout] = useState<"grid" | "classic">("grid");
+  const [layout, setLayout] = useState<"grid" | "aligned" | "classic">("grid");
   const [category, setCategory] = useState("All");
   const [state, setState] = useState("All states");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -116,6 +116,7 @@ export function CommunityClient() {
       <div className="feed-toolbar" aria-label="Community News controls">
         <div className="layout-toggle" role="group" aria-label="Feed layout">
           <button type="button" className={layout === "grid" ? "button primary" : "button secondary"} aria-pressed={layout === "grid"} onClick={() => setLayout("grid")}>Visual news</button>
+          <button type="button" className={layout === "aligned" ? "button primary" : "button secondary"} aria-pressed={layout === "aligned"} onClick={() => setLayout("aligned")}>Aligned rows</button>
           <button type="button" className={layout === "classic" ? "button primary" : "button secondary"} aria-pressed={layout === "classic"} onClick={() => setLayout("classic")}>Classic feed</button>
         </div>
         <label className="compact-control" htmlFor="community-state">
@@ -134,7 +135,7 @@ export function CommunityClient() {
       ) : visibleItems.length === 0 ? (
         <div className="empty-state"><h3>No saved signals here yet</h3><p>Change the market or category, or save posts you want to keep close.</p></div>
       ) : (
-        <div className={layout === "grid" ? "news-grid editorial-feed" : "news-classic editorial-feed"} data-layout={layout}>
+        <div className={`${layout === "grid" ? "news-grid" : layout === "aligned" ? "news-aligned" : "news-classic"} editorial-feed`} data-layout={layout}>
           {visibleItems.map((item) => {
             const favorite = favorites.includes(item.id);
             return (

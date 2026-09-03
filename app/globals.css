@@ -740,3 +740,11 @@ body:has(.bridge-home) > .site-footer { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .grain-image::after, .grain-image img, .bridge-home .visual-story-card, .bridge-home .visual-story-card::after { animation: none; }
 }
+
+/* Tori 2026-09-03: frozen feed controls + Fiverr-style aligned rows */
+.feed-toolbar { background: var(--surface, #0d0912); position: sticky; top: 0; z-index: 20; padding: 10px 0; }
+.news-aligned { align-items: start; display: grid; gap: 16px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+@media (max-width: 1200px) { .news-aligned { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .news-aligned { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .news-aligned { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: no-preference) { .feed-toolbar { transition: box-shadow .2s ease; } }
