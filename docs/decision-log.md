@@ -1,5 +1,25 @@
 # Bridge decision log
 
+## Milestone 3 hardening reference implementation — 2026-09-02
+
+Vocabulary warning: "Phase" is overloaded. In the signed proposal, Phase and Milestone
+are the same thing, and contract Phase/Milestone 4 is the Directory MVP, which has not
+started. In `CLAUDE_BUILD_SPEC.md`, "Phase 4" means Supabase integration. This entry
+covers Milestone 3 (accounts/auth/verification) hardening plus build-spec Phases 5 and 6.
+It does not start contract Phase 4 and triggers no payment. Commercial terms are
+deliberately not recorded in this repository.
+
+| Item | Recorded decision | Evidence boundary |
+|---|---|---|
+| `/join` sequence | Step 1 (role selection) stays the entry screen at `/join`; account creation is Step 2 at `/join/account` and carries the selected role | Step 1 is the only place the product captures role, and the surface whose Step 2/Step 4 product approval is still open with Melissa and Tori. `docs/INTEGRATION-PIPELINE.md` ("do not restyle the product or replace screens") and `docs/INTEGRATION-API-CONTRACT.md` ("the existing Connected purple screens are the design authority") both forbid replacing it |
+| One HTTP client | `register` / `login` / `logout` belong on the existing `Phase3Client` contract; there is exactly one base URL, one status mapping, one error type and one mock fallback | A second auth client re-implements `mapStatus`/`Phase3Error` badly and loses the mock-mode fallback, which is why `/login` was broken in the documented default configuration |
+| Session transport (D-10) | Cookie sessions remain the default and the only mode the app ships in; `credentials: "include"` is preserved. A bearer transport exists as a marked seam, holds the token in memory only, and omits credentials | `docs/INTEGRATION-PIPELINE.md` forbids access tokens in browser storage. `docs/INTEGRATION-API-CONTRACT.md` requires a bearer switch to be flagged as a contract change before the client changes. The Greencubes origin sends no `Access-Control-Allow-Credentials`, which is the actual blocker |
+| Client-side routing | Route guards, role-aware navigation and the `/admin` redirect are presentation only and are commented as such; every protected read and mutation is authorized server-side from session claims | Hiding a control is not authorization. The API must still return 401/403 with the guard bypassed |
+| Admin visual system | The admin portal is a separate panel, not a separate visual system: semantic tokens only, no raw hex, and it follows the active Bridge theme | Dillon 2026-08-31: "a separate admin panel is fine … no separate visual system" |
+| Accessibility | The skip link is never hidden on admin pages, and WCAG AA contrast is checked automatically against the tokens in `app/globals.css` | WCAG 2.4.1 bypass-blocks; `lib/contrast.test.ts` measures every rendered token pair across all three themes |
+| Session-claims path mismatch | Left unresolved rather than guessed at: the checked-in contract says `/api/v1/session`, the Greencubes staging origin serves `/api/v1/auth/me` | Miraj owns the route table. The frontend keeps the contracted path and flags the mismatch |
+| Contract Phase 4 / Gate B | Untouched. No Supabase dependency, no schema, no RLS, no storage design, no audit events, no env strategy | Human Gate B has not defined them; `CLAUDE.md` forbids adding a Supabase dependency before that review |
+
 ## Adult entry requirement restored — 2026-08-21
 
 | Item | Recorded decision | Evidence boundary |
@@ -109,3 +129,5 @@ All Phase 1 work repaired existing defects without pre-approving product or bran
 | D-06 | Is AWS a hard hosting requirement or a proposal-level direction? | Miraj/Mac | Architecture review |
 | D-07 | What is the first geographic market and priority user role? | Tori/Melissa | Launch plan |
 | D-08 | Who approves design and scope between live sessions? | Tori/Mac | Monday close |
+| D-09 | Which repository is canonical for the Bridge frontend? | Dillon | Before any Greencubes merge |
+| D-10 | Cookie sessions or bearer tokens for the Bridge API? | Dillon/Miraj | Before the auth layer merges |

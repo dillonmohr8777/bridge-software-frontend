@@ -1,27 +1,19 @@
 import { VerificationQueue } from "./verification-client";
 
+// The sidebar now comes from app/admin/layout.tsx (AdminShell), so this page no longer
+// renders its own duplicate admin navigation.
 export default function VerificationPage() {
   return (
-    <section className="page shell">
-      <div className="dashboard-heading">
+    <>
+      <div className="admin-page-heading">
         <div>
-          <p className="eyebrow">Admin workspace</p>
+          <p className="admin-eyebrow">Admin workspace</p>
           <h1>Verification queue</h1>
-          <p className="lede">Review business identity, licenses, and profile readiness.</p>
+          <p>Review business identity, licenses, and profile readiness.</p>
         </div>
-        <span className="status-chip pending">14 awaiting review</span>
+        <span className="status-chip pending">Sample queue</span>
       </div>
-      <div className="admin-layout">
-        <aside className="filter-panel admin-nav">
-          <strong>Administration</strong>
-          <button className="active" type="button">Verification <span>14</span></button>
-          <button disabled title="Planned for the post-decision build" type="button">Reported profiles <span>3</span></button>
-          <button disabled title="Planned for the post-decision build" type="button">Content moderation <span>8</span></button>
-          <button disabled title="Planned for the post-decision build" type="button">Member management</button>
-          <p className="form-hint">Other admin areas are planned for the post-decision build.</p>
-        </aside>
-        <VerificationQueue />
-      </div>
-    </section>
+      <VerificationQueue />
+    </>
   );
 }

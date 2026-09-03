@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { RouteState, safeMessage, stateKindFor, type RouteStateKind } from "@/components/RouteState";
 import {
   Phase3Error,
   audienceCatalog,
@@ -29,6 +30,7 @@ export function CreateClient() {
   const client = useMemo(() => getPhase3Client(), []);
   const [claims, setClaims] = useState<SessionClaims | null>(null);
   const [sessionStatus, setSessionStatus] = useState<SessionStatus>("loading");
+  const [sessionErrorKind, setSessionErrorKind] = useState<RouteStateKind>("error");
   const [sessionError, setSessionError] = useState<string | null>(null);
   const [contentType, setContentType] = useState<ContentType>("Promotion");
   const [message, setMessage] = useState("");
@@ -76,7 +78,8 @@ export function CreateClient() {
       .catch((error: unknown) => {
         if (cancelled) return;
         setSessionStatus("error");
-        setSessionError(error instanceof Phase3Error ? error.userMessage : "The session could not be loaded.");
+        setSessionErrorKind(stateKindFor(error));
+        setSessionError(safeMessage(error, "The session could not be loaded."));
       });
     return () => {
       cancelled = true;
@@ -223,7 +226,8 @@ export function CreateClient() {
       setSessionStatus("ready");
     } catch (error: unknown) {
       setSessionStatus("error");
-      setSessionError(error instanceof Phase3Error ? error.userMessage : "The session could not be loaded.");
+      setSessionErrorKind(stateKindFor(error));
+      setSessionError(safeMessage(error, "The session could not be loaded."));
     }
   }
 
@@ -258,11 +262,20 @@ export function CreateClient() {
   const visiblePosts = visiblePostsForView(posts, "protected");
 
   if (sessionStatus === "loading") {
-    return <p className="form-hint" aria-busy="true">Loading creator session…</p>;
+    return <RouteState kind="loading" title="Loading creator session…" />;
   }
 
   if (sessionStatus === "error") {
-    return <p className="form-error" role="alert">{sessionError}</p>;
+    return (
+      <RouteState
+        kind={sessionErrorKind}
+        message={sessionError ?? "The session could not be loaded."}
+        onRetry={sessionErrorKind === "forbidden" ? undefined : () => { void reloadSession(); }}
+        title={sessionErrorKind === "forbidden"
+          ? "This account cannot create promotions"
+          : "The creator session could not be loaded"}
+      />
+    );
   }
 
   return (

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
 
-const links = [
+const publicLinks = [
   { href: "/", label: "Home", match: (p: string) => p === "/" },
   { href: "/community", label: "Community News", match: (p: string) => p.startsWith("/community") },
   { href: "/create", label: "Create", match: (p: string) => p.startsWith("/create") },
@@ -12,10 +13,14 @@ const links = [
   { href: "/explore", label: "Explore", match: (p: string) => p.startsWith("/explore") || p.startsWith("/directory") },
 ] as const;
 
+const adminLink = { href: "/admin", label: "Admin", match: (p: string) => p.startsWith("/admin") } as const;
+
 export function NavMenu() {
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { status, isAdmin, logout } = useAuth();
 
   useEffect(() => {
     if (!open) return;
@@ -28,6 +33,16 @@ export function NavMenu() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
+
+  // Showing or hiding the Admin link is presentation only. It reflects a server claim; it
+  // does not grant anything. Every admin route and API call is authorized server-side.
+  const links = isAdmin ? [...publicLinks, adminLink] : [...publicLinks];
+
+  async function signOut() {
+    setOpen(false);
+    await logout();
+    router.replace("/login");
+  }
 
   return (
     <>
@@ -52,6 +67,13 @@ export function NavMenu() {
             {link.label}
           </Link>
         ))}
+        {status === "authenticated" ? (
+          <button className="nav-sign-out" onClick={() => { void signOut(); }} type="button">Sign out</button>
+        ) : status === "unauthenticated" ? (
+          <Link aria-current={pathname.startsWith("/login") ? "page" : undefined} href="/login" onClick={() => setOpen(false)}>
+            Sign in
+          </Link>
+        ) : null}
       </nav>
     </>
   );

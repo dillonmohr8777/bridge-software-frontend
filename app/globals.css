@@ -53,10 +53,13 @@
   --surface: #fffefa;
   --surface-alt: #ebece1;
   --text: #1d2c24;
-  --muted: #647067;
+  --muted: #606c63;
   --border: #d4d9cd;
   --success: #2b6b3f;
   --warning: #925120;
+  /* Botanical previously inherited the dark-theme --danger (#ff8179), which measures
+     2.22:1 on this light ground — form errors were unreadable. Measured 6.02:1. */
+  --danger: #b42318;
   --on-brand: #ffffff;
   --shadow: 0 18px 50px rgba(23, 60, 44, 0.11);
 }
@@ -739,4 +742,110 @@ body:has(.bridge-home) > .site-footer { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .grain-image::after, .grain-image img, .bridge-home .visual-story-card, .bridge-home .visual-story-card::after { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Auth surfaces and build-spec Phase 5 state views.
+   Every value below is a semantic token. Bridge has one visual system.
+   --------------------------------------------------------------------------- */
+.nav-sign-out { background: transparent; border: 0; color: var(--muted); cursor: pointer; font-size: .94rem; font-weight: 650; padding: 0; }
+.nav-sign-out:hover { color: var(--text); }
+.auth-page { align-items: center; display: flex; justify-content: center; }
+.auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); max-width: 560px; padding: clamp(28px, 5vw, 52px); width: 100%; }
+.auth-card h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); }
+.auth-form { display: grid; gap: 10px; }
+.auth-form .button { margin-top: 10px; }
+.auth-form .form-hint { margin: 0; }
+.auth-label-row { align-items: center; display: flex; justify-content: space-between; margin-top: 6px; }
+.auth-label-row label { margin: 0; }
+.auth-label-row a, .auth-secondary a { color: var(--accent); font-weight: 800; }
+.auth-secondary { color: var(--muted); font-size: .86rem; margin: 24px 0 0; }
+.join-auth-layout { display: grid; gap: 28px; margin-inline: auto; max-width: 560px; width: 100%; }
+.join-auth-heading { text-align: center; }
+.join-auth-heading h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); margin-bottom: 14px; }
+.join-auth-heading .lede { margin-inline: auto; }
+
+.route-state { display: grid; gap: 12px; justify-items: center; padding: clamp(36px, 6vw, 64px) 30px; }
+.route-state h3 { margin: 0; }
+.route-state p { margin: 0; max-width: 60ch; }
+.route-state .boundary-note { text-align: left; }
+.route-state-retry { margin-top: 6px; }
+.route-state-forbidden, .route-state-unavailable, .route-state-error { border-style: solid; }
+.route-state-unavailable, .route-state-error { border-color: color-mix(in srgb, var(--danger) 45%, var(--border)); }
+.route-state-forbidden { border-color: color-mix(in srgb, var(--warning) 45%, var(--border)); }
+.route-state-loading::after { animation: route-state-pulse 1.4s ease-in-out infinite; background: var(--accent); border-radius: 999px; content: ""; height: 6px; width: 64px; }
+@keyframes route-state-pulse { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+
+/* ---------------------------------------------------------------------------
+   Admin portal.
+   A separate panel, NOT a separate visual system: no raw hex, no private palette,
+   no fixed dark ground. It follows the active Bridge theme like every other route.
+   --------------------------------------------------------------------------- */
+.age-gated-content:has(.admin-shell) > .site-header,
+.age-gated-content:has(.admin-shell) > .site-footer { display: none; }
+/* The skip link is deliberately NOT hidden here. Hiding it fails WCAG 2.4.1
+   bypass-blocks on a keyboard-heavy screen with a multi-item sidebar. */
+.admin-shell { background: var(--canvas); color: var(--text); min-height: 100vh; }
+.admin-sidebar { background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; inset: 0 auto 0 0; padding: 28px 18px 18px; position: fixed; width: 272px; z-index: 20; }
+.admin-sidebar-brand { align-items: center; border-bottom: 1px solid var(--border); display: flex; gap: 12px; min-height: 54px; padding: 0 8px 22px; }
+.admin-sidebar-brand img { height: auto; width: 36px; }
+.admin-sidebar-brand div { display: grid; gap: 3px; }
+.admin-sidebar-brand strong { font-size: .95rem; letter-spacing: .12em; }
+.admin-sidebar-brand span { color: var(--muted); font-size: .68rem; }
+.admin-sidebar-close, .admin-sidebar-toggle, .admin-sidebar-account button { background: transparent; border: 0; color: var(--muted); cursor: pointer; }
+.admin-sidebar-close { display: none; font-size: 1.6rem; margin-left: auto; min-height: 44px; min-width: 44px; }
+.admin-sidebar-nav { display: block; flex: 1; padding-top: 26px; }
+.admin-sidebar-nav > p { color: var(--muted); font-size: .68rem; font-weight: 800; letter-spacing: .14em; margin: 0 12px 10px; }
+.admin-sidebar-nav a { align-items: center; border-radius: calc(var(--radius) / 2); color: var(--muted); display: flex; font-size: .82rem; font-weight: 700; gap: 13px; margin: 4px 0; min-height: 46px; padding: 0 13px; transition: 150ms ease; }
+.admin-sidebar-nav a:hover { background: var(--surface-alt); color: var(--text); }
+.admin-sidebar-nav a[aria-current="page"] { background: var(--accent-soft); box-shadow: inset 2px 0 var(--accent); color: var(--text); font-weight: 800; }
+.admin-nav-icon { align-items: center; display: inline-flex; font-size: 1.05rem; justify-content: center; width: 19px; }
+.admin-sidebar-account { align-items: center; border-top: 1px solid var(--border); display: grid; gap: 10px; grid-template-columns: 36px minmax(0, 1fr) auto; padding: 20px 6px 12px; }
+.admin-account-avatar { background: var(--accent-soft); border: 1px solid var(--border); border-radius: 50%; color: var(--text); display: grid; font-size: .78rem; font-weight: 800; height: 36px; place-items: center; width: 36px; }
+.admin-account-copy { display: grid; gap: 4px; min-width: 0; }
+.admin-account-copy strong, .admin-account-copy span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-account-copy strong { font-size: .78rem; }
+.admin-account-copy span { color: var(--muted); font-size: .72rem; }
+.admin-sidebar-account button { min-height: 44px; min-width: 44px; }
+.admin-sidebar-org { align-items: center; color: var(--muted); display: flex; font-size: .72rem; gap: 8px; min-width: 0; padding: 5px 8px; }
+.admin-sidebar-org span:last-child { overflow: hidden; text-overflow: ellipsis; }
+.admin-main { margin-left: 272px; min-height: 100vh; }
+.admin-page { margin: 0 auto; padding: 58px 0 80px; width: min(100% - 64px, 1180px); }
+.admin-page-heading { align-items: end; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; margin-bottom: 34px; }
+.admin-eyebrow { color: var(--accent); font-size: .7rem; font-weight: 800; letter-spacing: .15em; margin: 0 0 10px; text-transform: uppercase; }
+.admin-page-heading h1 { font-size: clamp(2.3rem, 4vw, 3.5rem); line-height: 1.05; margin: 0; }
+.admin-page-heading h1 + p { color: var(--muted); font-size: .9rem; margin: 12px 0 0; }
+.admin-stat-grid { display: grid; gap: 14px; grid-template-columns: repeat(4, 1fr); }
+.admin-stat-card, .admin-content-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.admin-stat-card { align-items: flex-start; display: flex; justify-content: space-between; min-height: 132px; padding: 23px; }
+.admin-stat-card div { display: grid; gap: 16px; }
+.admin-stat-card span { color: var(--muted); font-size: .78rem; font-weight: 700; }
+.admin-stat-card strong { color: var(--text); font-size: 1.65rem; }
+.admin-stat-card .admin-status-text { color: var(--success); font-size: 1.15rem; }
+.admin-content-card { padding: 26px; }
+.admin-card-heading { align-items: flex-start; border-bottom: 1px solid var(--border); display: flex; gap: 14px; justify-content: space-between; padding-bottom: 21px; }
+.admin-card-heading h2 { font-size: 1.05rem; margin: 0; }
+.admin-card-heading p { color: var(--muted); font-size: .8rem; margin: 7px 0 0; }
+.admin-empty-state { color: var(--muted); font-size: .85rem; margin: 24px 0 0; }
+.admin-shell .dashboard-heading { margin-bottom: 34px; }
+.admin-shell .dashboard-heading h1 { font-size: clamp(2.3rem, 4vw, 3.5rem); }
+.admin-shell .dashboard-heading .lede { color: var(--muted); font-size: .9rem; }
+.admin-sidebar-toggle { display: none; }
+
+@media (max-width: 1050px) {
+  .admin-stat-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+  .admin-sidebar { transform: translateX(-100%); transition: transform 180ms ease; }
+  .admin-sidebar--open { transform: translateX(0); }
+  .admin-sidebar-close { display: block; }
+  .admin-sidebar-toggle { background: var(--surface); border: 1px solid var(--border); border-radius: calc(var(--radius) / 2); display: grid; font-size: 1.2rem; height: 44px; left: 15px; place-items: center; position: fixed; top: 15px; width: 44px; z-index: 12; }
+  .admin-sidebar-backdrop { background: color-mix(in srgb, var(--canvas) 72%, transparent); border: 0; inset: 0; position: fixed; z-index: 15; }
+  .admin-main { margin-left: 0; }
+  .admin-page { padding-top: 80px; width: min(100% - 32px, 620px); }
+  .admin-stat-grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-state-loading::after { animation: none; opacity: .6; }
+  .admin-sidebar { transition: none; }
 }

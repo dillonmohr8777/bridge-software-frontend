@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { AgeGate } from "@/components/AgeGate";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DEFAULT_THEME, lockedTheme } from "@/lib/direction-lock";
 import { AGE_GATE_CONFIRMED_VALUE, AGE_GATE_STORAGE_KEY } from "@/lib/age-gate";
@@ -33,17 +34,19 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: ageGateScript }} />
       </head>
       <body className={bridgeDisplay.variable}>
-        <AgeGate>
-          <a className="skip-link" href="#main">Skip to content</a>
-          <SiteHeader />
-          <main id="main">{children}</main>
-          <footer className="site-footer">
-            <div className="shell footer-inner">
-              <span>Bridge discovery prototype</span>
-              <span>Provisional identity · pending Tori approval</span>
-            </div>
-          </footer>
-        </AgeGate>
+        <AuthProvider>
+          <AgeGate>
+            <a className="skip-link" href="#main">Skip to content</a>
+            <SiteHeader />
+            <main id="main">{children}</main>
+            <footer className="site-footer">
+              <div className="shell footer-inner">
+                <span>Bridge discovery prototype</span>
+                <span>Provisional identity · pending Tori approval</span>
+              </div>
+            </footer>
+          </AgeGate>
+        </AuthProvider>
       </body>
     </html>
   );

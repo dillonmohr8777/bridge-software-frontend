@@ -15,22 +15,29 @@ export {
 export { getPhase3Client, getBridgeApiBase, isPhase3LiveApi } from "./client.ts";
 export {
   MockPhase3Client,
+  MOCK_MIN_PASSWORD_LENGTH,
+  mockAdminClaims,
   mockHarborClaims,
   applySimulatedFailure,
   applyUnverifiedOrganization,
 } from "./mock-client.ts";
-export { HttpPhase3Client } from "./http-client.ts";
+export { HttpPhase3Client, type AuthTransport } from "./http-client.ts";
 export {
   Phase3Error,
   contentTypes,
   audienceIds,
   type AudienceId,
+  type AuthCredentials,
+  type BridgeRole,
   type ConfirmContactsInput,
   type ConfirmContactsResult,
   type ContentType,
   type CreatePostInput,
   type Phase3Client,
+  type Phase3ErrorCode,
   type ProfileProjection,
+  type RegisterInput,
+  type RegisterResult,
   type ResponsibleContact,
   type SessionClaims,
   type UpdateContactsInput,
