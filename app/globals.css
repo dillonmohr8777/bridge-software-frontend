@@ -518,13 +518,13 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .bridge-home .visual-story-copy h2, .bridge-home .suite-heading h2 { color: #fff; font-family: var(--font-display); font-size: clamp(30px,3.2vw,48px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin: 12px 0 16px; }
 .bridge-home .visual-story-copy p, .bridge-home .suite-heading > span { color: rgba(255,255,255,.7); }
 .bridge-home .visual-story-track { display: grid; gap: 14px; grid-template-columns: repeat(12,minmax(0,1fr)); }
-.bridge-home .visual-story-card { background-position: center; background-size: cover; border: 1px solid rgba(218,190,252,.2); border-radius: 16px; box-shadow: 0 24px 55px rgba(0,0,0,.3); display: flex; flex-direction: column; gap: 8px; isolation: isolate; justify-content: flex-end; min-height: 270px; overflow: hidden; padding: 24px; position: relative; }
-.bridge-home .visual-story-card::before { background: linear-gradient(180deg,rgba(7,5,11,.08),rgba(7,5,11,.9)); content: ""; inset: 0; position: absolute; z-index: -1; }
+.bridge-home .visual-story-card { background-position: center; background-size: cover; border: var(--glass-ring); border-radius: 16px; box-shadow: 0 24px 55px rgba(0,0,0,.34); display: flex; flex-direction: column; gap: 0; isolation: isolate; justify-content: flex-end; min-height: 290px; overflow: hidden; padding: 0; position: relative; }
+.bridge-home .visual-story-card::before { background: linear-gradient(180deg,transparent 62%,rgba(7,5,11,.45)); bottom: 92px; content: ""; left: 0; position: absolute; right: 0; top: 0; z-index: -1; }
 .bridge-home .visual-story-card.network { background-image: url("/bridge-editorial/home-community-network.webp"); grid-column: span 5; }
 .bridge-home .visual-story-card.markets { background-image: url("/bridge-editorial/home-nationwide-markets.webp"); grid-column: span 4; }
 .bridge-home .visual-story-card.identity { background-image: url("/bridge-editorial/home-verified-identity.webp"); grid-column: span 3; }
-.bridge-home .visual-story-card span { color: #d5b0ff; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.bridge-home .visual-story-card strong { color: #fff; font-family: var(--font-display); font-size: 18px; line-height: 1.25; }
+.bridge-home .visual-story-card span { background: #0a070e; color: #d5b0ff; font-family: var(--font-subhead); font-size: 10px; font-weight: 700; letter-spacing: .08em; padding: 16px 18px 4px; text-transform: uppercase; }
+.bridge-home .visual-story-card strong { background: #0a070e; color: #fff; font-family: var(--font-display); font-size: 17px; line-height: 1.22; padding: 0 18px 18px; }
 .bridge-home .entry-rail { align-items: stretch; background: linear-gradient(135deg,#100b15,#09060d); display: grid; grid-template-columns: minmax(210px,.7fr) minmax(0,2.3fr); padding: 0 clamp(24px,6vw,86px); }
 .bridge-home .entry-rail-copy { align-content: center; display: grid; gap: 5px; padding: 25px 28px 25px 0; }
 .bridge-home .entry-rail-copy span { color: #c99cff; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
@@ -585,10 +585,6 @@ body:has(.bridge-home) > .site-footer { display: none; }
 @keyframes bridge-image-drift {
   from { transform: scale(1.015) translate3d(-.35%, 0, 0); }
   to { transform: scale(1.055) translate3d(.35%, -.4%, 0); }
-}
-@keyframes bridge-story-drift {
-  from { background-position: 49% 50%; }
-  to { background-position: 53% 47%; }
 }
 .grain-image { isolation: isolate; overflow: hidden; position: relative; }
 .grain-image::after {
@@ -706,7 +702,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .join-pricing-note { align-items: center; background: var(--accent-soft); border: 1px solid var(--border); border-radius: 14px; display: flex; gap: 20px; justify-content: space-between; margin-top: 18px; padding: 18px; }
 .join-pricing-note p { margin-bottom: 4px; }
 
-.bridge-home .visual-story-card { animation: bridge-story-drift 20s ease-in-out infinite alternate; background-size: 108%; }
+.bridge-home .visual-story-card { background-size: cover; }
 .bridge-home .visual-story-card::after {
   background-image: url("/textures/bridge-film-grain.webp");
   background-size: 256px 256px;
@@ -788,7 +784,7 @@ body:has(.bridge-home) > .site-footer { display: none; }
    colour beneath supplies hue. Same look, no extra elements. */
 .bridge-home .visual-story-card, .category-thumb {
   background-blend-mode: luminosity;
-  background-color: color-mix(in srgb, var(--brand) 44%, var(--accent));
+  background-color: color-mix(in srgb, var(--brand) 30%, var(--accent));
 }
 .bridge-home .visual-story-card::after, .bridge-home .visual-story-card::before { z-index: 0; }
 
