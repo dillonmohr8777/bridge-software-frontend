@@ -7,6 +7,7 @@ import { US_STATE_OPTIONS } from "@/lib/states";
 import { StatusChip } from "@/components/StatusChip";
 import { Mascot } from "@/components/Mascot";
 import { FollowButton } from "@/components/FollowButton";
+import { PromotedSlot } from "@/components/PromotedSlot";
 import { GetListedBand } from "@/components/GetListedBand";
 const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Cultivator","Manufacturer","Lab","Transport","Bank","Service","Media","Hydroponics"];
 const FEATURED_MARKETS = ["All states", "California", "Michigan", "Maryland", "Colorado", "Pennsylvania"];
@@ -136,12 +137,12 @@ export function ExploreClient() {
           <div className="empty-state"><h3>No matches</h3><p>Try a simpler term, clear the category, or switch off Favorites only.</p></div>
         )}
         <div className="card-grid two">
-          {results.map((profile) => {
+          {results.map((profile, index) => {
             const fav = favorites.includes(profile.slug);
             return (
               <article key={profile.slug} className="profile-card">
                 {profile.imageSrc && <div className="grain-image profile-card-image"><Image alt={profile.imageAlt ?? ""} fill sizes="(max-width: 720px) 100vw, 50vw" src={profile.imageSrc} /></div>}
-                <div className="card-topline"><span className="avatar">{profile.initials}</span><StatusChip verified={profile.verified} /></div>
+                <div className="card-topline"><span className="avatar">{profile.initials}</span><StatusChip verified={profile.verified} />{index === 0 ? <PromotedSlot /> : null}</div>
                 <h3>{profile.name}</h3>
                 <p className="muted">{profile.role} · {profile.location}</p>
                 <p>{profile.description}</p>

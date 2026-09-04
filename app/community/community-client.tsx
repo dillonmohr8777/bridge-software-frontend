@@ -2,14 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PostActions } from "@/components/PostActions";
 import { useSocial } from "@/lib/social";
+import { getPhase3Client } from "@/lib/phase3";
+import type { PostRecord } from "@/lib/phase3/types";
 import { US_STATE_OPTIONS } from "@/lib/states";
 
 type FeedItem = {
   id: string;
-  type: "Promotion" | "Product introduction" | "Vendor announcement" | "Industry news" | "Event" | "Education" | "Market signal" | "Service update";
+  /* Includes the ContentType values the composer can produce, so a published
+     promotion is the same shape as a sample story. */
+  type: "Promotion" | "Product introduction" | "Vendor announcement" | "Industry news" | "Event" | "Education" | "Market signal" | "Service update" | "Update";
   title: string;
   org: string;
   audience: string;
@@ -19,6 +23,9 @@ type FeedItem = {
   image: string;
   imageAlt: string;
   age: string;
+  /* Set on anything the member published in this build, so the feed can mark
+     it as theirs rather than passing it off as sample activity. */
+  mine?: boolean;
 };
 
 const items: FeedItem[] = [
@@ -57,6 +64,13 @@ const categoryImageByName: Record<string, string> = {
   Testing: "/bridge-editorial/community-category-testing.webp",
 };
 
+/* First line of the message becomes the card title; the composer is a single
+   free-text field, so there is nothing else to use. */
+function firstLine(message: string): string {
+  const [head] = message.split(String.fromCharCode(10));
+  return head.trim().slice(0, 72) || "Your promotion";
+}
+
 export function CommunityClient() {
   const [layout, setLayout] = useState<"grid" | "aligned" | "classic">("grid");
   const [category, setCategory] = useState("All");
@@ -65,19 +79,50 @@ export function CommunityClient() {
   // PostActions writes favourites to the shared social store, so the filter
   // must read the same place or the page grows two favourite systems.
   const social = useSocial();
+  const [followingOnly, setFollowingOnly] = useState(false);
+  /* Anything published on Create shows up here, at the top, marked as yours.
+     Without this the composer posts into nothing and the loop never closes. */
+  const [mine, setMine] = useState<FeedItem[]>([]);
+
+  useEffect(() => {
+    let live = true;
+    getPhase3Client()
+      .listPosts()
+      .then((posts: PostRecord[]) => {
+        if (!live) return;
+        setMine(posts.map((post) => ({
+          id: post.postId,
+          type: post.contentType,
+          title: firstLine(post.message),
+          org: "Your organization",
+          audience: post.protectedDetail ? "Verified audiences" : "As selected",
+          body: post.message,
+          state: "All states",
+          category: "All",
+          image: "/bridge-editorial/create-promotion-studio.webp",
+          imageAlt: "",
+          age: "Just now",
+          mine: true,
+        })));
+      })
+      .catch(() => { /* Signed out or the mock threw; the sample feed still renders. */ });
+    return () => { live = false; };
+  }, []);
   const sampleStates = useMemo(
     () => Array.from(new Set(items.map((item) => item.state))).sort(),
     [],
   );
 
+  const allItems = useMemo(() => [...mine, ...items], [mine]);
   const visibleItems = useMemo(
-    () => items.filter((item) => {
+    () => allItems.filter((item) => {
       if (category !== "All" && item.category !== category) return false;
       if (state !== "All states" && item.state !== state) return false;
       if (favoritesOnly && !social.favorites.includes(item.id)) return false;
+      if (followingOnly && !social.following.includes(item.org)) return false;
       return true;
     }),
-    [category, favoritesOnly, social.favorites, state],
+    [allItems, category, favoritesOnly, followingOnly, social.favorites, social.following, state],
   );
   const noSampleForState = state !== "All states" && !sampleStates.includes(state) && visibleItems.length === 0;
 
@@ -104,7 +149,8 @@ export function CommunityClient() {
             {US_STATE_OPTIONS.map((item) => <option key={item}>{item}</option>)}
           </select>
         </label>
-        <label className="check-row favorites-control"><input checked={favoritesOnly} onChange={(event) => setFavoritesOnly(event.target.checked)} type="checkbox" /><span>Favorites only</span></label>
+        <label className="check-row favorites-control"><input checked={favoritesOnly} onChange={(event) => setFavoritesOnly(event.target.checked)} type="checkbox" /><span>Saved only</span></label>
+        <label className="check-row favorites-control"><input checked={followingOnly} onChange={(event) => setFollowingOnly(event.target.checked)} type="checkbox" /><span>Following only</span></label>
       </div>
 
       <p className="review-notice">Review build. Every post below is written sample content, not live activity. The filters, layouts and saving all work for real.</p>
@@ -125,7 +171,7 @@ export function CommunityClient() {
                 </div>
                 <div className="news-card-copy">
                   <div className="card-topline"><span className="status-chip">{item.type}</span><span className="tag">{item.audience}</span></div>
-                  <p className="eyebrow">{item.state} · {item.category}</p>
+                  <p className="eyebrow">{item.mine ? "Published by you" : `${item.state} · ${item.category}`}</p>
                   <h3>{item.title}</h3>
                   <p className="muted">{item.org} · {item.age}</p>
                   <p className="news-card-summary">{item.body}</p>
