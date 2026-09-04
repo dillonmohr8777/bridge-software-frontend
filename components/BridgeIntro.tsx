@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { IntroParticles } from "./IntroParticles";
 import "./bridge-intro.css";
 
 /*
@@ -17,7 +18,9 @@ import "./bridge-intro.css";
  * that gate.
  */
 
-const RUN_MS = 3250;
+/* 5s total: 3.4s of treatments, then the smoke gathers into the mark. */
+const RUN_MS = 5000;
+const GATHER_AT_MS = 3400;
 const TREATMENT_MS = 210;
 const TREATMENTS = 14;
 const WORD = "BRIDGE";
@@ -25,6 +28,7 @@ const WORD = "BRIDGE";
 export function BridgeIntro({ onDone }: { onDone: () => void }) {
   const [treatment, setTreatment] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const [gathering, setGathering] = useState(false);
   const doneRef = useRef(false);
   const skipRef = useRef<HTMLButtonElement>(null);
 
@@ -42,6 +46,12 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
     const cycle = window.setInterval(() => {
       setTreatment((current) => (current + 1) % TREATMENTS);
     }, TREATMENT_MS);
+    /* Stop cycling when the wordmark starts dissolving, so the last frame
+       does not flick to a new treatment mid-gather. */
+    const hold = window.setTimeout(() => {
+      window.clearInterval(cycle);
+      setGathering(true);
+    }, GATHER_AT_MS);
     const end = window.setTimeout(finish, RUN_MS);
 
     function onKey(event: KeyboardEvent) {
@@ -51,6 +61,7 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
 
     return () => {
       window.clearInterval(cycle);
+      window.clearTimeout(hold);
       window.clearTimeout(end);
       window.removeEventListener("keydown", onKey);
     };
@@ -62,6 +73,7 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
     <div
       aria-label="Bridge intro animation"
       className="bridge-intro"
+      data-gathering={gathering || undefined}
       data-leaving={leaving || undefined}
       onClick={finish}
       role="presentation"
@@ -105,6 +117,9 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
         <span className="bi-underline" aria-hidden="true" />
         <span className="bi-hand">one industry, one network</span>
       </div>
+
+      <IntroParticles gatherAt={GATHER_AT_MS} />
+      <img alt="" aria-hidden="true" className="bi-logo" src="/bridge-mark.svg" />
 
       <button className="bi-skip" onClick={finish} ref={skipRef} type="button">
         Skip

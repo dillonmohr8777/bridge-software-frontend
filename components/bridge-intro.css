@@ -229,21 +229,23 @@
   color: transparent;
 }
 
-/* Butterflies. */
+/* Antique lepidoptery plate, clipped into the letters. */
 .bi-word[data-treatment="4"] {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'120'%20viewBox%3D'0%200%20120%20120'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23F0E6C8'%20stroke-width%3D'2.4'%20stroke-linejoin%3D'round'%3E%3Cpath%20d%3D'M30%2034c-11-13-24-9-24%202s13%2016%2024%208z'%2F%3E%3Cpath%20d%3D'M30%2034c11-13%2024-9%2024%202s-13%2016-24%208z'%2F%3E%3Cpath%20d%3D'M30%2030v22'%2F%3E%3Cpath%20d%3D'M28%2028l-5-7M32%2028l5-7'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'none'%20stroke%3D'%23B983FF'%20stroke-width%3D'2.4'%20stroke-linejoin%3D'round'%3E%3Cpath%20d%3D'M88%2084c-11-13-24-9-24%202s13%2016%2024%208z'%2F%3E%3Cpath%20d%3D'M88%2084c11-13%2024-9%2024%202s-13%2016-24%208z'%2F%3E%3Cpath%20d%3D'M88%2080v22'%2F%3E%3Cpath%20d%3D'M86%2078l-5-7M90%2078l5-7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"), linear-gradient(160deg, var(--brand), var(--accent) 80%);
-  background-size: 74px 74px, cover;
+  background-image: url("/intro/plates/butterflies.webp");
+  background-position: center 42%;
+  background-size: 118% auto;
   color: transparent;
 }
 
-/* Guitars, tiled. */
+/* Engraved guitar patent plate. */
 .bi-word[data-treatment="5"] {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'150'%20height%3D'90'%20viewBox%3D'0%200%20150%2090'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23F0E6C8'%20stroke-width%3D'3'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M22%2046c0-13%2010-22%2024-22%209%200%2014%205%2020%205s9-4%2017-4c11%200%2019%208%2019%2021s-8%2021-19%2021c-8%200-11-4-17-4s-11%205-20%205c-14%200-24-9-24-22z'%2F%3E%3Cpath%20d%3D'M102%2046h28'%2F%3E%3Cpath%20d%3D'M130%2038h12v16h-12z'%2F%3E%3Ccircle%20cx%3D'55'%20cy%3D'46'%20r%3D'10'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"), linear-gradient(200deg, #fff, var(--brand) 78%);
-  background-size: 96px 58px, cover;
+  background-image: url("/intro/plates/guitar.webp");
+  background-position: center 46%;
+  background-size: 122% auto;
   color: transparent;
 }
 
@@ -265,12 +267,13 @@
   color: transparent;
 }
 
-/* Halftone print dots. */
+/* Celestial chart engraving. The densest plate, so it reads even at speed. */
 .bi-word[data-treatment="8"] {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%3E%3Ccircle%20cx%3D'6'%20cy%3D'6'%20r%3D'4.2'%20fill%3D'%23F0E6C8'%2F%3E%3Ccircle%20cx%3D'18'%20cy%3D'18'%20r%3D'2.4'%20fill%3D'%23B983FF'%2F%3E%3C%2Fsvg%3E"), linear-gradient(140deg, var(--brand), var(--accent));
-  background-size: 16px 16px, cover;
+  background-image: url("/intro/plates/celestial.webp");
+  background-position: center 50%;
+  background-size: 128% auto;
   color: transparent;
 }
 
@@ -389,4 +392,35 @@
   .bi-word { font-size: clamp(2.9rem, 16.5vw, 8rem); }
   /* The marker-hand treatment sets wider, so it gets its own phone size. */
   .bi-word[data-treatment="13"] { font-size: clamp(3rem, 17vw, 9rem); }
+}
+
+/* Particle finale: smoke off the wordmark, gathering into the arch mark. */
+/* A canvas is a replaced element: inset alone leaves it at its intrinsic
+   300x150, so it needs an explicit size to fill the stage. */
+.bi-particles { block-size: 100%; inline-size: 100%; inset: 0; pointer-events: none; position: absolute; z-index: 4; }
+
+/* The stage steps back as the particles take over. */
+.bridge-intro[data-gathering] .bi-stage,
+.bridge-intro[data-gathering] .bi-ephemera,
+.bridge-intro[data-gathering] .bi-guitar {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+.bi-logo {
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  opacity: 0;
+  position: absolute;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: clamp(150px, 26vw, 290px);
+  z-index: 5;
+}
+
+.bridge-intro[data-gathering] .bi-logo {
+  animation: bi-logo-in 0.9s var(--ease, ease-out) 0.85s forwards;
+}
+
+@keyframes bi-logo-in {
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
