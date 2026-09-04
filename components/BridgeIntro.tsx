@@ -6,7 +6,7 @@ import "./bridge-intro.css";
 /*
  * The 3.25s scrapbook cold open that runs before the 21+ gate.
  *
- * The wordmark cycles through nine treatments at speed while torn paper, tape,
+ * The wordmark cycles through fourteen treatments at speed while torn paper, tape,
  * stamps, doodles and a guitar slam in around it. It is the Field Notes
  * companion's visual language, which the client already reacted to, pushed
  * harder and made the front door.
@@ -18,8 +18,8 @@ import "./bridge-intro.css";
  */
 
 const RUN_MS = 3250;
-const TREATMENT_MS = 190;
-const TREATMENTS = 9;
+const TREATMENT_MS = 210;
+const TREATMENTS = 14;
 const WORD = "BRIDGE";
 
 export function BridgeIntro({ onDone }: { onDone: () => void }) {

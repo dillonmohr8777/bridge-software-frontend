@@ -196,12 +196,12 @@
   to { opacity: 1; }
 }
 
-/* Nine treatments, swapped every 190ms. Each one is a different way of
+/* Fourteen treatments, swapped every 210ms. Each is a different way of
    drawing the same word, which is what gives it the flick-book feel. */
 .bi-word[data-treatment="0"] { color: #fff; }
 
-/* The art sits OVER a solid underlay. Clipped to text on its own, a mostly
-   transparent SVG paints almost nothing and the word flashes blank. */
+/* Every image fill sits over a solid underlay. Clipped to text on its own,
+   art with transparency paints almost nothing and the word flashes blank. */
 .bi-word[data-treatment="1"] {
   -webkit-background-clip: text;
   background-clip: text;
@@ -210,49 +210,103 @@
   color: transparent;
 }
 
+/* Weed leaves packed inside the letterforms. */
 .bi-word[data-treatment="2"] {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: conic-gradient(from 210deg, var(--accent), #fff 30%, var(--brand) 62%, var(--accent));
+  background-image: url("/intro/leaf-doodles.svg"), linear-gradient(150deg, var(--accent), #fff 72%);
+  background-size: 34%, cover;
   color: transparent;
 }
 
+/* The spray-painted wall from the launch film, clipped into the word. */
 .bi-word[data-treatment="3"] {
-  color: color-mix(in srgb, var(--brand) 55%, transparent);
-  -webkit-text-stroke: 3px #fff;
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: url("/bridge-launch-poster.webp"), linear-gradient(180deg, #fff, var(--brand));
+  background-position: center 38%, center;
+  background-size: cover, cover;
+  color: transparent;
 }
 
+/* Butterflies. */
 .bi-word[data-treatment="4"] {
-  color: #fff;
-  text-shadow:
-    3px 0 0 var(--signal),
-    -3px 0 0 var(--accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'120'%20height%3D'120'%20viewBox%3D'0%200%20120%20120'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23F0E6C8'%20stroke-width%3D'2.4'%20stroke-linejoin%3D'round'%3E%3Cpath%20d%3D'M30%2034c-11-13-24-9-24%202s13%2016%2024%208z'%2F%3E%3Cpath%20d%3D'M30%2034c11-13%2024-9%2024%202s-13%2016-24%208z'%2F%3E%3Cpath%20d%3D'M30%2030v22'%2F%3E%3Cpath%20d%3D'M28%2028l-5-7M32%2028l5-7'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'none'%20stroke%3D'%23B983FF'%20stroke-width%3D'2.4'%20stroke-linejoin%3D'round'%3E%3Cpath%20d%3D'M88%2084c-11-13-24-9-24%202s13%2016%2024%208z'%2F%3E%3Cpath%20d%3D'M88%2084c11-13%2024-9%2024%202s-13%2016-24%208z'%2F%3E%3Cpath%20d%3D'M88%2080v22'%2F%3E%3Cpath%20d%3D'M86%2078l-5-7M90%2078l5-7'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"), linear-gradient(160deg, var(--brand), var(--accent) 80%);
+  background-size: 74px 74px, cover;
+  color: transparent;
 }
 
+/* Guitars, tiled. */
 .bi-word[data-treatment="5"] {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: url("/intro/leaf-doodles.svg"), linear-gradient(160deg, var(--accent), #fff 70%);
-  background-size: 44%, cover;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'150'%20height%3D'90'%20viewBox%3D'0%200%20150%2090'%3E%3Cg%20fill%3D'none'%20stroke%3D'%23F0E6C8'%20stroke-width%3D'3'%20stroke-linecap%3D'round'%3E%3Cpath%20d%3D'M22%2046c0-13%2010-22%2024-22%209%200%2014%205%2020%205s9-4%2017-4c11%200%2019%208%2019%2021s-8%2021-19%2021c-8%200-11-4-17-4s-11%205-20%205c-14%200-24-9-24-22z'%2F%3E%3Cpath%20d%3D'M102%2046h28'%2F%3E%3Cpath%20d%3D'M130%2038h12v16h-12z'%2F%3E%3Ccircle%20cx%3D'55'%20cy%3D'46'%20r%3D'10'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"), linear-gradient(200deg, #fff, var(--brand) 78%);
+  background-size: 96px 58px, cover;
   color: transparent;
 }
 
+/* Torn paper and tape, straight from the scrapbook sheet. */
 .bi-word[data-treatment="6"] {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: url("/intro/ephemera.svg"), linear-gradient(180deg, #F0E6C8, var(--accent));
+  background-size: 42%, cover;
+  color: transparent;
+}
+
+/* Grunge: torn photocopy noise. */
+.bi-word[data-treatment="7"] {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'140'%20height%3D'140'%3E%3Cfilter%20id%3D'g'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.04%200.9'%20numOctaves%3D'4'%20seed%3D'7'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.72%200%200%200%200%200.51%200%200%200%200%201%200%200%200%20-1.6%201.1'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'140'%20height%3D'140'%20filter%3D'url(%23g)'%2F%3E%3C%2Fsvg%3E"), linear-gradient(180deg, #fff, var(--brand) 84%);
+  background-size: 130px 130px, cover;
+  color: transparent;
+}
+
+/* Halftone print dots. */
+.bi-word[data-treatment="8"] {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%3E%3Ccircle%20cx%3D'6'%20cy%3D'6'%20r%3D'4.2'%20fill%3D'%23F0E6C8'%2F%3E%3Ccircle%20cx%3D'18'%20cy%3D'18'%20r%3D'2.4'%20fill%3D'%23B983FF'%2F%3E%3C%2Fsvg%3E"), linear-gradient(140deg, var(--brand), var(--accent));
+  background-size: 16px 16px, cover;
+  color: transparent;
+}
+
+/* Chrome bevel. */
+.bi-word[data-treatment="9"] {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: linear-gradient(178deg, #fff 6%, #cbb6e8 30%, #6a4f8f 52%, #fff 60%, #b08fd6 82%, #3a2358);
+  color: transparent;
+}
+
+/* Chromatic split, like a bad print registration. */
+.bi-word[data-treatment="10"] {
+  color: #fff;
+  text-shadow: 4px 0 0 var(--signal), -4px 0 0 var(--accent);
+}
+
+/* Neon tube. */
+.bi-word[data-treatment="11"] {
   color: var(--accent);
   text-shadow:
-    0 0 14px color-mix(in srgb, var(--accent) 70%, transparent),
-    0 0 42px color-mix(in srgb, var(--brand) 80%, transparent);
+    0 0 12px color-mix(in srgb, var(--accent) 80%, transparent),
+    0 0 40px color-mix(in srgb, var(--brand) 85%, transparent);
 }
 
-.bi-word[data-treatment="7"] {
-  color: #fff;
-  transform: skewX(-9deg);
+/* Spray stencil, outline only. */
+.bi-word[data-treatment="12"] {
+  color: color-mix(in srgb, var(--brand) 48%, transparent);
+  -webkit-text-stroke: 3px #F0E6C8;
 }
 
-.bi-word[data-treatment="8"] {
-  font-family: var(--font-hand);
+/* Marker hand, rotated off the baseline. */
+.bi-word[data-treatment="13"] {
   color: var(--accent);
-  font-size: clamp(3.6rem, 20vw, 13rem);
+  font-family: var(--font-hand);
+  font-size: clamp(3.6rem, 19vw, 13rem);
   transform: rotate(-3.4deg);
 }
 
@@ -333,5 +387,6 @@
   .bi-guitar { width: 150vw; }
   /* 21vw overflowed the right edge on a 430px screen. */
   .bi-word { font-size: clamp(2.9rem, 16.5vw, 8rem); }
-  .bi-word[data-treatment="8"] { font-size: clamp(3.2rem, 19vw, 9rem); }
+  /* The marker-hand treatment sets wider, so it gets its own phone size. */
+  .bi-word[data-treatment="13"] { font-size: clamp(3rem, 17vw, 9rem); }
 }

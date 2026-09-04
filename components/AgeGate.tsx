@@ -17,8 +17,6 @@ import {
 
 type GateState = "checking" | "intro" | "prompt" | "denied" | "allowed";
 
-const INTRO_SEEN_KEY = "bridge-intro-seen";
-
 const focusableSelector = [
   "button:not([disabled])",
   "a[href]",
@@ -33,31 +31,32 @@ export function AgeGate({ children }: Readonly<{ children: ReactNode }>) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
   const leaveRef = useRef<HTMLButtonElement>(null);
+  const confirmedRef = useRef(false);
   const isLocked = state !== "allowed";
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
+      let confirmed = false;
       try {
-        const confirmed = isAgeGateConfirmed(
+        confirmed = isAgeGateConfirmed(
           window.localStorage.getItem(AGE_GATE_STORAGE_KEY),
         );
-        if (confirmed) {
-          setState("allowed");
-          return;
-        }
-        /* The cold open runs once, and never for anyone who has asked for
-           less motion - it sits in front of a legal gate. */
-        const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        let seen = false;
-        try {
-          seen = window.sessionStorage.getItem(INTRO_SEEN_KEY) === "1";
-        } catch {
-          seen = true;
-        }
-        setState(quiet || seen ? "prompt" : "intro");
       } catch {
-        setState("prompt");
+        confirmed = false;
       }
+      confirmedRef.current = confirmed;
+
+      /* The cold open plays on every full page load, for returning visitors
+         too - it is the front door of the product, not a first-run tip. It
+         does not replay on client-side navigation, because this layout does
+         not remount. The one exception is reduced motion, since it sits in
+         front of a legal gate. */
+      const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (quiet) {
+        setState(confirmed ? "allowed" : "prompt");
+        return;
+      }
+      setState("intro");
     });
 
     return () => window.cancelAnimationFrame(frame);
@@ -138,14 +137,7 @@ export function AgeGate({ children }: Readonly<{ children: ReactNode }>) {
       </div>
       {state === "intro" && (
         <BridgeIntro
-          onDone={() => {
-            try {
-              window.sessionStorage.setItem(INTRO_SEEN_KEY, "1");
-            } catch {
-              /* Private mode. It simply plays again next visit. */
-            }
-            setState("prompt");
-          }}
+          onDone={() => setState(confirmedRef.current ? "allowed" : "prompt")}
         />
       )}
       {isLocked && state !== "intro" && (
