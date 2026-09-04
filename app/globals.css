@@ -589,17 +589,6 @@ body:has(.bridge-home) > .site-footer { display: none; }
   to { transform: scale(1.055) translate3d(.35%, -.4%, 0); }
 }
 .grain-image { isolation: isolate; overflow: hidden; position: relative; }
-.grain-image::after {
-  background-image: url("/textures/bridge-film-grain.webp");
-  background-size: 256px 256px;
-  content: "";
-  inset: 0;
-  mix-blend-mode: soft-light;
-  opacity: .34;
-  pointer-events: none;
-  position: absolute;
-  z-index: 2;
-}
 .grain-image img { animation: bridge-image-drift 18s ease-in-out infinite alternate; object-fit: cover; }
 .page-heading-with-media { align-items: center; display: grid; gap: clamp(28px, 5vw, 64px); grid-template-columns: minmax(0, 1.08fr) minmax(300px, .72fr); max-width: none; }
 .page-heading-with-media > div:first-child { max-width: 850px; }
@@ -778,14 +767,16 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
    never the cause. These values land +32% / +29%. */
 .grain-image img, .news-image img, .page-heading-media img { filter: saturate(.45) contrast(1.06) brightness(1.42); }
 /* Thumbnails are the smallest and darkest surface, so they take more lift. */
-.category-thumb, .explore-category-tile img { filter: saturate(.5) contrast(1.02) brightness(1.55); }
+/* Small surfaces need LESS processing to stay legible, not more. */
+.category-thumb, .explore-category-tile img { filter: saturate(.55) contrast(1.02) brightness(1.28); }
 .grain-image::after, .news-image::after, .page-heading-media::after {
   background: linear-gradient(168deg, color-mix(in srgb, var(--accent) 88%, transparent), color-mix(in srgb, var(--brand) 92%, transparent) 62%, color-mix(in srgb, var(--canvas) 90%, transparent));
   content: ""; inset: 0; mix-blend-mode: color; opacity: .28; pointer-events: none; position: absolute; z-index: 1;
 }
 .grain-image::before, .news-image::before, .page-heading-media::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-  content: ""; inset: 0; mix-blend-mode: overlay; opacity: .13; pointer-events: none; position: absolute; z-index: 2;
+  background-image: url("/textures/bridge-film-grain.webp");
+  background-size: 256px 256px;
+  content: ""; inset: 0; mix-blend-mode: soft-light; opacity: .3; pointer-events: none; position: absolute; z-index: 2;
 }
 
 /* One review-build notice instead of the word "fictional" in twenty posts. */
@@ -794,7 +785,9 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
 /* Background-image art cannot take the img filter, so it gets the same
    duotone via background-blend-mode: the photo supplies luminosity and the
    colour beneath supplies hue. Same look, no extra elements. */
-.bridge-home .visual-story-card, .category-thumb {
+/* Deliberate exemption: the home hero runs a brand-film register rather
+   than the documentary editorial treatment. Keep it out of .grain-image. */
+.bridge-home .visual-story-card {
   background-blend-mode: luminosity;
   background-color: color-mix(in srgb, var(--brand) 30%, var(--accent));
 }

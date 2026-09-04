@@ -109,7 +109,8 @@
   animation: bi-smoke-column 5s linear 0s forwards;
   bottom: -30%;
   left: 50%;
-  width: clamp(520px, 130vw, 1500px);
+  opacity: .34;
+  width: clamp(420px, 92vw, 1000px);
 }
 
 /* A second, slower column offset behind it so the smoke never reads as one
@@ -119,7 +120,8 @@
   bottom: -40%;
   left: 34%;
   transform: translate(-50%, 0) scale(1.3);
-  width: clamp(600px, 150vw, 1800px);
+  opacity: .22;
+  width: clamp(480px, 110vw, 1200px);
   z-index: 1;
 }
 
@@ -142,9 +144,9 @@
 /* Rises the full height of the frame across the whole run. */
 @keyframes bi-smoke-column {
   from { opacity: 0; transform: translate(-50%, 26%) scale(1); }
-  18% { opacity: 0.5; }
-  70% { opacity: 0.42; }
-  to { opacity: 0.2; transform: translate(-50%, -78%) scale(1.5); }
+  20% { opacity: 0.34; }
+  70% { opacity: 0.28; }
+  to { opacity: 0.12; transform: translate(-50%, -70%) scale(1.4); }
 }
 
 /* ---- guitar ------------------------------------------------------------ */
@@ -168,12 +170,22 @@
 
 /* ---- wordmark ---------------------------------------------------------- */
 
+.bi-stage::before {
+  background: radial-gradient(ellipse 66% 50% at 50% 50%, rgba(6, 4, 10, .9), rgba(6, 4, 10, .6) 58%, transparent 80%);
+  content: "";
+  inset: -18% -14%;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
 .bi-stage {
   display: grid;
+  /* Above the grain and the film: nothing overlays the wordmark. */
+  z-index: 7;
   gap: 6px;
   justify-items: center;
   position: relative;
-  z-index: 5;
   text-align: center;
   padding-inline: 20px;
 }
@@ -191,10 +203,10 @@
 .bi-word {
   display: flex;
   font-family: var(--font-display);
-  font-size: clamp(3.1rem, 17vw, 11rem);
+  font-size: clamp(4rem, 23vw, 19rem);
   font-weight: 800;
   gap: 0.01em;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.055em;
   line-height: 0.94;
   margin: 0;
 }
@@ -211,122 +223,105 @@
   to { opacity: 1; }
 }
 
-/* Fourteen treatments, swapped every 210ms. Each is a different way of
-   drawing the same word, which is what gives it the flick-book feel. */
-.bi-word[data-treatment="0"] { color: #fff; }
+/* The wordmark is solid cream by default. Individual letters take an art
+   fill for a beat and hand it back, so the word stays readable throughout and
+   lands clean - the companion's letter cycler, not a whole-word swap. */
+.bi-word { color: #F6F1E6; }
 
-/* Every image fill sits over a solid underlay. Clipped to text on its own,
-   art with transparency paints almost nothing and the word flashes blank. */
-.bi-word[data-treatment="1"] {
+.bi-letter[data-t] {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: url("/intro/smoke-motif.svg"), linear-gradient(180deg, #fff, var(--accent));
-  background-size: cover, cover;
   color: transparent;
 }
-
-/* Antique herbarium specimen sheet inside the letterforms. */
-.bi-word[data-treatment="2"] {
-  -webkit-background-clip: text;
-  background-clip: text;
+/* Graffiti wildstyle. */
+.bi-letter[data-t="0"] {
+  background-image: url("/intro/plates/graffiti.webp");
+  background-position: center 45%;
+  background-size: 112% auto;
+}
+/* Punk zine collage. */
+.bi-letter[data-t="1"] {
+  background-image: url("/intro/plates/zine.webp");
+  background-position: center 45%;
+  background-size: 104% auto;
+}
+/* Herbarium specimen sheet. */
+.bi-letter[data-t="2"] {
   background-image: url("/intro/plates/botanical.webp");
   background-position: center 40%;
-  background-size: 106% auto;
-  color: transparent;
+  background-size: 180% auto;
 }
-
-/* The spray-painted wall from the launch film, clipped into the word. */
-.bi-word[data-treatment="3"] {
-  -webkit-background-clip: text;
-  background-clip: text;
-  background-image: url("/bridge-launch-poster.webp"), linear-gradient(180deg, #fff, var(--brand));
-  background-position: center 38%, center;
-  background-size: cover, cover;
-  color: transparent;
-}
-
-/* Antique lepidoptery plate, clipped into the letters. */
-.bi-word[data-treatment="4"] {
-  -webkit-background-clip: text;
-  background-clip: text;
+/* Lepidoptery plate. */
+.bi-letter[data-t="3"] {
   background-image: url("/intro/plates/butterflies.webp");
   background-position: center 42%;
-  background-size: 118% auto;
-  color: transparent;
+  background-size: 190% auto;
 }
-
-/* Engraved guitar patent plate. */
-.bi-word[data-treatment="5"] {
-  -webkit-background-clip: text;
-  background-clip: text;
-  background-image: url("/intro/plates/guitar.webp");
-  background-position: center 46%;
-  background-size: 122% auto;
-  color: transparent;
+/* Hand drawn guitars. */
+.bi-letter[data-t="4"] {
+  background-image: url("/intro/plates/guitars.webp");
+  background-position: center 45%;
+  background-size: 150% auto;
 }
-
-/* Torn paper and tape, straight from the scrapbook sheet. */
-.bi-word[data-treatment="6"] {
-  -webkit-background-clip: text;
-  background-clip: text;
-  background-image: url("/intro/ephemera.svg"), linear-gradient(180deg, #F0E6C8, var(--accent));
-  background-size: 42%, cover;
-  color: transparent;
+/* Swallows in flight. */
+.bi-letter[data-t="5"] {
+  background-image: url("/intro/plates/birds.webp");
+  background-position: center 45%;
+  background-size: 150% auto;
 }
-
-/* Grunge: torn photocopy noise. */
-.bi-word[data-treatment="7"] {
-  -webkit-background-clip: text;
-  background-clip: text;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'140'%20height%3D'140'%3E%3Cfilter%20id%3D'g'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.04%200.9'%20numOctaves%3D'4'%20seed%3D'7'%2F%3E%3CfeColorMatrix%20values%3D'0%200%200%200%200.72%200%200%200%200%200.51%200%200%200%200%201%200%200%200%20-1.6%201.1'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'140'%20height%3D'140'%20filter%3D'url(%23g)'%2F%3E%3C%2Fsvg%3E"), linear-gradient(180deg, #fff, var(--brand) 84%);
-  background-size: 130px 130px, cover;
-  color: transparent;
-}
-
-/* Celestial chart engraving. The densest plate, so it reads even at speed. */
-.bi-word[data-treatment="8"] {
-  -webkit-background-clip: text;
-  background-clip: text;
+/* Celestial chart. */
+.bi-letter[data-t="6"] {
   background-image: url("/intro/plates/celestial.webp");
   background-position: center 50%;
-  background-size: 128% auto;
-  color: transparent;
+  background-size: 200% auto;
 }
-
+/* Peace signs and suns. */
+.bi-letter[data-t="7"] {
+  background-image: url("/intro/plates/peace.webp");
+  background-position: center 45%;
+  background-size: 150% auto;
+}
+/* Cannabis leaves. */
+.bi-letter[data-t="8"] {
+  background-image: url("/intro/plates/weed.webp");
+  background-position: center 45%;
+  background-size: 140% auto;
+}
+/* Guitar patent plate. */
+.bi-letter[data-t="9"] {
+  background-image: url("/intro/plates/guitar.webp");
+  background-position: center 46%;
+  background-size: 200% auto;
+}
 /* Chrome bevel. */
-.bi-word[data-treatment="9"] {
-  -webkit-background-clip: text;
-  background-clip: text;
-  background-image: linear-gradient(178deg, #fff 6%, #cbb6e8 30%, #6a4f8f 52%, #fff 60%, #b08fd6 82%, #3a2358);
-  color: transparent;
+.bi-letter[data-t="10"] {
+  background-image: linear-gradient(178deg, #fff 8%, #cbb6e8 34%, #7a5aa4 54%, #fff 64%, #b08fd6 86%);
 }
 
-/* Chromatic split, like a bad print registration. */
-.bi-word[data-treatment="10"] {
+/* Spray stencil. */
+.bi-letter[data-t="11"] {
+  background-image: linear-gradient(180deg, var(--accent), var(--brand));
+}
+
+/* Chromatic misregistration. */
+.bi-letter[data-t="12"] {
+  background-image: none;
   color: #fff;
-  text-shadow: 4px 0 0 var(--signal), -4px 0 0 var(--accent);
+  text-shadow: 3px 0 0 var(--signal), -3px 0 0 var(--accent);
 }
 
 /* Neon tube. */
-.bi-word[data-treatment="11"] {
+.bi-letter[data-t="13"] {
+  background-image: none;
   color: var(--accent);
-  text-shadow:
-    0 0 12px color-mix(in srgb, var(--accent) 80%, transparent),
-    0 0 40px color-mix(in srgb, var(--brand) 85%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 80%, transparent), 0 0 34px color-mix(in srgb, var(--brand) 85%, transparent);
 }
 
-/* Spray stencil, outline only. */
-.bi-word[data-treatment="12"] {
-  color: color-mix(in srgb, var(--brand) 48%, transparent);
-  -webkit-text-stroke: 3px #F0E6C8;
-}
-
-/* Marker hand, rotated off the baseline. */
-.bi-word[data-treatment="13"] {
-  color: var(--accent);
-  font-family: var(--font-hand);
-  font-size: clamp(3.6rem, 19vw, 13rem);
-  transform: rotate(-3.4deg);
+/* Resolved: every letter clean cream, the way the reference lands. */
+.bi-word[data-resolved] .bi-letter {
+  background-image: none;
+  color: #F6F1E6;
+  transition: color .35s ease-out;
 }
 
 .bi-underline {
@@ -405,9 +400,9 @@
   .bi-smoke { width: 120vw; bottom: -14%; }
   .bi-guitar { width: 150vw; }
   /* 21vw overflowed the right edge on a 430px screen. */
-  .bi-word { font-size: clamp(2.9rem, 16.5vw, 8rem); }
+  .bi-word { font-size: clamp(3.4rem, 21.5vw, 9rem); }
   /* The marker-hand treatment sets wider, so it gets its own phone size. */
-  .bi-word[data-treatment="13"] { font-size: clamp(3rem, 17vw, 9rem); }
+  .bi-word[data-treatment="13"] { font-size: clamp(3.2rem, 20vw, 9rem); }
 }
 
 /* Particle finale: smoke off the wordmark, gathering into the arch mark. */

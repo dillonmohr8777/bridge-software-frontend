@@ -25,7 +25,10 @@ const TREATMENTS = 14;
 const WORD = "BRIDGE";
 
 export function BridgeIntro({ onDone }: { onDone: () => void }) {
-  const [treatment, setTreatment] = useState(0);
+  /* Each letter flips independently, the way the companion's wordmark does.
+     One shared index made the whole word go dark at once and read as broken. */
+  const [letters, setLetters] = useState<number[]>(() => WORD.split("").map((_, i) => i % TREATMENTS));
+  const [resolved, setResolved] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [gathering, setGathering] = useState(false);
   const doneRef = useRef(false);
@@ -42,15 +45,26 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     skipRef.current?.focus();
 
+    let tick = 0;
     const cycle = window.setInterval(() => {
-      setTreatment((current) => (current + 1) % TREATMENTS);
+      tick += 1;
+      setLetters((current) =>
+        current.map((value, i) =>
+          /* Stagger which letter turns on each tick so they never move as a
+             block, and only ever a couple at a time. */
+          (tick + i) % 3 === 0 ? (value + 1 + i) % TREATMENTS : value,
+        ),
+      );
     }, TREATMENT_MS);
     /* Stop cycling when the wordmark starts dissolving, so the last frame
        does not flick to a new treatment mid-gather. */
-    const hold = window.setTimeout(() => {
+    /* The word lands clean before the smoke takes over, like the companion's
+       intro resolving to solid white. */
+    const settle = window.setTimeout(() => {
       window.clearInterval(cycle);
-      setGathering(true);
-    }, GATHER_AT_MS);
+      setResolved(true);
+    }, GATHER_AT_MS - 700);
+    const hold = window.setTimeout(() => setGathering(true), GATHER_AT_MS);
     const end = window.setTimeout(finish, RUN_MS);
 
     function onKey(event: KeyboardEvent) {
@@ -60,6 +74,7 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
 
     return () => {
       window.clearInterval(cycle);
+      window.clearTimeout(settle);
       window.clearTimeout(hold);
       window.clearTimeout(end);
       window.removeEventListener("keydown", onKey);
@@ -118,10 +133,11 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
 
       <div className="bi-stage">
         <span className="bi-kicker">Est. for the industry that gets shut out</span>
-        <h1 className="bi-word" data-treatment={treatment}>
+        <h1 className="bi-word" data-resolved={resolved || undefined}>
           {WORD.split("").map((letter, index) => (
             <span
               className="bi-letter"
+              data-t={resolved ? undefined : letters[index]}
               key={`${letter}-${index}`}
               style={{ animationDelay: `${index * 14}ms` }}
             >

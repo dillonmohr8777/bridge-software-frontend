@@ -5,8 +5,8 @@ export default function CommunityPage() {
       <div className="page-heading split-heading">
         <div>
           <p className="eyebrow">Cannabis Community News</p>
-          <h1>Find out what the cannabis WORLD is working on now</h1>
-          <p className="lede small">Launches, promotions, events and what operators are telling each other, across all 50 states and D.C.</p>
+          <h1>See what the cannabis industry is up to</h1>
+          <p className="lede small">Drops, deals, hiring notes, event invites: the stuff operators tell each other. All 50 states and D.C.</p>
         </div>
       </div>
       <CommunityClient />

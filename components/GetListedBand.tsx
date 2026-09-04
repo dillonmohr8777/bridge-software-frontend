@@ -23,7 +23,7 @@ export function GetListedBand() {
       <Link className="button get-listed-cta" href="/join">Get listed</Link>
       <p className="review-notice">
         Review build. This opens Step 1 of the join flow, not a live listing. Role selection
-        works now; verification and publishing follow the backend.
+        works now. Verification and publishing come later.
       </p>
     </section>
   );

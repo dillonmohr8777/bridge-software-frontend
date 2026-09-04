@@ -6,9 +6,9 @@ export default function CreatePage() {
     <div className="page shell">
       <div className="page-heading page-heading-with-media">
         <div>
-          <p className="eyebrow">Create · Cannabis Promotion</p>
+          <p className="eyebrow">Create a Cannabis Promotion</p>
           <h1>Reach the right audience in the cannabis WORLD</h1>
-          <p className="lede small">Build a promotion for consumers, verified operators, or selected business roles. Upload PNG, JPEG, WebP, or PDF up to 25 MB. Protected business details automatically remove public targeting.</p>
+          <p className="lede small">Build a promotion for consumers, verified operators, or just the trade. PNG, JPEG, WebP, or PDF, up to 25 MB. Protected business details never show up in the public feed.</p>
         </div>
         <div className="grain-image page-heading-media"><Image alt="Cannabis marketer preparing product photography and promotion layouts" fill priority sizes="(max-width: 900px) 100vw, 38vw" src="/bridge-editorial/create-promotion-studio.webp" /></div>
       </div>

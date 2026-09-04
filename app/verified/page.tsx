@@ -19,11 +19,11 @@ export const metadata: Metadata = {
 const CHECKS = [
   {
     title: "Who the business legally is",
-    body: "Legal name, EIN where the role has one, and the operating name people would recognise. The two are often different and buyers need both.",
+    body: "Legal name, EIN where the role has one, and the name people actually know it by. The two are not always the same, so buyers need both.",
   },
   {
-    title: "The licence the role requires",
-    body: "A dispensary shows a dispensary licence, a cultivator a cultivation licence, a lab its credentials. Roles without a state licence, like media, show references instead.",
+    title: "The license the role requires",
+    body: "A dispensary shows a dispensary license, a cultivator a cultivation license, a lab its credentials. Roles without a state license, like media, show references instead.",
   },
   {
     title: "Where they actually operate",
@@ -64,7 +64,7 @@ export default function VerifiedPage() {
         </div>
         <div className="grain-image page-heading-media">
           <Image
-            alt="Operators reviewing licence and compliance paperwork together"
+            alt="Operators reviewing license and compliance paperwork together"
             fill
             priority
             sizes="(max-width: 900px) 100vw, 38vw"
@@ -79,7 +79,7 @@ export default function VerifiedPage() {
           <article className="content-card verified-state">
             <StatusChip verified />
             <p>
-              Identity, licence and location have been checked against the requirements for that
+              Identity, license and location have been checked against the requirements for that
               role. The record has a named owner who keeps it current.
             </p>
           </article>
@@ -125,12 +125,12 @@ export default function VerifiedPage() {
         <h2 id="verified-limits-title">What it does not mean</h2>
         <article className="content-card verified-limits">
           <p>
-            Verified is a check on identity and licence. It is not a rating, not an endorsement,
-            and not a judgement about whether a business is good to work with. Bridge does not
+            Verified is a check on identity and license. It is not a rating, not an endorsement,
+            and not a judgment about whether a business is good to work with. Bridge does not
             score members and does not sell a higher badge.
           </p>
           <p className="muted">
-            A verified badge is also a point-in-time check. Licences lapse, so the named contact on
+            A verified badge is also a point-in-time check. Licenses lapse, so the named contact on
             each record is asked to confirm details on a schedule rather than once at signup.
           </p>
         </article>
