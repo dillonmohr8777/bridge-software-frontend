@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { BoostPanel } from "@/components/BoostPanel";
 import { CreateClient } from "./create-client";
 export default function CreatePage() {
   return (
@@ -12,6 +13,7 @@ export default function CreatePage() {
         <div className="grain-image page-heading-media"><Image alt="Cannabis marketer preparing product photography and promotion layouts" fill priority sizes="(max-width: 900px) 100vw, 38vw" src="/bridge-editorial/create-promotion-studio.webp" /></div>
       </div>
       <CreateClient />
+      <BoostPanel />
     </div>
   );
 }

@@ -6,6 +6,8 @@ import { profiles } from "@/lib/data";
 import { US_STATE_OPTIONS } from "@/lib/states";
 import { StatusChip } from "@/components/StatusChip";
 import { Mascot } from "@/components/Mascot";
+import { FollowButton } from "@/components/FollowButton";
+import { GetListedBand } from "@/components/GetListedBand";
 const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Cultivator","Manufacturer","Lab","Transport","Bank","Service","Media","Hydroponics"];
 const FEATURED_MARKETS = ["All states", "California", "Michigan", "Maryland", "Colorado", "Pennsylvania"];
 const VISUAL_CATEGORIES = [
@@ -97,6 +99,8 @@ export function ExploreClient() {
         </div>
       </section>
 
+      <GetListedBand />
+
       <section className="market-switcher" aria-labelledby="market-switcher-title">
         <div><p className="eyebrow">Nationwide market view</p><h2 id="market-switcher-title">Stay in signal with how other states are moving. Browse the movement.</h2><p>Use the complete state selector or jump into a featured prototype market. California and Michigan show how cross-state learning can work without claiming live market coverage.</p></div>
         <div className="market-pills" role="group" aria-label="Featured markets">
@@ -144,6 +148,7 @@ export function ExploreClient() {
                 <div className="tag-row">{profile.specialties.map((s) => <span className="tag" key={s}>{s}</span>)}</div>
                 <div className="button-row" style={{ marginTop: "auto", paddingTop: "1rem" }}>
                   <Link className="button secondary" href={`/profile/${profile.slug}`}>View profile</Link>
+                  <FollowButton orgId={profile.slug} orgName={profile.name} />
                   <button type="button" className={fav ? "button primary" : "button secondary"} aria-pressed={fav} aria-label={`${fav ? "Remove" : "Add"} ${profile.name} ${fav ? "from" : "to"} favorites`} onClick={() => toggleFavorite(profile.slug)}>{fav ? "Favorited" : "Favorite"}</button>
                   <button type="button" className="button secondary" onClick={() => setIntroStatus(`Introduction request for ${profile.name} is ready for verified staff review. No contact details were disclosed.`)}>Request introduction</button>
                 </div>

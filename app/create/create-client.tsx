@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { emptyPostModeValues, isPostModeValid, type PostModeId, type PostModeValues } from "@/lib/phase3/post-modes";
+import { PostModeFields } from "@/components/PostModeFields";
+import { PostModePicker } from "@/components/PostModePicker";
 import {
   Phase3Error,
   audienceCatalog,
@@ -49,6 +52,8 @@ export function CreateClient() {
   const [posts, setPosts] = useState<PostRecord[]>([]);
   const [creativeDirection, setCreativeDirection] = useState<"Signal" | "Product" | "Editorial">("Signal");
   const [reach, setReach] = useState<string>("everyone");
+  const [postMode, setPostMode] = useState<PostModeId>("update");
+  const [modeValues, setModeValues] = useState<PostModeValues>(() => emptyPostModeValues("update"));
   const [workflowMessage, setWorkflowMessage] = useState("");
   const uploadRequestId = useRef(0);
 
@@ -59,7 +64,9 @@ export function CreateClient() {
   const eligible = claims ? canCreatePromotion(claims) : false;
   const hasMessage = message.trim().length > 0;
   const uploadReady = file === null || (uploadStatus === "accepted" && upload !== null);
+  const modeComplete = isPostModeValid(postMode, modeValues);
   const canPublish = eligible
+    && modeComplete
     && canPublishPost(selected, protectedDetail, fileError)
     && hasMessage
     && uploadReady
@@ -153,6 +160,8 @@ export function CreateClient() {
       protectedDetail,
       audienceIds: effectiveAudiences,
       reach,
+      postMode,
+      modeValues,
       fileName: fileMeta?.name ?? null,
       creativeDirection,
       savedAt: new Date().toISOString(),
@@ -291,6 +300,17 @@ export function CreateClient() {
         >
           {contentTypes.filter((type) => type === "Promotion").map((type) => <option key={type}>{type}</option>)}
         </select>
+        <PostModePicker
+          disabled={!eligible || status === "pending" || status === "success"}
+          onChange={(next) => { setPostMode(next); setModeValues(emptyPostModeValues(next)); }}
+          value={postMode}
+        />
+        <PostModeFields
+          disabled={!eligible || status === "pending" || status === "success"}
+          mode={postMode}
+          onChange={setModeValues}
+          values={modeValues}
+        />
         <label htmlFor="message">Message</label>
         <textarea
           disabled={!eligible || status === "pending" || status === "success"}

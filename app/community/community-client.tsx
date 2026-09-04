@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { PostActions } from "@/components/PostActions";
+import { useSocial } from "@/lib/social";
 import { US_STATE_OPTIONS } from "@/lib/states";
 
 type FeedItem = {
@@ -54,53 +56,30 @@ const categoryImageByName: Record<string, string> = {
   Services: "/bridge-editorial/community-category-services.webp",
   Testing: "/bridge-editorial/community-category-testing.webp",
 };
-const FAVORITE_KEY = "bridge-community-favorites";
 
 export function CommunityClient() {
   const [layout, setLayout] = useState<"grid" | "aligned" | "classic">("grid");
   const [category, setCategory] = useState("All");
   const [state, setState] = useState("All states");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [ready, setReady] = useState(false);
+  // PostActions writes favourites to the shared social store, so the filter
+  // must read the same place or the page grows two favourite systems.
+  const social = useSocial();
   const sampleStates = useMemo(
     () => Array.from(new Set(items.map((item) => item.state))).sort(),
     [],
   );
 
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      try {
-        const stored = JSON.parse(window.localStorage.getItem(FAVORITE_KEY) ?? "[]");
-        if (Array.isArray(stored)) setFavorites(stored.filter((value): value is string => typeof value === "string"));
-      } catch {
-        setFavorites([]);
-      } finally {
-        setReady(true);
-      }
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
-    window.localStorage.setItem(FAVORITE_KEY, JSON.stringify(favorites));
-  }, [favorites, ready]);
-
   const visibleItems = useMemo(
     () => items.filter((item) => {
       if (category !== "All" && item.category !== category) return false;
       if (state !== "All states" && item.state !== state) return false;
-      if (favoritesOnly && !favorites.includes(item.id)) return false;
+      if (favoritesOnly && !social.favorites.includes(item.id)) return false;
       return true;
     }),
-    [category, favorites, favoritesOnly, state],
+    [category, favoritesOnly, social.favorites, state],
   );
   const noSampleForState = state !== "All states" && !sampleStates.includes(state) && visibleItems.length === 0;
-
-  function toggleFavorite(id: string) {
-    setFavorites((current) => current.includes(id) ? current.filter((value) => value !== id) : [...current, id]);
-  }
 
   return (
     <div>
@@ -139,7 +118,6 @@ export function CommunityClient() {
       ) : (
         <div className={`${layout === "grid" ? "news-grid" : layout === "aligned" ? "news-aligned" : "news-classic"} editorial-feed`} data-layout={layout}>
           {visibleItems.map((item) => {
-            const favorite = favorites.includes(item.id);
             return (
               <article key={item.id} className="content-card news-card media-card">
                 <div className="grain-image news-image">
@@ -152,7 +130,7 @@ export function CommunityClient() {
                   <p className="muted">{item.org} · {item.age}</p>
                   <p className="news-card-summary">{item.body}</p>
                   <div className="news-actions">
-                    <button aria-pressed={favorite} className={favorite ? "text-link is-favorite" : "text-link"} onClick={() => toggleFavorite(item.id)} type="button">{favorite ? "Saved to favorites" : "Save to favorites"}</button>
+                    <PostActions postId={item.id} postTitle={item.title} />
                     <Link className="text-link" href="/explore">Explore related members</Link>
                   </div>
                 </div>
