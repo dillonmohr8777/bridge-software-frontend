@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { IntroParticles } from "./IntroParticles";
 import "./bridge-intro.css";
 
 /*
@@ -78,6 +77,21 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
       onClick={finish}
       role="presentation"
     >
+      {/* Shot smoke, rising the full height and resolving into the arch mark
+          on its last beat. Muted, inert and decorative. */}
+      <video
+        aria-hidden="true"
+        autoPlay
+        className="bi-film"
+        loop={false}
+        muted
+        playsInline
+        poster="/intro/smoke-rise-poster.webp"
+        preload="auto"
+      >
+        <source src="/intro/smoke-rise.mp4" type="video/mp4" />
+      </video>
+
       <div className="bridge-intro-grain" aria-hidden="true" />
 
       {/* Paper, tape and stamps land on beats rather than drifting in. */}
@@ -118,9 +132,6 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
         <span className="bi-underline" aria-hidden="true" />
         <span className="bi-hand">one industry, one network</span>
       </div>
-
-      <IntroParticles gatherAt={GATHER_AT_MS} />
-      <img alt="" aria-hidden="true" className="bi-logo" src="/bridge-mark.svg" />
 
       <button className="bi-skip" onClick={finish} ref={skipRef} type="button">
         Skip

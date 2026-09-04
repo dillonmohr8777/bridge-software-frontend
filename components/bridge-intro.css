@@ -225,12 +225,13 @@
   color: transparent;
 }
 
-/* Weed leaves packed inside the letterforms. */
+/* Antique herbarium specimen sheet inside the letterforms. */
 .bi-word[data-treatment="2"] {
   -webkit-background-clip: text;
   background-clip: text;
-  background-image: url("/intro/leaf-doodles.svg"), linear-gradient(150deg, var(--accent), #fff 72%);
-  background-size: 34%, cover;
+  background-image: url("/intro/plates/botanical.webp");
+  background-position: center 40%;
+  background-size: 106% auto;
   color: transparent;
 }
 
@@ -410,9 +411,18 @@
 }
 
 /* Particle finale: smoke off the wordmark, gathering into the arch mark. */
-/* A canvas is a replaced element: inset alone leaves it at its intrinsic
-   300x150, so it needs an explicit size to fill the stage. */
-.bi-particles { block-size: 100%; inline-size: 100%; inset: 0; pointer-events: none; position: absolute; z-index: 4; }
+/* The smoke film sits behind everything. Contained rather than covered so
+   the arch it forms is never cropped; the letterboxing is black on black. */
+.bi-film {
+  block-size: 100%;
+  inline-size: 100%;
+  inset: 0;
+  object-fit: contain;
+  opacity: 0.92;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
 
 /* The stage steps back as the particles take over. */
 .bridge-intro[data-gathering] .bi-stage,
@@ -422,20 +432,5 @@
   transition: opacity 0.6s ease-out;
 }
 
-.bi-logo {
-  inset-block-start: 50%;
-  inset-inline-start: 50%;
-  opacity: 0;
-  position: absolute;
-  transform: translate(-50%, -50%) scale(0.9);
-  width: clamp(150px, 26vw, 290px);
-  z-index: 5;
-}
-
-.bridge-intro[data-gathering] .bi-logo {
-  animation: bi-logo-in 0.9s var(--ease, ease-out) 0.85s forwards;
-}
-
-@keyframes bi-logo-in {
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
+/* The film carries the ending, so the stage clears out of its way. */
+.bridge-intro[data-gathering] .bi-film { opacity: 1; transition: opacity .6s ease-out; }
