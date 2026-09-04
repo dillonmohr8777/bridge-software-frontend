@@ -39,11 +39,38 @@ const fontVariables = [bridgeDisplay, bridgeSubhead, bridgeBody, bridgeHand]
   .join(" ");
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bridge-signal-redesign.netlify.app"),
   title: "Bridge: The cannabis industry, connected",
   description: "A verified cannabis industry network for discovering businesses, following market activity, and reaching the right people.",
-  icons: { icon: "/bridge-mark.svg" },
-  // Staging previews must not be indexed.
-  robots: lockedTheme ? { index: false, follow: false } : undefined,
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/bridge-mark.svg", type: "image/svg+xml" },
+    ],
+  },
+  openGraph: {
+    title: "Bridge: The cannabis industry, connected",
+    description: "A verified cannabis industry network for discovering businesses, following market activity, and reaching the right people.",
+    url: "https://bridge-signal-redesign.netlify.app",
+    siteName: "Bridge",
+    type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Bridge: the cannabis industry, connected",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bridge: The cannabis industry, connected",
+    description: "A verified cannabis industry network for discovering businesses, following market activity, and reaching the right people.",
+    images: ["/og.png"],
+  },
+  // This branch ships the secondary redesign preview. Keep it out of search.
+  robots: { index: false, follow: false },
 };
 
 // Connected-signal is the purple Modern Network review URL. Force it before
