@@ -56,7 +56,7 @@ export default function Home() {
         <div className="visual-story-track" aria-label="Bridge product moments">
           <Link className="visual-story-card network" href="/community"><span>Community News</span><strong>A visual feed for useful cannabis industry discovery.</strong></Link>
           <Link className="visual-story-card markets" href="/explore"><span>Nationwide Explore</span><strong>Filter legal markets, products, brands, and services.</strong></Link>
-          <Link className="visual-story-card identity" href="/my-profile"><span>Verified identity</span><strong>Know who is current before the introduction.</strong></Link>
+          <Link className="visual-story-card identity" href="/verified"><span>Verified identity</span><strong>Know who is current before the introduction.</strong></Link>
         </div>
       </section>
 

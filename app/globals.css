@@ -832,3 +832,16 @@ body:has(.bridge-home) > .site-footer { display: none; }
   .explore-visual-filters .section-heading button { padding-left: 0; text-align: left; }
   .explore-rail-wrap { margin-top: 34px; }
 }
+
+/* Verified explainer. Two-up on the state cards so verified and pending read
+   as a pair rather than a hierarchy. */
+.verified-states { margin-bottom: 44px; }
+.verified-state-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.verified-state { display: grid; gap: 12px; justify-items: start; padding: 22px; }
+.verified-checks { margin-bottom: 14px; }
+.verified-checks article { padding: 22px; }
+.verified-checks h3 { margin-bottom: .5rem; }
+.verified-limits { display: grid; gap: 12px; padding: 24px; }
+@media (max-width: 620px) {
+  .verified-state-grid { grid-template-columns: 1fr; }
+}
