@@ -8,13 +8,16 @@ import {
   useRef,
   useState,
 } from "react";
+import { BridgeIntro } from "./BridgeIntro";
 import {
   AGE_GATE_CONFIRMED_VALUE,
   AGE_GATE_STORAGE_KEY,
   isAgeGateConfirmed,
 } from "@/lib/age-gate";
 
-type GateState = "checking" | "prompt" | "denied" | "allowed";
+type GateState = "checking" | "intro" | "prompt" | "denied" | "allowed";
+
+const INTRO_SEEN_KEY = "bridge-intro-seen";
 
 const focusableSelector = [
   "button:not([disabled])",
@@ -38,7 +41,20 @@ export function AgeGate({ children }: Readonly<{ children: ReactNode }>) {
         const confirmed = isAgeGateConfirmed(
           window.localStorage.getItem(AGE_GATE_STORAGE_KEY),
         );
-        setState(confirmed ? "allowed" : "prompt");
+        if (confirmed) {
+          setState("allowed");
+          return;
+        }
+        /* The cold open runs once, and never for anyone who has asked for
+           less motion - it sits in front of a legal gate. */
+        const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let seen = false;
+        try {
+          seen = window.sessionStorage.getItem(INTRO_SEEN_KEY) === "1";
+        } catch {
+          seen = true;
+        }
+        setState(quiet || seen ? "prompt" : "intro");
       } catch {
         setState("prompt");
       }
@@ -48,7 +64,7 @@ export function AgeGate({ children }: Readonly<{ children: ReactNode }>) {
   }, []);
 
   useEffect(() => {
-    if (!isLocked) {
+    if (!isLocked || state === "intro") {
       document.body.style.removeProperty("overflow");
       return;
     }
@@ -120,7 +136,19 @@ export function AgeGate({ children }: Readonly<{ children: ReactNode }>) {
       >
         {children}
       </div>
-      {isLocked && (
+      {state === "intro" && (
+        <BridgeIntro
+          onDone={() => {
+            try {
+              window.sessionStorage.setItem(INTRO_SEEN_KEY, "1");
+            } catch {
+              /* Private mode. It simply plays again next visit. */
+            }
+            setState("prompt");
+          }}
+        />
+      )}
+      {isLocked && state !== "intro" && (
         <div className="age-gate" role="presentation">
           <div
             aria-describedby="age-gate-description"

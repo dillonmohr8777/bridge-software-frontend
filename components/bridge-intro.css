@@ -1,0 +1,320 @@
+/*
+ * Scrapbook cold open. Everything is layered over a near-black ground with
+ * grain on top, so the pieces read as paper on a table rather than UI.
+ */
+
+.bridge-intro {
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--brand) 34%, transparent), transparent 62%),
+    var(--canvas);
+  bottom: 0;
+  cursor: pointer;
+  display: grid;
+  justify-items: center;
+  left: 0;
+  overflow: hidden;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 200;
+}
+
+.bridge-intro[data-leaving] {
+  animation: bi-out 0.32s ease-in forwards;
+}
+
+@keyframes bi-out {
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+/* feTurbulence rather than an image request, same trick as the companion. */
+.bridge-intro-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  inset: 0;
+  mix-blend-mode: overlay;
+  opacity: 0.16;
+  pointer-events: none;
+  position: absolute;
+  z-index: 6;
+}
+
+/* ---- ephemera ---------------------------------------------------------- */
+
+.bi-ephemera {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+/* Each piece slams in on its own beat, none of them centred, all rotated. */
+.bi-tape-a {
+  animation: bi-slam 0.34s var(--ease-heavy, ease-out) 0.12s forwards;
+  left: 6%;
+  object-fit: cover;
+  object-position: 12% 22%;
+  top: 14%;
+  transform: rotate(-13deg);
+  width: clamp(120px, 22vw, 260px);
+}
+
+.bi-tape-b {
+  animation: bi-slam 0.34s var(--ease-heavy, ease-out) 0.78s forwards;
+  bottom: 12%;
+  object-fit: cover;
+  object-position: 68% 54%;
+  right: 5%;
+  transform: rotate(9deg);
+  width: clamp(110px, 20vw, 230px);
+}
+
+.bi-leaf-a {
+  animation: bi-drop 0.42s var(--ease-heavy, ease-out) 0.42s forwards;
+  left: 12%;
+  bottom: 16%;
+  transform: rotate(18deg);
+  width: clamp(80px, 14vw, 170px);
+}
+
+.bi-leaf-b {
+  animation: bi-drop 0.42s var(--ease-heavy, ease-out) 1.18s forwards;
+  right: 14%;
+  top: 12%;
+  transform: rotate(-26deg);
+  width: clamp(70px, 12vw, 150px);
+}
+
+.bi-arrow {
+  animation: bi-slam 0.3s var(--ease-heavy, ease-out) 1.5s forwards;
+  bottom: 26%;
+  left: 24%;
+  transform: rotate(-8deg);
+  width: clamp(90px, 16vw, 190px);
+}
+
+.bi-stamp {
+  animation: bi-stamp-hit 0.26s var(--ease-heavy, ease-out) 1.92s forwards;
+  filter: hue-rotate(-118deg);
+  right: 18%;
+  top: 30%;
+  width: clamp(84px, 13vw, 150px);
+}
+
+.bi-smoke {
+  animation: bi-smoke-rise 2.6s ease-out 0.5s forwards;
+  bottom: -6%;
+  left: 50%;
+  width: clamp(260px, 52vw, 620px);
+}
+
+@keyframes bi-slam {
+  from { opacity: 0; transform: translate3d(0, 26px, 0) rotate(var(--r, -13deg)) scale(1.16); }
+  to { opacity: 0.9; }
+}
+
+@keyframes bi-drop {
+  from { opacity: 0; transform: translate3d(0, -30px, 0) scale(0.86); }
+  to { opacity: 0.85; }
+}
+
+@keyframes bi-stamp-hit {
+  0% { opacity: 0; transform: rotate(-16deg) scale(2.1); }
+  70% { opacity: 1; transform: rotate(-16deg) scale(0.94); }
+  100% { opacity: 0.92; transform: rotate(-16deg) scale(1); }
+}
+
+@keyframes bi-smoke-rise {
+  from { opacity: 0; transform: translate(-50%, 12%) scale(1); }
+  40% { opacity: 0.4; }
+  to { opacity: 0.16; transform: translate(-50%, -22%) scale(1.3); }
+}
+
+/* ---- guitar ------------------------------------------------------------ */
+
+.bi-guitar {
+  animation: bi-guitar-sweep 1.1s var(--ease-heavy, ease-out) 0.28s forwards;
+  color: color-mix(in srgb, var(--accent) 52%, transparent);
+  height: auto;
+  left: 50%;
+  opacity: 0;
+  position: absolute;
+  top: 52%;
+  width: clamp(420px, 92vw, 1080px);
+  z-index: 1;
+}
+
+@keyframes bi-guitar-sweep {
+  from { opacity: 0; transform: translate(-50%, -50%) rotate(-38deg) scale(1.5); }
+  to { opacity: 0.5; transform: translate(-50%, -50%) rotate(-19deg) scale(1); }
+}
+
+/* ---- wordmark ---------------------------------------------------------- */
+
+.bi-stage {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding-inline: 20px;
+}
+
+.bi-kicker {
+  animation: bi-fade-up 0.5s var(--ease, ease-out) 0.05s both;
+  color: color-mix(in srgb, var(--accent) 88%, white);
+  font-family: var(--font-subhead);
+  font-size: clamp(0.6rem, 1.9vw, 0.76rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.bi-word {
+  display: flex;
+  font-family: var(--font-display);
+  font-size: clamp(3.1rem, 17vw, 11rem);
+  font-weight: 800;
+  gap: 0.01em;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+  margin: 0;
+}
+
+.bi-letter {
+  animation: bi-letter-in 0.5s var(--ease-heavy, ease-out) both;
+  display: inline-block;
+}
+
+@keyframes bi-letter-in {
+  from { opacity: 0; transform: translate3d(0, 64px, 0) rotate(6deg) scale(0.86); }
+  to { opacity: 1; }
+}
+
+/* Nine treatments, swapped every 190ms. Each one is a different way of
+   drawing the same word, which is what gives it the flick-book feel. */
+.bi-word[data-treatment="0"] { color: #fff; }
+
+/* The art sits OVER a solid underlay. Clipped to text on its own, a mostly
+   transparent SVG paints almost nothing and the word flashes blank. */
+.bi-word[data-treatment="1"] {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: url("/intro/smoke-motif.svg"), linear-gradient(180deg, #fff, var(--accent));
+  background-size: cover, cover;
+  color: transparent;
+}
+
+.bi-word[data-treatment="2"] {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: conic-gradient(from 210deg, var(--accent), #fff 30%, var(--brand) 62%, var(--accent));
+  color: transparent;
+}
+
+.bi-word[data-treatment="3"] {
+  color: color-mix(in srgb, var(--brand) 55%, transparent);
+  -webkit-text-stroke: 3px #fff;
+}
+
+.bi-word[data-treatment="4"] {
+  color: #fff;
+  text-shadow:
+    3px 0 0 var(--signal),
+    -3px 0 0 var(--accent);
+}
+
+.bi-word[data-treatment="5"] {
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: url("/intro/leaf-doodles.svg"), linear-gradient(160deg, var(--accent), #fff 70%);
+  background-size: 44%, cover;
+  color: transparent;
+}
+
+.bi-word[data-treatment="6"] {
+  color: var(--accent);
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--accent) 70%, transparent),
+    0 0 42px color-mix(in srgb, var(--brand) 80%, transparent);
+}
+
+.bi-word[data-treatment="7"] {
+  color: #fff;
+  transform: skewX(-9deg);
+}
+
+.bi-word[data-treatment="8"] {
+  font-family: var(--font-hand);
+  color: var(--accent);
+  font-size: clamp(3.6rem, 20vw, 13rem);
+  transform: rotate(-3.4deg);
+}
+
+.bi-underline {
+  animation: bi-rule 0.5s var(--ease-heavy, ease-out) 1.05s both;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  block-size: 3px;
+  inline-size: min(420px, 68vw);
+  transform-origin: center;
+}
+
+@keyframes bi-rule {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.bi-hand {
+  animation: bi-fade-up 0.5s var(--ease, ease-out) 1.35s both;
+  color: color-mix(in srgb, #fff 82%, transparent);
+  font-family: var(--font-hand);
+  font-size: clamp(1.1rem, 4.4vw, 1.7rem);
+  transform: rotate(-1.8deg);
+}
+
+@keyframes bi-fade-up {
+  from { opacity: 0; transform: translate3d(0, 12px, 0); }
+  to { opacity: 1; }
+}
+
+/* ---- skip -------------------------------------------------------------- */
+
+.bi-skip {
+  background: color-mix(in srgb, var(--canvas) 70%, transparent);
+  border: 1px solid color-mix(in srgb, #fff 26%, transparent);
+  border-radius: 999px;
+  bottom: max(22px, env(safe-area-inset-bottom, 0px));
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-subhead);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  min-height: 44px;
+  padding: 0 22px;
+  position: absolute;
+  right: 20px;
+  text-transform: uppercase;
+  z-index: 8;
+}
+
+.bi-skip:hover {
+  background: color-mix(in srgb, var(--brand) 60%, var(--canvas));
+}
+
+/*
+ * Decoration in front of a legal gate. Anyone who has asked for less motion
+ * gets none of it, and the gate is reached immediately - the component itself
+ * also refuses to mount in that case.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .bridge-intro,
+  .bridge-intro * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
