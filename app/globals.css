@@ -514,7 +514,11 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .bridge-home .landing-stats strong { color: #f4e9ff; display: block; font-family: var(--font-display); font-size: 25px; font-weight: 800; line-height: 1; text-shadow: 0 8px 24px rgba(124,58,237,.3); }
 .bridge-home .landing-stats span { color: rgba(255,255,255,.7); font-size: 12px; line-height: 1.4; }
 .bridge-home .signal-visual { border: var(--glass-ring); border-radius: 24px; box-shadow: 0 32px 90px rgba(0,0,0,.48); isolation: isolate; min-height: 500px; overflow: hidden; position: relative; z-index: 2; }
-.bridge-home .signal-film { display: block; height: 100%; left: 0; object-fit: cover; position: absolute; top: 0; width: 100%; }
+.bridge-home .signal-film { display: block; height: 100%; left: 0; object-fit: cover; object-position: 50% 42%; position: absolute; top: 0; width: 100%; }
+@media (max-width: 620px) {
+  /* Narrow crop clipped the last letter of the painted wordmark. */
+  .bridge-home .signal-film { object-position: 52% 40%; transform: scale(1.06); }
+}
 .bridge-home .visual-story { align-items: center; background: radial-gradient(circle at 78% 20%,rgba(124,58,237,.16),transparent 28rem),#0a070e; border-top: 1px solid rgba(201,151,255,.14); display: grid; gap: clamp(28px,5vw,72px); grid-template-columns: minmax(250px,.72fr) minmax(0,1.28fr); padding: 72px clamp(24px,6vw,86px); }
 .bridge-home .visual-story-copy > span, .bridge-home .suite-heading > p { color: #c995ff; font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
 .bridge-home .visual-story-copy h2, .bridge-home .suite-heading h2 { color: #fff; font-family: var(--font-display); font-size: clamp(30px,3.2vw,48px); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; margin: 12px 0 16px; }
@@ -840,4 +844,38 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
 .verified-limits { display: grid; gap: 12px; padding: 24px; }
 @media (max-width: 620px) {
   .verified-state-grid { grid-template-columns: 1fr; }
+}
+
+/* Specular edge: a single implied light source across the top of every glass
+   surface, rather than a uniform border doing all the work. */
+.glass, .profile-card, .content-card, .contact-card, .metric-card, .filter-panel,
+.moment-card, .suite-card, .market-switcher, .pricing-plan, .explore-category-tile {
+  position: relative;
+}
+
+.glass::after, .profile-card::after, .content-card::after, .metric-card::after,
+.moment-card::after, .suite-card::after, .pricing-plan::after {
+  background: linear-gradient(180deg, color-mix(in srgb, #fff 22%, transparent), transparent 42%);
+  border-radius: inherit;
+  content: "";
+  inset: 0;
+  mask: linear-gradient(180deg, #000 0 34%, transparent 34%);
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+/* Elevation: cards sit at two heights instead of one flat plane. */
+.moment-card, .suite-card, .pricing-plan { box-shadow: var(--glass-shadow), 0 2px 6px rgba(0, 0, 0, .28); }
+
+/* Press states with physics. This is the thing that makes a web app feel
+   native on a phone: it responds to the finger, then springs back. */
+@media (prefers-reduced-motion: no-preference) {
+  .explore-category-tile, .news-card, .moment-card, .button, .bridge-tabbar .tab {
+    transition: transform .16s var(--ease, ease-out), box-shadow .16s var(--ease, ease-out);
+  }
+  .explore-category-tile:active, .news-card:active, .moment-card:active,
+  .button:active, .bridge-tabbar .tab:active {
+    transform: scale(.975);
+  }
 }

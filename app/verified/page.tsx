@@ -64,11 +64,11 @@ export default function VerifiedPage() {
         </div>
         <div className="grain-image page-heading-media">
           <Image
-            alt="Operators reviewing license and compliance paperwork together"
+            alt="Hands checking a licence document against records on a laptop"
             fill
             priority
             sizes="(max-width: 900px) 100vw, 38vw"
-            src="/bridge-editorial/community-michigan-testing.webp"
+            src="/bridge-editorial/verified-licence-check.webp"
           />
         </div>
       </div>
