@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "components/bridge-intro.css"
+        ],
+        "createdAt": "2026-09-04T01:54:23.519Z",
+        "reason": "Title-card wordmark treatments; client asked for scrapbook art filling the letterforms, and the gradient underlays stop transparent art clipped to text from painting nothing"
+      }
+    ]
+  }
+}
