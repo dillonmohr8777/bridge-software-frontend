@@ -87,6 +87,7 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
       <img alt="" aria-hidden="true" className="bi-ephemera bi-leaf-b" src="/intro/leaf-doodles.svg" />
       <img alt="" aria-hidden="true" className="bi-ephemera bi-arrow" src="/intro/arrows.svg" />
       <img alt="" aria-hidden="true" className="bi-ephemera bi-stamp" src="/intro/stamp-1.webp" />
+      <img alt="" aria-hidden="true" className="bi-ephemera bi-smoke-back" src="/intro/smoke-motif.svg" />
       <img alt="" aria-hidden="true" className="bi-ephemera bi-smoke" src="/intro/smoke-motif.svg" />
 
       {/* The guitar runs corner to corner behind the wordmark. */}
@@ -108,7 +109,7 @@ export function BridgeIntro({ onDone }: { onDone: () => void }) {
             <span
               className="bi-letter"
               key={`${letter}-${index}`}
-              style={{ animationDelay: `${index * 38}ms` }}
+              style={{ animationDelay: `${index * 14}ms` }}
             >
               {letter}
             </span>

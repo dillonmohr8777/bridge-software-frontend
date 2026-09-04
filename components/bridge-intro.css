@@ -106,10 +106,21 @@
 }
 
 .bi-smoke {
-  animation: bi-smoke-rise 2.6s ease-out 0.5s forwards;
-  bottom: -10%;
+  animation: bi-smoke-column 5s linear 0s forwards;
+  bottom: -30%;
   left: 50%;
-  width: clamp(340px, 78vw, 760px);
+  width: clamp(520px, 130vw, 1500px);
+}
+
+/* A second, slower column offset behind it so the smoke never reads as one
+   flat sheet. */
+.bi-smoke-back {
+  animation: bi-smoke-column 6.4s linear 0.3s forwards;
+  bottom: -40%;
+  left: 34%;
+  transform: translate(-50%, 0) scale(1.3);
+  width: clamp(600px, 150vw, 1800px);
+  z-index: 1;
 }
 
 @keyframes bi-slam {
@@ -128,10 +139,12 @@
   100% { opacity: 0.92; transform: rotate(-16deg) scale(1); }
 }
 
-@keyframes bi-smoke-rise {
-  from { opacity: 0; transform: translate(-50%, 12%) scale(1); }
-  40% { opacity: 0.4; }
-  to { opacity: 0.16; transform: translate(-50%, -22%) scale(1.3); }
+/* Rises the full height of the frame across the whole run. */
+@keyframes bi-smoke-column {
+  from { opacity: 0; transform: translate(-50%, 26%) scale(1); }
+  18% { opacity: 0.5; }
+  70% { opacity: 0.42; }
+  to { opacity: 0.2; transform: translate(-50%, -78%) scale(1.5); }
 }
 
 /* ---- guitar ------------------------------------------------------------ */
@@ -186,13 +199,15 @@
   margin: 0;
 }
 
+/* The wordmark reads from the first frame. It only settles, it does not
+   arrive - waiting for six staggered letters wasted the opening beat. */
 .bi-letter {
-  animation: bi-letter-in 0.5s var(--ease-heavy, ease-out) both;
+  animation: bi-letter-in 0.26s var(--ease-heavy, ease-out) both;
   display: inline-block;
 }
 
 @keyframes bi-letter-in {
-  from { opacity: 0; transform: translate3d(0, 64px, 0) rotate(6deg) scale(0.86); }
+  from { opacity: .55; transform: translate3d(0, 10px, 0) scale(0.97); }
   to { opacity: 1; }
 }
 
