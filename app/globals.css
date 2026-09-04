@@ -662,7 +662,10 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .channel-row { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .mandatory-review-backdrop { align-items: center; background: rgba(7,5,11,.84); display: flex; inset: 0; justify-content: center; padding: 22px; position: fixed; z-index: 100; }
-.mandatory-review { background: var(--surface); border: 1px solid var(--accent); border-radius: 24px; box-shadow: 0 36px 100px rgba(0,0,0,.68); max-height: calc(100vh - 44px); max-width: 900px; overflow: auto; padding: 30px; width: 100%; }
+.mandatory-review { background: var(--surface); border: 1px solid var(--accent); border-radius: 24px; box-shadow: 0 36px 100px rgba(0,0,0,.68); max-height: calc(100dvh - 44px); max-width: 900px; overflow: auto; padding: 30px; width: 100%; }
+/* A modal owns the screen. The bottom tab bar was showing through the
+   backdrop and still taking taps underneath it. */
+body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
 .mandatory-review h2 { font-size: clamp(1.8rem,3vw,2.8rem); }
 .mandatory-contact-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; margin-top: 24px; }
 .mandatory-contact-grid .contact-edit { background: var(--surface-alt); border-radius: 14px; padding: 18px; }
