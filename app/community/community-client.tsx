@@ -154,6 +154,7 @@ export function CommunityClient() {
       </div>
 
       <p className="review-notice">Heads up: this is a review build. The posts below are sample content, not live activity. Filters, layouts and saving all work for real.</p>
+      <p className="handwrite">what the industry actually sounds like</p>
 
       <p className="feed-sample-summary" aria-live="polite"><strong>{visibleItems.length}</strong> {visibleItems.length === 1 ? "post" : "posts"} · {sampleStates.length} sample markets so far · all 50 states + D.C. filterable</p>
 

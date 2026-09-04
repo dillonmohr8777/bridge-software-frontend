@@ -31,6 +31,7 @@ export default function Home() {
             <div><strong>03</strong><span>Audience controls</span></div>
             <div><strong>B2B</strong><span>EIN-verified access</span></div>
           </div>
+          <p className="handwrite aside">no algorithm deciding who gets seen. just the industry, talking.</p>
         </div>
 
         {/* Launch video slot. Tori asked for the orbit graphic to become the
@@ -52,6 +53,7 @@ export default function Home() {
           <span>Bridge in motion</span>
           <h2 id="visual-story-title">Stay connected with the world. Move the industry forward.</h2>
           <p>One nationwide home for cannabis news, promotions, verified profiles, products, and services.</p>
+          <p className="handwrite right">everything in one place, finally</p>
         </div>
         <div className="visual-story-track" aria-label="Bridge product moments">
           <Link className="visual-story-card network" href="/community"><span>Community News</span><strong>Where the industry shows up every day.</strong></Link>

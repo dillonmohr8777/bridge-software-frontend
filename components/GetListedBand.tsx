@@ -19,6 +19,7 @@ export function GetListedBand() {
           The big ad platforms will not run cannabis ads. Bridge is the opposite: your brand,
           your markets and how to reach you, in the same place buyers come to search.
         </p>
+        <p className="handwrite right">nobody else will run your ads. we will.</p>
       </div>
       <Link className="button get-listed-cta" href="/join">Get listed</Link>
       <p className="review-notice">

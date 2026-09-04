@@ -6,6 +6,7 @@ export default function ExplorePage() {
         <p className="eyebrow">Explore the Cannabis Industry</p>
         <h1>Find verified cannabis businesses nationwide</h1>
         <p className="lede small">Brands, dispensaries, cultivators, sales teams, and service partners across all 50 states and D.C.</p>
+          <p className="handwrite right">every state, every role, one search</p>
       </div>
       <ExploreClient />
     </div>

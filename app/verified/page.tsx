@@ -61,6 +61,7 @@ export default function VerifiedPage() {
             Anyone can claim to be a licensed operator. The badge exists so buyers do not have to
             take that on faith, and so trade-only information stays on the trade side.
           </p>
+          <p className="handwrite">a badge nobody can buy</p>
         </div>
         <div className="grain-image page-heading-media">
           <Image
