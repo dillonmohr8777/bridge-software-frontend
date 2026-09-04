@@ -6,8 +6,9 @@
 .bridge-intro {
   align-items: center;
   background:
-    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--brand) 34%, transparent), transparent 62%),
+    radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--brand) 52%, transparent), transparent 88%),
     var(--canvas);
+  block-size: 100dvh;
   bottom: 0;
   cursor: pointer;
   display: grid;
@@ -54,44 +55,44 @@
 /* Each piece slams in on its own beat, none of them centred, all rotated. */
 .bi-tape-a {
   animation: bi-slam 0.34s var(--ease-heavy, ease-out) 0.12s forwards;
-  left: 6%;
+  left: 4%;
   object-fit: cover;
   object-position: 12% 22%;
-  top: 14%;
+  top: 6%;
   transform: rotate(-13deg);
   width: clamp(120px, 22vw, 260px);
 }
 
 .bi-tape-b {
   animation: bi-slam 0.34s var(--ease-heavy, ease-out) 0.78s forwards;
-  bottom: 12%;
+  bottom: 7%;
   object-fit: cover;
   object-position: 68% 54%;
-  right: 5%;
+  right: 3%;
   transform: rotate(9deg);
   width: clamp(110px, 20vw, 230px);
 }
 
 .bi-leaf-a {
   animation: bi-drop 0.42s var(--ease-heavy, ease-out) 0.42s forwards;
-  left: 12%;
-  bottom: 16%;
+  left: 7%;
+  bottom: 18%;
   transform: rotate(18deg);
   width: clamp(80px, 14vw, 170px);
 }
 
 .bi-leaf-b {
   animation: bi-drop 0.42s var(--ease-heavy, ease-out) 1.18s forwards;
-  right: 14%;
-  top: 12%;
+  right: 8%;
+  top: 13%;
   transform: rotate(-26deg);
   width: clamp(70px, 12vw, 150px);
 }
 
 .bi-arrow {
   animation: bi-slam 0.3s var(--ease-heavy, ease-out) 1.5s forwards;
-  bottom: 26%;
-  left: 24%;
+  bottom: 28%;
+  left: 16%;
   transform: rotate(-8deg);
   width: clamp(90px, 16vw, 190px);
 }
@@ -99,16 +100,16 @@
 .bi-stamp {
   animation: bi-stamp-hit 0.26s var(--ease-heavy, ease-out) 1.92s forwards;
   filter: hue-rotate(-118deg);
-  right: 18%;
-  top: 30%;
+  right: 12%;
+  top: 27%;
   width: clamp(84px, 13vw, 150px);
 }
 
 .bi-smoke {
   animation: bi-smoke-rise 2.6s ease-out 0.5s forwards;
-  bottom: -6%;
+  bottom: -10%;
   left: 50%;
-  width: clamp(260px, 52vw, 620px);
+  width: clamp(340px, 78vw, 760px);
 }
 
 @keyframes bi-slam {
@@ -317,4 +318,18 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Tall phone screens leave the middle third doing all the work unless the
+   pieces grow and spread. */
+@media (max-width: 620px) {
+  .bi-tape-a { top: 7%; width: 42vw; }
+  .bi-tape-b { bottom: 8%; width: 40vw; }
+  .bi-leaf-a { bottom: 20%; width: 30vw; }
+  .bi-leaf-b { top: 15%; width: 27vw; }
+  .bi-arrow { bottom: 30%; left: 8%; width: 34vw; }
+  .bi-stamp { top: 24%; right: 8%; width: 26vw; }
+  .bi-smoke { width: 120vw; bottom: -14%; }
+  .bi-guitar { width: 150vw; }
+  .bi-word { font-size: clamp(3.6rem, 21vw, 8rem); }
 }
