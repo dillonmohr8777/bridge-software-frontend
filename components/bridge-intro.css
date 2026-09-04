@@ -331,5 +331,7 @@
   .bi-stamp { top: 24%; right: 8%; width: 26vw; }
   .bi-smoke { width: 120vw; bottom: -14%; }
   .bi-guitar { width: 150vw; }
-  .bi-word { font-size: clamp(3.6rem, 21vw, 8rem); }
+  /* 21vw overflowed the right edge on a 430px screen. */
+  .bi-word { font-size: clamp(2.9rem, 16.5vw, 8rem); }
+  .bi-word[data-treatment="8"] { font-size: clamp(3.2rem, 19vw, 9rem); }
 }
