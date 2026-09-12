@@ -62,6 +62,34 @@ function defaultHarborContacts(): ResponsibleContact[] {
   ];
 }
 
+/*
+ * Posts survive a route change in the review build. The mock client is
+ * otherwise in-memory, which meant a promotion published on Create vanished
+ * the moment you navigated to the feed. Guarded for SSR and for the node test
+ * runner, where there is no window and this is a no-op.
+ */
+const POSTS_KEY = "bridge-phase3-posts-v1";
+
+function readStoredPosts(): PostRecord[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(POSTS_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? (parsed as PostRecord[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeStoredPosts(posts: PostRecord[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+  } catch {
+    /* Private mode. The session still works, it just will not persist. */
+  }
+}
+
 export class MockPhase3Client implements Phase3Client {
   private claims: SessionClaims;
   private confirmation: ProfileProjection["confirmation"];
@@ -81,7 +109,7 @@ export class MockPhase3Client implements Phase3Client {
     this.failNext = options?.failNext ?? false;
     this.now = options?.now ?? (() => new Date());
     this.contacts = defaultHarborContacts();
-    this.posts = [];
+    this.posts = readStoredPosts();
     this.confirmation = {
       status: "needed",
       confirmedAt: null,
@@ -164,6 +192,7 @@ export class MockPhase3Client implements Phase3Client {
       createdAt: iso(this.now()),
     };
     this.posts.unshift(record);
+    writeStoredPosts(this.posts);
     return structuredClone(record);
   }
 

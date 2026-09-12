@@ -5,6 +5,10 @@ import { useEffect, useMemo, useState } from "react";
 import { profiles } from "@/lib/data";
 import { US_STATE_OPTIONS } from "@/lib/states";
 import { StatusChip } from "@/components/StatusChip";
+import { Mascot } from "@/components/Mascot";
+import { FollowButton } from "@/components/FollowButton";
+import { PromotedSlot } from "@/components/PromotedSlot";
+import { GetListedBand } from "@/components/GetListedBand";
 const CATEGORIES = ["All categories","Brand","Dispensary","Retailer","Sales rep","Cultivator","Manufacturer","Lab","Transport","Bank","Service","Media","Hydroponics"];
 const FEATURED_MARKETS = ["All states", "California", "Michigan", "Maryland", "Colorado", "Pennsylvania"];
 const VISUAL_CATEGORIES = [
@@ -80,6 +84,11 @@ export function ExploreClient() {
           <div><p className="eyebrow">Browse visually</p><h2 id="browse-category-title">Start with what you are looking for</h2></div>
           <button className="text-link" onClick={() => { setQuery(""); setCategory("All categories"); }} type="button">Clear category search</button>
         </div>
+        {/* The rail itself scrolls sideways on phones, so the mascot is
+            anchored to this wrapper instead - inside the scroller she ends up
+            parked off-screen at the end of the scroll. */}
+        <div className="explore-rail-wrap">
+        <Mascot className="bridge-mascot-explore" />
         <div className="explore-category-rail">
           {VISUAL_CATEGORIES.map((item) => (
             <button aria-pressed={query === item.query} className="explore-category-tile grain-image" key={item.label} onClick={() => { setQuery(item.query); setCategory("All categories"); }} type="button">
@@ -88,10 +97,13 @@ export function ExploreClient() {
             </button>
           ))}
         </div>
+        </div>
       </section>
 
+      <GetListedBand />
+
       <section className="market-switcher" aria-labelledby="market-switcher-title">
-        <div><p className="eyebrow">Nationwide market view</p><h2 id="market-switcher-title">Move between legal markets without losing the signal</h2><p>Use the complete state selector or jump into a featured prototype market. California and Michigan show how cross-state learning can work without claiming live market coverage.</p></div>
+        <div><p className="eyebrow">Nationwide market view</p><h2 id="market-switcher-title">Stay in signal with how other states are moving. Browse the movement.</h2><p>Use the complete state selector or jump into a featured prototype market. California and Michigan show how cross-state learning can work without claiming live market coverage.</p></div>
         <div className="market-pills" role="group" aria-label="Featured markets">
           {FEATURED_MARKETS.map((market) => <button aria-pressed={state === market} className={state === market ? "button primary" : "button secondary"} key={market} onClick={() => setState(market)} type="button">{market}</button>)}
         </div>
@@ -125,18 +137,19 @@ export function ExploreClient() {
           <div className="empty-state"><h3>No matches</h3><p>Try a simpler term, clear the category, or switch off Favorites only.</p></div>
         )}
         <div className="card-grid two">
-          {results.map((profile) => {
+          {results.map((profile, index) => {
             const fav = favorites.includes(profile.slug);
             return (
               <article key={profile.slug} className="profile-card">
                 {profile.imageSrc && <div className="grain-image profile-card-image"><Image alt={profile.imageAlt ?? ""} fill sizes="(max-width: 720px) 100vw, 50vw" src={profile.imageSrc} /></div>}
-                <div className="card-topline"><span className="avatar">{profile.initials}</span><StatusChip verified={profile.verified} /></div>
+                <div className="card-topline"><span className="avatar">{profile.initials}</span><StatusChip verified={profile.verified} />{index === 0 ? <PromotedSlot /> : null}</div>
                 <h3>{profile.name}</h3>
                 <p className="muted">{profile.role} · {profile.location}</p>
                 <p>{profile.description}</p>
                 <div className="tag-row">{profile.specialties.map((s) => <span className="tag" key={s}>{s}</span>)}</div>
                 <div className="button-row" style={{ marginTop: "auto", paddingTop: "1rem" }}>
                   <Link className="button secondary" href={`/profile/${profile.slug}`}>View profile</Link>
+                  <FollowButton orgId={profile.slug} orgName={profile.name} />
                   <button type="button" className={fav ? "button primary" : "button secondary"} aria-pressed={fav} aria-label={`${fav ? "Remove" : "Add"} ${profile.name} ${fav ? "from" : "to"} favorites`} onClick={() => toggleFavorite(profile.slug)}>{fav ? "Favorited" : "Favorite"}</button>
                   <button type="button" className="button secondary" onClick={() => setIntroStatus(`Introduction request for ${profile.name} is ready for verified staff review. No contact details were disclosed.`)}>Request introduction</button>
                 </div>

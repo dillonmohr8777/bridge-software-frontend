@@ -10,6 +10,7 @@ const links = [
   { href: "/create", label: "Create", match: (p: string) => p.startsWith("/create") },
   { href: "/my-profile", label: "My Profile", match: (p: string) => p.startsWith("/my-profile") },
   { href: "/explore", label: "Explore", match: (p: string) => p.startsWith("/explore") || p.startsWith("/directory") },
+  { href: "/verified", label: "Verified", match: (p: string) => p.startsWith("/verified") },
 ] as const;
 
 export function NavMenu() {
