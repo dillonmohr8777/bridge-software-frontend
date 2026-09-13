@@ -1,3 +1,4 @@
+import { canEditOrganization, validateOrganizationInput } from "./organizations.ts";
 import {
   canConfirmContacts,
   canCreatePromotion,
@@ -8,9 +9,13 @@ import {
 } from "./audiences.ts";
 import {
   Phase3Error,
+  type OrganizationInput,
+  type OrganizationRecord,
   type ConfirmContactsInput,
   type ConfirmContactsResult,
+  type AdminUsersResponse,
   type CreatePostInput,
+  type CurrentUserResponse,
   type Phase3Client,
   type ProfileProjection,
   type ResponsibleContact,
@@ -99,6 +104,43 @@ export class MockPhase3Client implements Phase3Client {
   private readonly now: () => Date;
   private uploadCount = 0;
   private postCount = 0;
+  private authenticated = true;
+  private organizations: OrganizationRecord[] | null = null;
+
+  async listOrganizations() {
+    const identity = await this.getCurrentUser();
+    this.organizations ??= identity.memberships.map((membership, index) => ({
+      id: `00000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
+      name: membership.organizationName,
+      organizationType: membership.organizationType,
+      membership: { role: membership.role, status: membership.status },
+    }));
+    return { organizations: structuredClone(this.organizations) };
+  }
+
+  async getOrganization(organizationId: string) {
+    const { organizations } = await this.listOrganizations();
+    const organization = organizations.find(({ id }) => id === organizationId);
+    if (!organization) throw new Phase3Error("unavailable", "Organization not found. Refresh your organizations.");
+    return { organization };
+  }
+
+  async createOrganization(input: OrganizationInput) {
+    const validated = validateOrganizationInput(input) as OrganizationInput;
+    await this.listOrganizations();
+    const organization: OrganizationRecord = { ...validated, id: crypto.randomUUID(), membership: { role: "owner", status: "active" } };
+    this.organizations!.push(organization);
+    return { organization: structuredClone(organization) };
+  }
+
+  async updateOrganization(organizationId: string, input: Partial<OrganizationInput>) {
+    const validated = validateOrganizationInput(input, true);
+    const { organization } = await this.getOrganization(organizationId);
+    if (!canEditOrganization(organization)) throw new Phase3Error("forbidden", "Only organization owners and admins can edit these details.");
+    const updated = { ...organization, ...validated };
+    this.organizations = this.organizations!.map((entry) => entry.id === organizationId ? updated : entry);
+    return { organization: structuredClone(updated) };
+  }
 
   constructor(options?: {
     claims?: SessionClaims;
@@ -138,8 +180,60 @@ export class MockPhase3Client implements Phase3Client {
     throw new Phase3Error("unavailable", "The request could not be completed. Your work is still here — try again.");
   }
 
+  async register() {
+    this.maybeFail();
+  }
+
+  async login(): Promise<CurrentUserResponse> {
+    this.maybeFail();
+    this.authenticated = true;
+    return this.getCurrentUser();
+  }
+
+  async logout() {
+    this.maybeFail();
+    this.authenticated = false;
+  }
+
+  async getCurrentUser(): Promise<CurrentUserResponse> {
+    this.maybeFail();
+    if (!this.authenticated) throw new Phase3Error("unauthenticated", "Sign in to continue.");
+    return {
+      user: {
+        id: this.claims.userId,
+        email: "member@example.invalid",
+        accountType: "standard",
+        platformRoles: this.claims.adminScope ? ["admin"] : [],
+        profile: { displayName: "Harbor Member", phone: null },
+      },
+      memberships: this.claims.organizationId ? [{
+        organizationId: this.claims.organizationId,
+        organizationName: "Harbor Dispensary",
+        organizationType: "dispensary",
+        role: "owner",
+        status: "active",
+      }] : [],
+    };
+  }
+
+  async forgotPassword() { throw new Phase3Error("unavailable", "Email recovery is unavailable in this preview."); }
+  async resendVerification() { throw new Phase3Error("unavailable", "Verification email is unavailable in this preview."); }
+  async resetPassword() { throw new Phase3Error("unavailable", "Passwords cannot be changed in this preview."); }
+  async establishRecoverySession() { throw new Phase3Error("unavailable", "Recovery sessions are unavailable in this preview."); }
+
+  async listAdminUsers(page: number, pageSize: number): Promise<AdminUsersResponse> {
+    this.maybeFail();
+    return { users: [], pagination: { page, pageSize, total: 0 } };
+  }
+
+  async getVerificationQueue(): Promise<unknown> {
+    this.maybeFail();
+    return { entries: [] };
+  }
+
   async getSession(): Promise<SessionClaims> {
     this.maybeFail();
+    if (!this.authenticated) throw new Phase3Error("unauthenticated", "Sign in to continue.");
     return structuredClone(this.claims);
   }
 

@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { TabBar } from "@/components/TabBar";
 import { DEFAULT_THEME, lockedTheme } from "@/lib/direction-lock";
 import { AGE_GATE_CONFIRMED_VALUE, AGE_GATE_STORAGE_KEY } from "@/lib/age-gate";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 // Client brand kit, 2026-07-20 Tori source package: Poppins headlines,
 // Montserrat SemiBold subheads, Inter body. Caveat is the marginalia hand
@@ -86,7 +87,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: ageGateScript }} />
       </head>
       <body>
-        <AgeGate>
+        <AuthProvider><AgeGate>
           <a className="skip-link" href="#main">Skip to content</a>
           <SiteHeader />
           <main id="main">{children}</main>
@@ -97,7 +98,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <span>The cannabis industry, connected</span>
             </div>
           </footer>
-        </AgeGate>
+        </AgeGate></AuthProvider>
       </body>
     </html>
   );

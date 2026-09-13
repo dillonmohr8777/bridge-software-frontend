@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { profiles } from "@/lib/data";
 import { US_STATE_OPTIONS } from "@/lib/states";
+import { matchesQuery, matchesServiceState } from "@/lib/search";
 import { StatusChip } from "@/components/StatusChip";
 import { Mascot } from "@/components/Mascot";
 import { FollowButton } from "@/components/FollowButton";
@@ -29,9 +30,10 @@ export function ExploreClient() {
   const [state, setState] = useState("All states");
   const [category, setCategory] = useState("All categories");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [includeServiceArea, setIncludeServiceArea] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(DEFAULT_FAVORITES);
   const [favoritesReady, setFavoritesReady] = useState(false);
-  const [introStatus, setIntroStatus] = useState("");
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -58,17 +60,15 @@ export function ExploreClient() {
     }
   }, [favorites, favoritesReady]);
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
     return profiles.filter((p) => {
       if (favoritesOnly && !favorites.includes(p.slug)) return false;
+      if (verifiedOnly && !p.verified) return false;
       if (category !== "All categories" && p.role !== category) return false;
       const st = stateFromLocation(p.location);
-      if (state !== "All states" && st !== state) return false;
-      if (!q) return true;
-      const hay = [p.name, p.role, p.location, p.description, p.serving, ...p.specialties, ...(p.products ?? [])].join(" ").toLowerCase();
-      return hay.includes(q);
+      if (includeServiceArea ? !matchesServiceState(p, state) : state !== "All states" && st !== state) return false;
+      return matchesQuery(p, query);
     });
-  }, [query, state, category, favoritesOnly, favorites]);
+  }, [query, state, category, favoritesOnly, favorites, verifiedOnly, includeServiceArea]);
   const sampleStates = useMemo(() => {
     const set = new Set(profiles.map((p) => stateFromLocation(p.location)).filter(Boolean));
     return Array.from(set).sort();
@@ -76,7 +76,7 @@ export function ExploreClient() {
   function toggleFavorite(slug: string) {
     setFavorites((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]));
   }
-  const noSampleForState = state !== "All states" && !sampleStates.includes(state) && results.length === 0;
+  const noSampleForState = state !== "All states" && !profiles.some((p) => includeServiceArea ? matchesServiceState(p, state) : stateFromLocation(p.location) === state);
   return (
     <div>
       <section className="explore-visual-filters" aria-labelledby="browse-category-title">
@@ -120,9 +120,12 @@ export function ExploreClient() {
         <input id="explore-q" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Brand, strain, service…" />
         <label htmlFor="explore-state">State</label>
         <select id="explore-state" value={state} onChange={(e) => setState(e.target.value)}>{US_STATE_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}</select>
+        <label className="check-row"><input type="checkbox" checked={includeServiceArea} onChange={(e) => setIncludeServiceArea(e.target.checked)} /><span>Include members serving this state</span></label>
+        <p className="form-hint">Uses the listed location, named service states, and nationwide coverage. Broad regions such as “the West” do not imply a specific state.</p>
         <label htmlFor="explore-cat">Category</label>
         <select id="explore-cat" value={category} onChange={(e) => setCategory(e.target.value)}>{CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}</select>
         <label className="check-row"><input type="checkbox" checked={favoritesOnly} onChange={(e) => setFavoritesOnly(e.target.checked)} /><span>Favorites only</span></label>
+        <label className="check-row"><input type="checkbox" checked={verifiedOnly} onChange={(e) => setVerifiedOnly(e.target.checked)} /><span>Verified only (sample status)</span></label>
         <p className="form-hint">Geographic filter: 50 states + D.C. Sample records currently illustrate: {sampleStates.join(", ")}.</p>
       </aside>
       <div>
@@ -134,7 +137,7 @@ export function ExploreClient() {
           </div>
         )}
         {!noSampleForState && results.length === 0 && (
-          <div className="empty-state"><h3>No matches</h3><p>Try a simpler term, clear the category, or switch off Favorites only.</p></div>
+          <div className="empty-state"><h3>No matches</h3><p>Try a simpler term, clear the category, include service areas, or switch off the favorites and verified filters.</p></div>
         )}
         <div className="card-grid two">
           {results.map((profile, index) => {
@@ -151,13 +154,13 @@ export function ExploreClient() {
                   <Link className="button secondary" href={`/profile/${profile.slug}`}>View profile</Link>
                   <FollowButton orgId={profile.slug} orgName={profile.name} />
                   <button type="button" className={fav ? "button primary" : "button secondary"} aria-pressed={fav} aria-label={`${fav ? "Remove" : "Add"} ${profile.name} ${fav ? "from" : "to"} favorites`} onClick={() => toggleFavorite(profile.slug)}>{fav ? "Favorited" : "Favorite"}</button>
-                  <button type="button" className="button secondary" onClick={() => setIntroStatus(`Introduction request for ${profile.name} is ready for verified staff review. No contact details were disclosed.`)}>Request introduction</button>
+                  <Link className="button secondary" href={`/profile/${profile.slug}#contact-request`}>Request introduction</Link>
                 </div>
               </article>
             );
           })}
         </div>
-        <p className="form-hint" role="status" aria-live="polite">{introStatus || "Introduction requests are permissioned — this prototype does not auto-disclose protected contacts."}</p>
+        <p className="form-hint">Introduction links open a preview form. Nothing is sent or stored in this prototype.</p>
       </div>
       </div>
     </div>

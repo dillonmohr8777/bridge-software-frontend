@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HeroFilm } from "@/components/HeroFilm";
+import { HomeAccountLink } from "@/components/HomeAccountLink";
 
 export default function Home() {
   return (
@@ -11,7 +12,7 @@ export default function Home() {
           <span>BRIDGE</span>
         </Link>
         <div className="landing-links">
-          <Link className="button primary" href="/join">Join the Bridge</Link>
+          <HomeAccountLink className="button primary" signedOutLabel="Join the Bridge" authenticatedLabel="My Profile" />
         </div>
       </nav>
 
@@ -23,7 +24,7 @@ export default function Home() {
             A space to promote yourself, have others help promote you, advertise your movement, and let people know what you are doing. A space to connect, a space to build, a space to keep in touch.
           </p>
           <div className="landing-links landing-actions">
-            <Link className="button primary" href="/join">Join the verified network <span aria-hidden="true">→</span></Link>
+            <HomeAccountLink className="button primary" signedOutLabel="Join the verified network" authenticatedLabel="Open Bridge" showArrow />
             <Link className="button ghost" href="/explore">Explore cannabis businesses</Link>
           </div>
           <div className="landing-stats" aria-label="Bridge capabilities">
