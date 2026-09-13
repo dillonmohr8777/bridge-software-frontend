@@ -1,23 +1,77 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Caveat, Inter, Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
 import { AgeGate } from "@/components/AgeGate";
 import { SiteHeader } from "@/components/SiteHeader";
+import { TabBar } from "@/components/TabBar";
 import { DEFAULT_THEME, lockedTheme } from "@/lib/direction-lock";
 import { AGE_GATE_CONFIRMED_VALUE, AGE_GATE_STORAGE_KEY } from "@/lib/age-gate";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
+// Client brand kit, 2026-07-20 Tori source package: Poppins headlines,
+// Montserrat SemiBold subheads, Inter body. Caveat is the marginalia hand
+// from the Field Notes companion, used for accents only.
 const bridgeDisplay = Poppins({
   subsets: ["latin"],
   variable: "--font-bridge",
-  weight: ["700", "800"],
+  weight: ["600", "700", "800"],
 });
 
+const bridgeSubhead = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-bridge-subhead",
+  weight: ["600", "700"],
+});
+
+const bridgeBody = Inter({
+  subsets: ["latin"],
+  variable: "--font-bridge-body",
+  weight: ["400", "500", "600"],
+});
+
+const bridgeHand = Caveat({
+  subsets: ["latin"],
+  variable: "--font-bridge-hand",
+  weight: ["700"],
+});
+
+const fontVariables = [bridgeDisplay, bridgeSubhead, bridgeBody, bridgeHand]
+  .map((font) => font.variable)
+  .join(" ");
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bridge-connected-signal.netlify.app"),
   title: "Bridge: The cannabis industry, connected",
   description: "A verified cannabis industry network for discovering businesses, following market activity, and reaching the right people.",
-  icons: { icon: "/bridge-mark.svg" },
-  // Staging previews must not be indexed.
-  robots: lockedTheme ? { index: false, follow: false } : undefined,
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/bridge-mark.svg", type: "image/svg+xml" },
+    ],
+  },
+  openGraph: {
+    title: "Bridge: The cannabis industry, connected",
+    description: "A verified cannabis industry network for discovering businesses, following market activity, and reaching the right people.",
+    url: "https://bridge-connected-signal.netlify.app",
+    siteName: "Bridge",
+    type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Bridge: the cannabis industry, connected",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bridge: The cannabis industry, connected",
+    description: "A verified cannabis industry network for discovering businesses, following market activity, and reaching the right people.",
+    images: ["/og.png"],
+  },
+  // The official review prototype stays out of search.
+  robots: { index: false, follow: false },
 };
 
 // Connected-signal is the purple Modern Network review URL. Force it before
@@ -27,23 +81,24 @@ const ageGateScript = `(function(){try{if(localStorage.getItem(${JSON.stringify(
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme={lockedTheme ?? DEFAULT_THEME} suppressHydrationWarning>
+    <html lang="en" className={fontVariables} data-theme={lockedTheme ?? DEFAULT_THEME} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: unifiedThemeScript }} />
         <script dangerouslySetInnerHTML={{ __html: ageGateScript }} />
       </head>
-      <body className={bridgeDisplay.variable}>
-        <AgeGate>
+      <body>
+        <AuthProvider><AgeGate>
           <a className="skip-link" href="#main">Skip to content</a>
           <SiteHeader />
           <main id="main">{children}</main>
+          <TabBar />
           <footer className="site-footer">
             <div className="shell footer-inner">
-              <span>Bridge discovery prototype</span>
-              <span>Provisional identity · pending Tori approval</span>
+              <span>Bridge</span>
+              <span>The cannabis industry, connected</span>
             </div>
           </footer>
-        </AgeGate>
+        </AgeGate></AuthProvider>
       </body>
     </html>
   );

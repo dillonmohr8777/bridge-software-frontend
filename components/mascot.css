@@ -1,0 +1,98 @@
+/*
+ * Bridge mascot placement and idle.
+ *
+ * She is decorative and must never block a control, so the whole element is
+ * pointer-events: none and sits at a z-index below the category tiles - that
+ * is what makes her read as standing *behind* them.
+ */
+
+.bridge-mascot {
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.bridge-mascot-art {
+  display: block;
+  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.55));
+  height: auto;
+  width: 100%;
+
+  /* Start tucked down behind the row, then rise once. */
+  opacity: 0;
+  transform: translate3d(0, 34%, 0) scale(0.94);
+  transition:
+    opacity 0.5s var(--ease, ease-out),
+    /* Exponential ease-out. She decelerates into place rather than
+       overshooting - the rise reads as confident without the springiness
+       that dates a design. */
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.bridge-mascot[data-risen="true"] .bridge-mascot-art {
+  animation: bridge-mascot-idle 6.5s ease-in-out 0.9s infinite;
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Weight shift, not a bounce - she is leaning, not jumping. */
+@keyframes bridge-mascot-idle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  35% {
+    transform: translate3d(0, -6px, 0) rotate(-0.7deg);
+  }
+  70% {
+    transform: translate3d(0, -2px, 0) rotate(0.5deg);
+  }
+}
+
+/*
+ * Anchored to the tile row: her bottom sits 58px INSIDE the row, so her boots
+ * are hidden behind the "Testing and compliance" tile and she reads as
+ * standing up from behind it. right: 21% lands her over that fourth tile.
+ */
+.bridge-mascot-explore {
+  bottom: calc(100% - 74px);
+  right: 19%;
+  width: clamp(178px, 19vw, 268px);
+}
+
+@media (max-width: 900px) {
+  .bridge-mascot-explore {
+    bottom: calc(100% - 150px);
+    right: -9%;
+    width: 240px;
+  }
+}
+
+/* Bridge is a mobile-first product and she is its personality, so she ships
+   at roughly double the size she started at on phones. */
+@media (max-width: 620px) {
+  .bridge-mascot-explore {
+    bottom: calc(100% - 142px);
+    right: -22%;
+    width: 218px;
+  }
+}
+
+@media (max-width: 420px) {
+  .bridge-mascot-explore {
+    bottom: calc(100% - 128px);
+    right: -26%;
+    width: 196px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bridge-mascot-art,
+  .bridge-mascot[data-risen="true"] .bridge-mascot-art {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
