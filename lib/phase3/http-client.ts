@@ -50,7 +50,7 @@ export class HttpPhase3Client implements Phase3Client {
     return `${this.baseUrl.replace(/\/$/, "")}${path}`;
   }
 
-  private async request<T>(path: string, init?: RequestInit): Promise<T> {
+  protected async request<T>(path: string, init?: RequestInit): Promise<T> {
     let response: Response;
     try {
       response = await fetch(this.endpoint(path), {
