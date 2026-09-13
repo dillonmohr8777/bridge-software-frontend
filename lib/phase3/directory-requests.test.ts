@@ -9,7 +9,8 @@ test("request boundaries reject forged authority and misleading receipts", () =>
   assert.deepEqual(validateRequestInput(input), input);
   assert.throws(() => validateRequestInput({ ...input, senderId: id } as never));
   assert.throws(() => validateRequestInput({ ...input, message: " " }));
-  assert.throws(() => parseDirectoryRequest({ ...request, emailDelivery: "sent" }));
+  assert.equal(parseDirectoryRequest({ ...request, emailDelivery: "sent" }).emailDelivery, "sent");
+  assert.throws(() => parseDirectoryRequest({ ...request, emailDelivery: "delivered" }));
   assert.throws(() => parseDirectoryRequest({ ...request, canReview: "true" }));
   assert.deepEqual(parseDirectoryRequest({ ...request, senderId: id }), request);
   assert.throws(() => parseRequestPage({ requests: [request], pagination: { page: 1, pageSize: 20, total: -1, totalPages: 0 } }));

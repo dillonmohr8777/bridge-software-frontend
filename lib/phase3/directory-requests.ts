@@ -3,9 +3,10 @@ import { Phase3Error } from "./types.ts";
 import { validateOrganizationId } from "./organizations.ts";
 
 export const requestKinds = { contact: "Contact request", claim: "Claim this listing", correction: "Suggest a correction" } as const;
+export const emailDeliveryStatuses = ["not_configured", "not_applicable", "queued", "sent", "partial", "failed"] as const;
 export type DirectoryRequest = {
   id: string; profileId: string; kind: keyof typeof requestKinds; message: string; replyEmail: string | null;
-  status: "pending" | "resolved" | "rejected"; createdAt: string; updatedAt: string; canReview: boolean; emailDelivery: "not_configured";
+  status: "pending" | "resolved" | "rejected"; createdAt: string; updatedAt: string; canReview: boolean; emailDelivery: typeof emailDeliveryStatuses[number];
 };
 export type RequestInput = { profileId: string; kind: DirectoryRequest["kind"]; message: string; shareEmail: boolean; idempotencyKey: string };
 export type RequestPage = { requests: DirectoryRequest[]; pagination: { page: number; pageSize: number; total: number; totalPages: number } };
@@ -13,9 +14,9 @@ function invalid(): never { throw new Phase3Error("unavailable", "The request re
 function object(value: unknown): Record<string, unknown> { if (!value || typeof value !== "object" || Array.isArray(value)) return invalid(); return value as Record<string, unknown>; }
 export function parseDirectoryRequest(value: unknown): DirectoryRequest {
   const r = object(value);
-  if (typeof r.id !== "string" || typeof r.profileId !== "string" || !Object.hasOwn(requestKinds, String(r.kind)) || typeof r.message !== "string" || (r.replyEmail !== null && typeof r.replyEmail !== "string") || !["pending", "resolved", "rejected"].includes(String(r.status)) || typeof r.canReview !== "boolean" || r.emailDelivery !== "not_configured" || typeof r.createdAt !== "string" || typeof r.updatedAt !== "string" || !Number.isFinite(Date.parse(r.createdAt)) || !Number.isFinite(Date.parse(r.updatedAt))) return invalid();
+  if (typeof r.id !== "string" || typeof r.profileId !== "string" || !Object.hasOwn(requestKinds, String(r.kind)) || typeof r.message !== "string" || (r.replyEmail !== null && typeof r.replyEmail !== "string") || !["pending", "resolved", "rejected"].includes(String(r.status)) || typeof r.canReview !== "boolean" || !emailDeliveryStatuses.includes(r.emailDelivery as never) || typeof r.createdAt !== "string" || typeof r.updatedAt !== "string" || !Number.isFinite(Date.parse(r.createdAt)) || !Number.isFinite(Date.parse(r.updatedAt))) return invalid();
   try { validateOrganizationId(r.id); validateOrganizationId(r.profileId); } catch { return invalid(); }
-  return { id: r.id, profileId: r.profileId, kind: r.kind as DirectoryRequest["kind"], message: r.message, replyEmail: r.replyEmail, status: r.status as DirectoryRequest["status"], createdAt: r.createdAt, updatedAt: r.updatedAt, canReview: r.canReview, emailDelivery: r.emailDelivery };
+  return { id: r.id, profileId: r.profileId, kind: r.kind as DirectoryRequest["kind"], message: r.message, replyEmail: r.replyEmail, status: r.status as DirectoryRequest["status"], createdAt: r.createdAt, updatedAt: r.updatedAt, canReview: r.canReview, emailDelivery: r.emailDelivery as DirectoryRequest["emailDelivery"] };
 }
 export function parseRequestPage(value: unknown): RequestPage {
   const result = object(value), p = object(result.pagination);
