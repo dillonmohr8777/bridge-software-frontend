@@ -1,8 +1,11 @@
+import { EngagementDashboard } from "@/components/Engagement";
+import { isPhase3LiveApi } from "@/lib/phase3";
 import Link from "next/link";
 
 const metrics = [["Profile views", "184", "+18%"], ["Search appearances", "726", "+9%"], ["Contact requests", "12", "+3"], ["Saved by members", "31", "+6"]];
 
 export default function DashboardPage() {
+  if (isPhase3LiveApi()) return <EngagementDashboard />;
   return (
     <section className="page shell">
       <div className="dashboard-heading"><div><p className="eyebrow">Brand dashboard</p><h1>Good morning, Tori.</h1><p className="lede">Here is what is happening around your profile. All metrics and requests below are fictional sample data.</p></div><button className="button secondary" disabled title="Profile editing opens in the post-decision build" type="button">Edit profile</button></div>

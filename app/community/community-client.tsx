@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { NewsFeed } from "@/components/Engagement";
+import { isPhase3LiveApi } from "@/lib/phase3";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { PostActions } from "@/components/PostActions";
@@ -71,7 +73,8 @@ function firstLine(message: string): string {
   return head.trim().slice(0, 72) || "Your promotion";
 }
 
-export function CommunityClient() {
+export function CommunityClient() { return isPhase3LiveApi() ? <NewsFeed /> : <><p className="boundary-note">Preview mode · illustrative news and promotions</p><PreviewCommunityClient /></>; }
+function PreviewCommunityClient() {
   const [layout, setLayout] = useState<"grid" | "aligned" | "classic">("grid");
   const [category, setCategory] = useState("All");
   const [state, setState] = useState("All states");

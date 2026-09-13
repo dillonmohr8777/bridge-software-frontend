@@ -1,5 +1,7 @@
 "use client";
 import Image from "next/image";
+import { LiveDirectory } from "@/components/LiveDirectory";
+import { isPhase3LiveApi } from "@/lib/phase3";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { profiles } from "@/lib/data";
@@ -25,7 +27,8 @@ function stateFromLocation(location: string) {
   const parts = location.split(",").map((p) => p.trim());
   return parts[1] || "";
 }
-export function ExploreClient() {
+export function ExploreClient() { return isPhase3LiveApi() ? <LiveDirectory /> : <><p className="boundary-note">Preview mode · fictional sample profiles</p><SampleExploreClient /></>; }
+function SampleExploreClient() {
   const [query, setQuery] = useState("");
   const [state, setState] = useState("All states");
   const [category, setCategory] = useState("All categories");
