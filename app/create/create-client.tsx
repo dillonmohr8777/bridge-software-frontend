@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { emptyPostModeValues, isPostModeValid, type PostModeId, type PostModeValues } from "@/lib/phase3/post-modes";
+import { PostModeFields } from "@/components/PostModeFields";
+import { PostModePicker } from "@/components/PostModePicker";
 import {
   Phase3Error,
   audienceCatalog,
+  reachCatalog,
+  reachLabel,
   audienceLabel,
   applySimulatedFailure,
   applyUnverifiedOrganization,
@@ -46,6 +51,9 @@ export function CreateClient() {
   const [publishedId, setPublishedId] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostRecord[]>([]);
   const [creativeDirection, setCreativeDirection] = useState<"Signal" | "Product" | "Editorial">("Signal");
+  const [reach, setReach] = useState<string>("everyone");
+  const [postMode, setPostMode] = useState<PostModeId>("update");
+  const [modeValues, setModeValues] = useState<PostModeValues>(() => emptyPostModeValues("update"));
   const [workflowMessage, setWorkflowMessage] = useState("");
   const uploadRequestId = useRef(0);
 
@@ -56,7 +64,9 @@ export function CreateClient() {
   const eligible = claims ? canCreatePromotion(claims) : false;
   const hasMessage = message.trim().length > 0;
   const uploadReady = file === null || (uploadStatus === "accepted" && upload !== null);
+  const modeComplete = isPostModeValid(postMode, modeValues);
   const canPublish = eligible
+    && modeComplete
     && canPublishPost(selected, protectedDetail, fileError)
     && hasMessage
     && uploadReady
@@ -149,6 +159,9 @@ export function CreateClient() {
       message,
       protectedDetail,
       audienceIds: effectiveAudiences,
+      reach,
+      postMode,
+      modeValues,
       fileName: fileMeta?.name ?? null,
       creativeDirection,
       savedAt: new Date().toISOString(),
@@ -287,6 +300,17 @@ export function CreateClient() {
         >
           {contentTypes.filter((type) => type === "Promotion").map((type) => <option key={type}>{type}</option>)}
         </select>
+        <PostModePicker
+          disabled={!eligible || status === "pending" || status === "success"}
+          onChange={(next) => { setPostMode(next); setModeValues(emptyPostModeValues(next)); }}
+          value={postMode}
+        />
+        <PostModeFields
+          disabled={!eligible || status === "pending" || status === "success"}
+          mode={postMode}
+          onChange={setModeValues}
+          values={modeValues}
+        />
         <label htmlFor="message">Message</label>
         <textarea
           disabled={!eligible || status === "pending" || status === "success"}
@@ -326,7 +350,18 @@ export function CreateClient() {
           </button>
         )}
         <fieldset className="audience-fieldset">
-          <legend>Audiences</legend>
+          <legend>Who do you want to see this?</legend>
+          {reachCatalog.map((item) => (
+            <label key={item.id} className="check-row">
+              <input type="radio" name="post-reach" checked={reach === item.id} disabled={!eligible || status === "pending" || status === "success"} onChange={() => setReach(item.id)} />
+              <span>{item.label} <span className="muted">· {item.hint}</span></span>
+            </label>
+          ))}
+          <p className="form-hint">Reach is who you are talking to. The 21+ and verified-access rules below still apply on top of it.</p>
+        </fieldset>
+
+        <fieldset className="audience-fieldset">
+          <legend>Access rules</legend>
           {audienceCatalog.map((audience) => {
             const disabled = !eligible || status === "pending" || status === "success" || (protectedDetail && audience.id === "adults");
             const checked = effectiveAudiences.includes(audience.id);
@@ -399,7 +434,7 @@ export function CreateClient() {
         <p className="status-chip">{creativeDirection} direction</p>
         <p>{message || "Message preview appears here."}</p>
         {fileMeta && <p className="muted">Asset: {fileMeta.name}</p>}
-        <p className="muted">Access level: {protectedDetail ? "Verified audiences only" : "As selected"}</p>
+        <p className="muted">Reach: {reachLabel(reach)} · Access level: {protectedDetail ? "Verified audiences only" : "As selected"}</p>
         <div className="tag-row">
           {effectiveAudiences.length === 0
             ? <span className="tag">No eligible audience</span>

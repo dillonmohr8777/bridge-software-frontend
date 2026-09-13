@@ -109,7 +109,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             </>
           )}
         </article>
-        <aside className="contact-card">
+        <aside className="contact-card" id="contact-request" tabIndex={-1}>
           <ContactRequestForm profileName={profile.name} profileSlug={profile.slug} />
         </aside>
       </div>
