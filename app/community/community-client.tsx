@@ -138,10 +138,13 @@ export function CommunityClient() {
       </div>
 
       <div className="feed-toolbar" aria-label="Community News controls">
-        <div className="layout-toggle" role="group" aria-label="Feed layout">
+        <div className="layout-toggle-group">
+        <p className="experience-label" id="choose-your-experience">Choose your experience</p>
+        <div className="layout-toggle" role="group" aria-labelledby="choose-your-experience">
           <button type="button" className={layout === "grid" ? "button primary" : "button secondary"} aria-pressed={layout === "grid"} onClick={() => setLayout("grid")}>Visual news</button>
           <button type="button" className={layout === "aligned" ? "button primary" : "button secondary"} aria-pressed={layout === "aligned"} onClick={() => setLayout("aligned")}>Aligned rows</button>
           <button type="button" className={layout === "classic" ? "button primary" : "button secondary"} aria-pressed={layout === "classic"} onClick={() => setLayout("classic")}>Classic feed</button>
+        </div>
         </div>
         <label className="compact-control" htmlFor="community-state">
           Market
