@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { PostActions } from "@/components/PostActions";
-import { useSocial } from "@/lib/social";
+import { collectionCount, collectionNames, useSocial } from "@/lib/social";
 import { getPhase3Client } from "@/lib/phase3";
 import type { PostRecord } from "@/lib/phase3/types";
 import { US_STATE_OPTIONS } from "@/lib/states";
@@ -76,6 +76,8 @@ export function CommunityClient() {
   const [category, setCategory] = useState("All");
   const [state, setState] = useState("All states");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  /* null means every saved post, regardless of folder. */
+  const [folder, setFolder] = useState<string | null>(null);
   // PostActions writes favourites to the shared social store, so the filter
   // must read the same place or the page grows two favourite systems.
   const social = useSocial();
@@ -119,10 +121,11 @@ export function CommunityClient() {
       if (category !== "All" && item.category !== category) return false;
       if (state !== "All states" && item.state !== state) return false;
       if (favoritesOnly && !social.favorites.includes(item.id)) return false;
+      if (favoritesOnly && folder && !(social.collections[folder] ?? []).includes(item.id)) return false;
       if (followingOnly && !social.following.includes(item.org)) return false;
       return true;
     }),
-    [allItems, category, favoritesOnly, followingOnly, social.favorites, social.following, state],
+    [allItems, category, favoritesOnly, folder, followingOnly, social.collections, social.favorites, social.following, state],
   );
   const noSampleForState = state !== "All states" && !sampleStates.includes(state) && visibleItems.length === 0;
 
@@ -155,6 +158,34 @@ export function CommunityClient() {
         <label className="check-row favorites-control"><input checked={favoritesOnly} onChange={(event) => setFavoritesOnly(event.target.checked)} type="checkbox" /><span>Saved only</span></label>
         <label className="check-row favorites-control"><input checked={followingOnly} onChange={(event) => setFollowingOnly(event.target.checked)} type="checkbox" /><span>Following only</span></label>
       </div>
+
+      {/* Tori: "when a user saves a post, it can go under a specific folder
+          like SAVED EVENTS, or SAVED DEALS or maybe they can custom their own".
+          The chips only exist while Saved only is on, because outside that view
+          they would filter against posts the member has not saved. */}
+      {favoritesOnly && (
+        <div className="folder-filter" role="group" aria-label="Filter saved posts by folder">
+          <button
+            type="button"
+            className="folder-chip"
+            aria-pressed={folder === null}
+            onClick={() => setFolder(null)}
+          >
+            All saved<span className="folder-chip-count">{social.favorites.length}</span>
+          </button>
+          {collectionNames(social).map((name) => (
+            <button
+              key={name}
+              type="button"
+              className="folder-chip"
+              aria-pressed={folder === name}
+              onClick={() => setFolder(folder === name ? null : name)}
+            >
+              {name}<span className="folder-chip-count">{collectionCount(name, social)}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <p className="review-notice">Heads up: this is a review build. The posts below are sample content, not live activity. Filters, layouts and saving all work for real.</p>
       <p className="handwrite">what the industry actually sounds like</p>

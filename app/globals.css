@@ -1043,3 +1043,16 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
     transform: scale(.975);
   }
 }
+
+
+/* Screen-reader-only text. Lives here, not in a component sheet: the mascot's
+   label rendered as visible text on /explore because the sheet that defined it
+   was only imported by /community. */
+.visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
