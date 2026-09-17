@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { HeroFilm } from "@/components/HeroFilm";
 import { HomeAccountLink } from "@/components/HomeAccountLink";
+import { PostPeek } from "@/components/PostPeek";
 
 export default function Home() {
   return (
@@ -20,13 +21,18 @@ export default function Home() {
         <div className="landing-copy">
           <p className="hero-label">Verified cannabis community</p>
           <h1 id="hero-title">One industry.<br />One network.<br /><span>One Bridge.</span></h1>
+          <p className="hero-tagline">To connect us all.</p>
           <p>
             A space to promote yourself, have others help promote you, advertise your movement, and let people know what you are doing. A space to connect, a space to build, a space to keep in touch.
           </p>
           <div className="landing-links landing-actions">
-            <HomeAccountLink className="button primary" signedOutLabel="Join the verified network" authenticatedLabel="Open Bridge" showArrow />
-            <Link className="button ghost" href="/explore">Explore cannabis businesses</Link>
+            <HomeAccountLink className="button primary" signedOutLabel="Business sign up" authenticatedLabel="Open Bridge" showArrow />
+            <Link className="button ghost" href="/join?audience=consumer">Consumer sign up</Link>
           </div>
+          <p className="signup-note">
+            Business accounts are EIN verified and can post. Consumer accounts skip
+            verification and can repost, save and follow, not post.
+          </p>
           <div className="landing-stats" aria-label="Bridge capabilities">
             <div><strong>50</strong><span>State discovery</span></div>
             <div><strong>03</strong><span>Audience controls</span></div>
@@ -57,9 +63,9 @@ export default function Home() {
           <p className="handwrite right">everything in one place, finally</p>
         </div>
         <div className="visual-story-track" aria-label="Bridge product moments">
-          <Link className="visual-story-card network" href="/community"><span>Community News</span><strong>Where the industry shows up every day.</strong></Link>
-          <Link className="visual-story-card markets" href="/explore"><span>Nationwide Explore</span><strong>Every legal market, one search away.</strong></Link>
-          <Link className="visual-story-card identity" href="/verified"><span>Verified identity</span><strong>Know who is current before you make the introduction.</strong></Link>
+          <Link className="visual-story-card network" href="/community"><span>Community News</span><strong>Where the industry shows up every day.</strong><em>Find out about events state by state. Get involved, get tickets, get in the know.</em></Link>
+          <Link className="visual-story-card markets" href="/explore"><span>Nationwide Explore</span><strong>Every legal market, one search away.</strong><em>Look up any brand, learn about them, watch their business grow, support them or learn from them.</em></Link>
+          <Link className="visual-story-card identity" href="/verified"><span>Verified identity</span><strong>Know who is current before you make the introduction.</strong><em>Skip the gossip and the rumours. Find out from the source.</em></Link>
         </div>
       </section>
 
@@ -80,14 +86,13 @@ export default function Home() {
         <div>
           <p className="hero-label">Bridge League</p>
           <h2 id="growth-model-title">Get recognized for good work, not for winning.</h2>
-          <p>Bridge League recognizes useful participation privately. No public leaderboard, no pressure to turn relationships into a competition.</p>
+          <p>Post in a place that lets you post, and get recognized for it. Bridge League recognizes useful participation privately. No public leaderboard, no pressure to turn relationships into a competition.</p>
           <Link className="button ghost" href="/league">See the Bridge League concept</Link>
         </div>
-        <div>
-          <p className="hero-label">Founding pricing</p>
-          <h2>See what membership might cost, before billing is turned on.</h2>
-          <p>A free tier, a founding business tier, and a multi-market option for bigger teams. Nothing is locked in until Tori approves the price.</p>
-          <Link className="button ghost" href="/pricing">See the proposed pricing</Link>
+        <div className="post-peek">
+          <p className="hero-label">A look inside</p>
+          <h2>This is what a post looks like.</h2>
+          <PostPeek />
         </div>
       </section>
 
