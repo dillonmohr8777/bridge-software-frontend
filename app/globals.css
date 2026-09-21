@@ -730,10 +730,15 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .page-heading-media { aspect-ratio: 3 / 2; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
 
 .visual-category-rail { display: flex; gap: 11px; margin-bottom: 24px; overflow-x: auto; padding: 4px 2px 12px; scrollbar-width: thin; }
-.visual-category { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; color: var(--muted); cursor: pointer; display: grid; flex: 0 0 130px; gap: 9px; min-height: 118px; overflow: hidden; padding: 8px; text-align: left; }
+.visual-category { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; color: var(--muted); cursor: pointer; display: grid; flex: 0 0 130px; gap: 9px; min-height: 142px; align-content: start; overflow: hidden; padding: 8px; text-align: left; }
 .visual-category[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); color: var(--text); }
 .category-thumb { background-position: center; background-size: cover; border-radius: 10px; display: block; height: 66px; }
 .visual-category strong { font-size: .78rem; line-height: 1.25; }
+/* Tori's vocab word under each chip, 2026-09-16. Its own line and its own
+   colour so the category name still reads as the control and the note reads
+   as the note. Sits in the grid the chip already declares, so the rail keeps
+   one row and one scroll. */
+.visual-category .category-note { color: var(--accent); font-family: var(--font-subhead); font-size: .7rem; font-weight: 600; line-height: 1.25; margin-top: -4px; }
 .feed-toolbar { align-items: end; }
 .feed-sample-summary { color: var(--muted); font-size: .8rem; margin: -5px 0 24px; }
 .feed-sample-summary strong { color: var(--text); }
@@ -1055,4 +1060,43 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
   position: absolute;
   white-space: nowrap;
   width: 1px;
+}
+
+/* Suite card previews. Tori asked for a visual inside each of the four
+   "Four spaces" cards (2026-09-16 screenshot set). These sit in the gap the
+   .number margin used to hold open. Colours are the shipped tokens or the
+   card's own white, so a contrast run reads the same values the browser does.
+   Flat tiles with a hairline edge on purpose: no second glass layer, no glow,
+   no orb. The card already carries one .arc and that is enough. */
+.bridge-home .suite-card .number { margin-bottom: 18px; }
+.bridge-home .suite-peek { margin-bottom: 20px; position: relative; z-index: 2; }
+
+.bridge-home .suite-peek-news { display: grid; gap: 6px; grid-template-columns: repeat(2, 108px); }
+.bridge-home .suite-peek-tile { border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent); border-radius: 10px; display: block; height: 72px; overflow: hidden; position: relative; }
+.bridge-home .suite-peek-tile img { object-fit: cover; }
+
+.bridge-home .suite-peek-create { display: flex; flex-direction: column; gap: 9px; }
+.bridge-home .suite-peek-label { color: #fff; font-family: var(--font-subhead); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.bridge-home .suite-peek-modes { display: flex; flex-wrap: wrap; gap: 6px; }
+.bridge-home .suite-peek-mode { border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent); border-radius: 999px; color: #fff; font-size: 12px; font-weight: 600; padding: 5px 11px; }
+.bridge-home .suite-peek-mode.is-on { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.bridge-home .suite-peek-reposts { color: #e4d7f2; font-size: 12px; font-weight: 600; }
+
+.bridge-home .suite-peek-profile { align-items: flex-start; display: flex; gap: 12px; }
+.bridge-home .suite-peek-avatar { align-items: center; background: var(--brand); border-radius: 12px; color: var(--on-brand); display: flex; flex: none; font-family: var(--font-subhead); font-size: 13px; font-weight: 700; height: 42px; justify-content: center; width: 42px; }
+.bridge-home .suite-peek-profile-copy { display: flex; flex-direction: column; gap: 3px; }
+.bridge-home .suite-peek-name { align-items: center; color: #fff; display: flex; flex-wrap: wrap; font-family: var(--font-display); font-size: 15px; font-weight: 700; gap: 8px; }
+.bridge-home .suite-peek-verified { background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-family: var(--font-subhead); font-size: 10px; font-weight: 700; letter-spacing: .05em; padding: 3px 8px; text-transform: uppercase; }
+.bridge-home .suite-peek-meta { color: #e4d7f2; font-size: 12px; }
+.bridge-home .suite-peek-about { color: #e4d7f2; font-size: 12px; line-height: 1.5; max-width: 330px; }
+
+.bridge-home .suite-peek-explore { display: flex; flex-wrap: wrap; gap: 8px; }
+.bridge-home .suite-peek-explore-tile { border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent); border-radius: 10px; display: block; height: 86px; overflow: hidden; position: relative; width: 132px; }
+.bridge-home .suite-peek-explore-tile img { object-fit: cover; }
+.bridge-home .suite-peek-explore-label { background: var(--canvas); bottom: 0; color: var(--text); display: block; font-family: var(--font-subhead); font-size: 10px; font-weight: 700; left: 0; padding: 5px 7px; position: absolute; right: 0; }
+
+@media (max-width: 720px) {
+  .bridge-home .suite-peek-news { grid-template-columns: repeat(2, 1fr); }
+  .bridge-home .suite-peek-tile { height: 64px; }
+  .bridge-home .suite-peek-explore-tile { flex: 1 1 108px; width: auto; }
 }

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { HeroFilm } from "@/components/HeroFilm";
 import { HomeAccountLink } from "@/components/HomeAccountLink";
 import { PostPeek } from "@/components/PostPeek";
+import { SuitePeek } from "@/components/SuitePeek";
 
 export default function Home() {
   return (
@@ -106,6 +107,7 @@ export default function Home() {
           <article className="suite-card">
             <div className="arc" />
             <span className="number">Community News</span>
+            <SuitePeek kind="news" />
             <h3>See what the industry is doing right now.</h3>
             <p>Launches, promotions, events, and what people are talking about. All in one feed.</p>
             <Link className="button ghost" href="/community">Open Community News <span aria-hidden="true">→</span></Link>
@@ -113,6 +115,7 @@ export default function Home() {
           <article className="suite-card">
             <div className="arc" />
             <span className="number">Create</span>
+            <SuitePeek kind="create" />
             <h3>Get your promotion to the right people.</h3>
             <p>Post for consumers, verified operators, or just the trade. Protected details stay out of the public feed automatically.</p>
             <Link className="button ghost" href="/create">Open Create</Link>
@@ -120,6 +123,7 @@ export default function Home() {
           <article className="suite-card">
             <div className="arc" />
             <span className="number">My Profile</span>
+            <SuitePeek kind="profile" />
             <h3>Your verified home base in the industry.</h3>
             <p>Keep your public info, contacts, and protected details current for the partners who need them.</p>
             <Link className="button ghost" href="/my-profile">Open My Profile</Link>
@@ -127,6 +131,7 @@ export default function Home() {
           <article className="suite-card">
             <div className="arc" />
             <span className="number">Explore</span>
+            <SuitePeek kind="explore" />
             <h3>Find who you need, anywhere in the country.</h3>
             <p>Brands, dispensaries, cultivators, service partners, and everything in between. Across every legal market.</p>
             <Link className="button ghost" href="/explore">Open Explore <span aria-hidden="true">→</span></Link>

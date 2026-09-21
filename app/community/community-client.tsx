@@ -64,6 +64,24 @@ const categoryImageByName: Record<string, string> = {
   Testing: "/bridge-editorial/community-category-testing.webp",
 };
 
+/* Tori, 2026-09-16 (Screenshot 2026-09-16 at 9.31.01 PM), beside this rail:
+   "Because it's not a shopping experience and more or less of an advertising
+   space, let's add these vocab words :D" - then wrote one under each chip.
+   Her words, unchanged, with one exception: she typed "Uniqe Services" and
+   that is shipped as "Unique". "Blogger's & Scientist" is left exactly as she
+   wrote it, because unlike the misspelling it could be deliberate voice.
+   Both are flagged back to her rather than quietly rewritten.
+   "All" has no note from her, so it has no sublabel. */
+const categoryNoteByName: Record<string, string> = {
+  Edibles: "New Edibles",
+  Retail: "All Dispensary Deals",
+  Cultivation: "What strains are growing",
+  Events: "Events Coming Up",
+  Wellness: "Blogger's & Scientist",
+  Transport: "Job Finder",
+  Services: "Unique Services",
+};
+
 /* First line of the message becomes the card title; the composer is a single
    free-text field, so there is nothing else to use. */
 function firstLine(message: string): string {
@@ -136,6 +154,7 @@ export function CommunityClient() {
           <button aria-pressed={category === item} className="visual-category" key={item} onClick={() => setCategory(item)} type="button">
             <span className="category-thumb grain-image" aria-hidden="true" style={{ backgroundImage: `url(${categoryImageByName[item]})` }} />
             <strong>{item}</strong>
+            {categoryNoteByName[item] ? <span className="category-note">{categoryNoteByName[item]}</span> : null}
           </button>
         ))}
       </div>
