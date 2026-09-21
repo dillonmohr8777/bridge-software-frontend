@@ -7,7 +7,7 @@ export default function MyProfilePage() {
     <RequireAuth><div className="page shell">
       <div className="page-heading page-heading-with-media">
         <div>
-          <p className="eyebrow">My Profile · Verified Cannabis Business</p>
+          <p className="eyebrow">My Profile</p>
           <h1>Give cannabis partners the right way to reach you</h1>
           <p><Link className="button secondary" href="/join/organization">Manage your organization</Link></p>
           <p className="lede small">Let the public know about you. Share the special work you have put into the industry, instead of relying on marketers, budtenders, managers and everyone else to tell your story. Let those people get it from the source. New team? List them via B2B so businesses know who to contact even when you have team changes.</p>
