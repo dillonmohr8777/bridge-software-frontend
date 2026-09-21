@@ -60,7 +60,8 @@ restrictive CSP, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referre
 
 ### B1 — Repository identity was rewritten in the canonical repo
 
-`9f5fa49` rewrites the repository pointer in all three project-identity files:
+`93ba32b` rewrites the repository pointer in all three project-identity files (this review
+originally attributed the change to `9f5fa49`; `git log -S` places it in `93ba32b`):
 
 | File | From | To |
 |---|---|---|
@@ -72,14 +73,24 @@ restrictive CSP, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referre
 specifically to stop sessions working against the wrong Bridge. Merging this change points
 every future session at a different repository.
 
-This may well be intentional: a client-owned repo under the `getonthebridge0-max` account
-is a reasonable end state, and that account already holds an admin invitation. But moving
-the canonical pointer is a decision about **which repo is authoritative**, not an
-integration detail, and it arrived inside a feature branch with no discussion.
+### B1 status — decided, and now fixed (2026-09-21)
 
-**Needs Dillon's decision before merge.** If `getonthebridge0-max/thebridge` is becoming
-canonical, that deserves its own commit, a note in `docs/decision-log.md`, and a migration
-of the pipeline docs. If it is not, revert these four lines.
+This was written as an open governance question. It is neither open nor a governance
+question: the target repository does not exist. `gh api repos/getonthebridge0-max/thebridge`
+returned HTTP 404 to a `repo`-scoped admin token on 2026-09-02, and
+`docs/INTEGRATION-PIPELINE.md` records `getonthebridge0-max` as a *pending invitee to this
+repository*, not the owner of another one. The rewrite took an invitee's username and turned
+it into a repository path.
+
+D-09 was finalised accordingly: canonical stays `dillonmohr8777/bridge-software-frontend`.
+
+The revert itself sat unexecuted for nineteen days and reached `production` in the meantime,
+so between 2026-09-03 and 2026-09-21 the "STOP: verify the Bridge repository first" guard on
+the default branch pointed every session at a 404. **This commit applies the revert**,
+restoring all four lines across the three files to their exact pre-`93ba32b` text.
+
+A later transfer to a client-owned repository remains possible; it would be its own decision
+and its own commit, with the pipeline docs migrated alongside.
 
 ### B2 — The branch fails the existing test suite
 
