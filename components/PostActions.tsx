@@ -6,10 +6,11 @@ import {
   isReposted,
   repost,
   repostCount,
-  unfavoritePost,
+  unfavoriteEverywhere,
   unrepost,
   useSocial,
 } from "@/lib/social";
+import { SaveToFolder } from "./SaveToFolder";
 import "./post-actions.css";
 
 type PostActionsProps = {
@@ -53,7 +54,7 @@ export function PostActions({ postId, postTitle, className }: PostActionsProps) 
         aria-label={`${saved ? "Remove" : "Add"} ${postTitle} ${saved ? "from" : "to"} your favorites`}
         aria-pressed={saved}
         className="bridge-post-action bridge-post-save"
-        onClick={() => (saved ? unfavoritePost(postId) : favoritePost(postId))}
+        onClick={() => (saved ? unfavoriteEverywhere(postId) : favoritePost(postId))}
         type="button"
       >
         <span aria-hidden="true" className="bridge-post-glyph">
@@ -64,6 +65,8 @@ export function PostActions({ postId, postTitle, className }: PostActionsProps) 
         <span>{saved ? "Saved" : "Save"}</span>
         {/* No saved-count: who saved a post is nobody's business, owner included. */}
       </button>
+
+      {saved && <SaveToFolder postId={postId} postTitle={postTitle} />}
     </div>
   );
 }

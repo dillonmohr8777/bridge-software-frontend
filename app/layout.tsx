@@ -11,6 +11,17 @@ import { AuthProvider } from "@/components/auth/AuthProvider";
 // Client brand kit, 2026-07-20 Tori source package: Poppins headlines,
 // Montserrat SemiBold subheads, Inter body. Caveat is the marginalia hand
 // from the Field Notes companion, used for accents only.
+//
+// Inter, Montserrat and Caveat are loaded as VARIABLE fonts: no `weight` key,
+// so next/font ships the whole 100-900 axis. Pinning a static list here is
+// what caused the weight defect found 2026-09-21 - globals.css declares 650,
+// 700, 750, 780, 800, 850 and 900 across ~45 selectors (.button, nav a, label,
+// .status-chip, .tag, .eyebrow among them) while only 400/500/600 of Inter and
+// 600/700 of Montserrat were ever downloaded. The browser cannot load a weight
+// that was not requested, so it synthesised a faux bold instead and the
+// rendered text did not match the declared weight anywhere on the site.
+// Poppins has no variable axis on Google Fonts, so its weights stay enumerated;
+// 800 is the only one globals.css asks for and it is present.
 const bridgeDisplay = Poppins({
   subsets: ["latin"],
   variable: "--font-bridge",
@@ -20,19 +31,16 @@ const bridgeDisplay = Poppins({
 const bridgeSubhead = Montserrat({
   subsets: ["latin"],
   variable: "--font-bridge-subhead",
-  weight: ["600", "700"],
 });
 
 const bridgeBody = Inter({
   subsets: ["latin"],
   variable: "--font-bridge-body",
-  weight: ["400", "500", "600"],
 });
 
 const bridgeHand = Caveat({
   subsets: ["latin"],
   variable: "--font-bridge-hand",
-  weight: ["700"],
 });
 
 const fontVariables = [bridgeDisplay, bridgeSubhead, bridgeBody, bridgeHand]

@@ -6,7 +6,7 @@ import { isPhase3LiveApi } from "@/lib/phase3";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { PostActions } from "@/components/PostActions";
-import { useSocial } from "@/lib/social";
+import { collectionCount, collectionNames, useSocial } from "@/lib/social";
 import { getPhase3Client } from "@/lib/phase3";
 import type { PostRecord } from "@/lib/phase3/types";
 import { US_STATE_OPTIONS } from "@/lib/states";
@@ -66,6 +66,24 @@ const categoryImageByName: Record<string, string> = {
   Testing: "/bridge-editorial/community-category-testing.webp",
 };
 
+/* Tori, 2026-09-16 (Screenshot 2026-09-16 at 9.31.01 PM), beside this rail:
+   "Because it's not a shopping experience and more or less of an advertising
+   space, let's add these vocab words :D" - then wrote one under each chip.
+   Her words, unchanged, with one exception: she typed "Uniqe Services" and
+   that is shipped as "Unique". "Blogger's & Scientist" is left exactly as she
+   wrote it, because unlike the misspelling it could be deliberate voice.
+   Both are flagged back to her rather than quietly rewritten.
+   "All" has no note from her, so it has no sublabel. */
+const categoryNoteByName: Record<string, string> = {
+  Edibles: "New Edibles",
+  Retail: "All Dispensary Deals",
+  Cultivation: "What strains are growing",
+  Events: "Events Coming Up",
+  Wellness: "Blogger's & Scientist",
+  Transport: "Job Finder",
+  Services: "Unique Services",
+};
+
 /* First line of the message becomes the card title; the composer is a single
    free-text field, so there is nothing else to use. */
 function firstLine(message: string): string {
@@ -79,6 +97,8 @@ function PreviewCommunityClient() {
   const [category, setCategory] = useState("All");
   const [state, setState] = useState("All states");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  /* null means every saved post, regardless of folder. */
+  const [folder, setFolder] = useState<string | null>(null);
   // PostActions writes favourites to the shared social store, so the filter
   // must read the same place or the page grows two favourite systems.
   const social = useSocial();
@@ -122,10 +142,11 @@ function PreviewCommunityClient() {
       if (category !== "All" && item.category !== category) return false;
       if (state !== "All states" && item.state !== state) return false;
       if (favoritesOnly && !social.favorites.includes(item.id)) return false;
+      if (favoritesOnly && folder && !(social.collections[folder] ?? []).includes(item.id)) return false;
       if (followingOnly && !social.following.includes(item.org)) return false;
       return true;
     }),
-    [allItems, category, favoritesOnly, followingOnly, social.favorites, social.following, state],
+    [allItems, category, favoritesOnly, folder, followingOnly, social.collections, social.favorites, social.following, state],
   );
   const noSampleForState = state !== "All states" && !sampleStates.includes(state) && visibleItems.length === 0;
 
@@ -136,15 +157,19 @@ function PreviewCommunityClient() {
           <button aria-pressed={category === item} className="visual-category" key={item} onClick={() => setCategory(item)} type="button">
             <span className="category-thumb grain-image" aria-hidden="true" style={{ backgroundImage: `url(${categoryImageByName[item]})` }} />
             <strong>{item}</strong>
+            {categoryNoteByName[item] ? <span className="category-note">{categoryNoteByName[item]}</span> : null}
           </button>
         ))}
       </div>
 
       <div className="feed-toolbar" aria-label="Community News controls">
-        <div className="layout-toggle" role="group" aria-label="Feed layout">
+        <div className="layout-toggle-group">
+        <p className="experience-label" id="choose-your-experience">Choose your experience</p>
+        <div className="layout-toggle" role="group" aria-labelledby="choose-your-experience">
           <button type="button" className={layout === "grid" ? "button primary" : "button secondary"} aria-pressed={layout === "grid"} onClick={() => setLayout("grid")}>Visual news</button>
           <button type="button" className={layout === "aligned" ? "button primary" : "button secondary"} aria-pressed={layout === "aligned"} onClick={() => setLayout("aligned")}>Aligned rows</button>
           <button type="button" className={layout === "classic" ? "button primary" : "button secondary"} aria-pressed={layout === "classic"} onClick={() => setLayout("classic")}>Classic feed</button>
+        </div>
         </div>
         <label className="compact-control" htmlFor="community-state">
           Market
@@ -155,6 +180,34 @@ function PreviewCommunityClient() {
         <label className="check-row favorites-control"><input checked={favoritesOnly} onChange={(event) => setFavoritesOnly(event.target.checked)} type="checkbox" /><span>Saved only</span></label>
         <label className="check-row favorites-control"><input checked={followingOnly} onChange={(event) => setFollowingOnly(event.target.checked)} type="checkbox" /><span>Following only</span></label>
       </div>
+
+      {/* Tori: "when a user saves a post, it can go under a specific folder
+          like SAVED EVENTS, or SAVED DEALS or maybe they can custom their own".
+          The chips only exist while Saved only is on, because outside that view
+          they would filter against posts the member has not saved. */}
+      {favoritesOnly && (
+        <div className="folder-filter" role="group" aria-label="Filter saved posts by folder">
+          <button
+            type="button"
+            className="folder-chip"
+            aria-pressed={folder === null}
+            onClick={() => setFolder(null)}
+          >
+            All saved<span className="folder-chip-count">{social.favorites.length}</span>
+          </button>
+          {collectionNames(social).map((name) => (
+            <button
+              key={name}
+              type="button"
+              className="folder-chip"
+              aria-pressed={folder === name}
+              onClick={() => setFolder(folder === name ? null : name)}
+            >
+              {name}<span className="folder-chip-count">{collectionCount(name, social)}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <p className="review-notice">Heads up: this is a review build. The posts below are sample content, not live activity. Filters, layouts and saving all work for real.</p>
       <p className="handwrite">what the industry actually sounds like</p>

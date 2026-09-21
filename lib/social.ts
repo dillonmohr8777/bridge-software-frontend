@@ -11,7 +11,15 @@ export type SocialState = {
   favorites: readonly string[];
   following: readonly string[];
   reposts: readonly string[];
+  /* Folder name -> post ids. Tori asked for "SAVED EVENTS", "SAVED DEALS" or
+     "maybe they can custom their own", so the two she named are seeded and the
+     shape takes any name the member types. A post can sit in more than one. */
+  collections: Readonly<Record<string, readonly string[]>>;
 };
+
+/* Seeded, not hard-coded: they are ordinary folders the member can empty or
+   ignore, and a folder only persists once something is filed in it. */
+export const DEFAULT_COLLECTIONS = ["Saved events", "Saved deals"] as const;
 
 /**
  * The owner's own numbers. Tori's rule: a follower count is back-end data, so
@@ -31,7 +39,7 @@ export type OwnAnalytics = {
 const SAMPLE_OWN_FOLLOWERS = 214;
 const SAMPLE_OWN_REPOSTS = 37;
 
-const EMPTY: SocialState = { favorites: [], following: [], reposts: [] };
+const EMPTY: SocialState = { favorites: [], following: [], reposts: [], collections: {} };
 
 /* useSyncExternalStore compares snapshots by identity, so the parsed state is
    held here and only replaced on a write. */
@@ -41,13 +49,33 @@ function ids(value: unknown): readonly string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 }
 
+/* Anything in localStorage is untrusted input: another tab, an older build or
+   a hand-edited value can all land here, so every folder name and every id is
+   checked rather than assumed. */
+function folders(value: unknown): Record<string, readonly string[]> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const out: Record<string, readonly string[]> = {};
+  for (const [name, list] of Object.entries(value as Record<string, unknown>)) {
+    const clean = name.trim().slice(0, 40);
+    if (!clean) continue;
+    const members = ids(list);
+    if (members.length) out[clean] = members;
+  }
+  return out;
+}
+
 function read(): SocialState {
   if (snapshot) return snapshot;
   if (typeof window === "undefined") return EMPTY;
   try {
     const parsed: unknown = JSON.parse(window.localStorage.getItem(SOCIAL_STORAGE_KEY) ?? "{}");
     const stored = (parsed ?? {}) as Partial<Record<keyof SocialState, unknown>>;
-    snapshot = { favorites: ids(stored.favorites), following: ids(stored.following), reposts: ids(stored.reposts) };
+    snapshot = {
+      favorites: ids(stored.favorites),
+      following: ids(stored.following),
+      reposts: ids(stored.reposts),
+      collections: folders(stored.collections),
+    };
   } catch {
     /* Private mode throws on read. An empty store is still a working store. */
     snapshot = EMPTY;
@@ -55,7 +83,12 @@ function read(): SocialState {
   return snapshot;
 }
 
-function setMember(key: keyof SocialState, id: string, on: boolean) {
+/* collections is a map, not a list, so it is deliberately not addressable
+   here. Widening this to keyof SocialState makes state[key] a union and the
+   list operations below stop type-checking. */
+type ListKey = "favorites" | "following" | "reposts";
+
+function setMember(key: ListKey, id: string, on: boolean) {
   const state = read();
   if (state[key].includes(id) === on) return;
   snapshot = { ...state, [key]: on ? [...state[key], id] : state[key].filter((item) => item !== id) };
@@ -93,6 +126,76 @@ export function repost(postId: string) {
 
 export function unrepost(postId: string) {
   setMember("reposts", postId, false);
+}
+
+/* ---------------------------------------------------------------- folders */
+
+function writeCollections(next: Record<string, readonly string[]>) {
+  const state = read();
+  snapshot = { ...state, collections: next };
+  try {
+    window.localStorage.setItem(SOCIAL_STORAGE_KEY, JSON.stringify(snapshot));
+  } catch {
+    /* Private mode throws on write. The session keeps working in memory. */
+  }
+  window.dispatchEvent(new Event(SOCIAL_EVENT));
+}
+
+/** Every folder that exists, the two seeded names first, then the member's own. */
+export function collectionNames(state: SocialState = read()): readonly string[] {
+  const own = Object.keys(state.collections).filter(
+    (name) => !DEFAULT_COLLECTIONS.includes(name as (typeof DEFAULT_COLLECTIONS)[number]),
+  );
+  return [...DEFAULT_COLLECTIONS, ...own.sort()];
+}
+
+export function inCollection(postId: string, name: string, state: SocialState = read()) {
+  return (state.collections[name] ?? []).includes(postId);
+}
+
+export function collectionsOf(postId: string, state: SocialState = read()): readonly string[] {
+  return Object.keys(state.collections).filter((name) => state.collections[name].includes(postId));
+}
+
+export function collectionCount(name: string, state: SocialState = read()) {
+  return (state.collections[name] ?? []).length;
+}
+
+/**
+ * Files a post into a folder, or takes it out. Filing also saves the post,
+ * because a post in "Saved events" that is not saved would be a contradiction
+ * the member never asked for.
+ */
+export function setCollection(postId: string, name: string, on: boolean) {
+  const clean = name.trim().slice(0, 40);
+  if (!clean) return;
+  const state = read();
+  const current = state.collections[clean] ?? [];
+  if (current.includes(postId) === on) return;
+
+  const next = { ...state.collections };
+  if (on) {
+    next[clean] = [...current, postId];
+  } else {
+    const rest = current.filter((item) => item !== postId);
+    /* An empty folder that the member did not create is not worth persisting. */
+    if (rest.length) next[clean] = rest;
+    else delete next[clean];
+  }
+  writeCollections(next);
+  if (on && !isFavorite(postId)) favoritePost(postId);
+}
+
+/** Unsaving a post takes it out of every folder, so nothing is orphaned. */
+export function unfavoriteEverywhere(postId: string) {
+  const state = read();
+  const next: Record<string, readonly string[]> = {};
+  for (const [name, list] of Object.entries(state.collections)) {
+    const rest = list.filter((item) => item !== postId);
+    if (rest.length) next[name] = rest;
+  }
+  writeCollections(next);
+  unfavoritePost(postId);
 }
 
 export function isFavorite(postId: string, state: SocialState = read()) {

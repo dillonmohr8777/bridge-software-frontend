@@ -730,10 +730,15 @@ body:has(.bridge-home) > .site-footer { display: none; }
 .page-heading-media { aspect-ratio: 3 / 2; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
 
 .visual-category-rail { display: flex; gap: 11px; margin-bottom: 24px; overflow-x: auto; padding: 4px 2px 12px; scrollbar-width: thin; }
-.visual-category { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; color: var(--muted); cursor: pointer; display: grid; flex: 0 0 130px; gap: 9px; min-height: 118px; overflow: hidden; padding: 8px; text-align: left; }
+.visual-category { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; color: var(--muted); cursor: pointer; display: grid; flex: 0 0 130px; gap: 9px; min-height: 142px; align-content: start; overflow: hidden; padding: 8px; text-align: left; }
 .visual-category[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); color: var(--text); }
 .category-thumb { background-position: center; background-size: cover; border-radius: 10px; display: block; height: 66px; }
 .visual-category strong { font-size: .78rem; line-height: 1.25; }
+/* Tori's vocab word under each chip, 2026-09-16. Its own line and its own
+   colour so the category name still reads as the control and the note reads
+   as the note. Sits in the grid the chip already declares, so the rail keeps
+   one row and one scroll. */
+.visual-category .category-note { color: var(--accent); font-family: var(--font-subhead); font-size: .7rem; font-weight: 600; line-height: 1.25; margin-top: -4px; }
 .feed-toolbar { align-items: end; }
 .feed-sample-summary { color: var(--muted); font-size: .8rem; margin: -5px 0 24px; }
 .feed-sample-summary strong { color: var(--text); }
@@ -900,19 +905,50 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
    Tori asked for. contrast() was the culprit - it pulls dark editorial
    photography down hard, and saturate() is luminance-preserving so it was
    never the cause. These values land +32% / +29%. */
-.grain-image img, .news-image img, .page-heading-media img { filter: saturate(.45) contrast(1.06) brightness(1.42); }
-/* Thumbnails are the smallest and darkest surface, so they take more lift. */
-/* Small surfaces need LESS processing to stay legible, not more. */
-.category-thumb, .explore-category-tile img { filter: saturate(.55) contrast(1.02) brightness(1.28); }
-.grain-image::after, .news-image::after, .page-heading-media::after {
-  background: linear-gradient(168deg, color-mix(in srgb, var(--accent) 88%, transparent), color-mix(in srgb, var(--brand) 92%, transparent) 62%, color-mix(in srgb, var(--canvas) 90%, transparent));
-  content: ""; inset: 0; mix-blend-mode: color; opacity: .28; pointer-events: none; position: absolute; z-index: 1;
-}
-.grain-image::before, .news-image::before, .page-heading-media::before {
-  background-image: url("/textures/bridge-film-grain.webp");
-  background-size: 256px 256px;
-  content: ""; inset: 0; mix-blend-mode: soft-light; opacity: .3; pointer-events: none; position: absolute; z-index: 2;
-}
+/* Tori, 2026-09-16, on two separate pages: "remove the purple filter and
+   keep all photos real time no filter... when people post, they'll want their
+   original artwork to be shown" and "ALLOWING natural color to the photos".
+
+   Photography now renders as shot. What is deliberately kept is the dark
+   bottom-gradient on tiles that carry a label over the image, because that is
+   text contrast, not a colour treatment, and dropping it fails WCAG on the
+   category tiles. */
+.grain-image img, .news-image img, .page-heading-media img { filter: none; }
+.category-thumb, .explore-category-tile img { filter: none; }
+
+/* ---- Tori's 2026-09-16 notes: new elements -------------------------- */
+
+/* "TO CONNECT US ALL." written under the One Bridge. line. */
+.bridge-home .hero-tagline { color: var(--accent); font-family: var(--font-display); font-size: clamp(19px, 2.4vw, 26px); letter-spacing: .01em; margin: 10px 0 0; }
+
+/* The consumer limit stated rather than implied, under the two sign-up CTAs. */
+.bridge-home .signup-note { color: color-mix(in srgb, var(--text) 68%, transparent); font-size: .82rem; line-height: 1.5; margin: 12px 0 0; max-width: 46ch; }
+
+/* Her line on each of the three story cards. The card is a flex column that
+   bottom-aligns, so this rides directly under the existing strong. */
+.bridge-home .visual-story-card em { background: #0a070e; color: color-mix(in srgb, #fff 72%, transparent); font-size: 12.5px; font-style: normal; line-height: 1.4; padding: 0 18px 18px; }
+.bridge-home .visual-story-card strong { padding-bottom: 8px; }
+
+/* Replaces the struck-out Founding pricing panel. */
+.bridge-home .post-peek { display: grid; gap: 4px; }
+.post-peek-frame { display: grid; gap: 12px; margin-top: 18px; }
+.post-peek-card { pointer-events: none; }
+.post-peek-actions { display: flex; gap: 14px; }
+.post-peek-action { color: color-mix(in srgb, var(--text) 62%, transparent); font-family: var(--font-subhead); font-size: .78rem; font-weight: 700; }
+.post-peek-caption { color: color-mix(in srgb, var(--text) 66%, transparent); font-size: .82rem; line-height: 1.5; margin: 0; }
+
+/* "Can we put a header here that says Choose your experience" */
+.layout-toggle-group { display: grid; gap: 8px; }
+.experience-label { color: var(--accent); font-family: var(--font-subhead); font-size: .72rem; font-weight: 800; letter-spacing: .09em; margin: 0; text-transform: uppercase; }
+
+/* "any chance we could add photos with each blurb to help owners read better" */
+/* .content-card sets its own padding later in this file, so the photo has to
+   win on specificity or it renders inset with a gap down one side. */
+.content-card.blurb-card { display: grid; gap: 0; overflow: hidden; padding: 0; }
+.content-card.blurb-card .blurb-media { aspect-ratio: 16 / 9; border-radius: 0; margin: 0; position: relative; width: 100%; }
+.content-card.blurb-card .blurb-media img { object-fit: cover; }
+.content-card.blurb-card h3 { margin: 18px 20px 0; }
+.content-card.blurb-card p { margin: 8px 20px 20px; }
 
 /* One review-build notice instead of the word "fictional" in twenty posts. */
 .review-notice { background: color-mix(in srgb, var(--signal) 12%, transparent); border-left: 3px solid var(--signal); border-radius: 0 10px 10px 0; color: var(--text); font-size: .92rem; margin: 0 0 18px; padding: 12px 16px; }
@@ -922,9 +958,11 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
    colour beneath supplies hue. Same look, no extra elements. */
 /* Deliberate exemption: the home hero runs a brand-film register rather
    than the documentary editorial treatment. Keep it out of .grain-image. */
+/* Was background-blend-mode: luminosity over a brand-coloured plate, which
+   is where the purple on these three cards came from. Same note from Tori. */
 .bridge-home .visual-story-card {
-  background-blend-mode: luminosity;
-  background-color: color-mix(in srgb, var(--brand) 30%, var(--accent));
+  background-blend-mode: normal;
+  background-color: var(--canvas);
 }
 .bridge-home .visual-story-card::after, .bridge-home .visual-story-card::before { z-index: 0; }
 
@@ -1009,4 +1047,56 @@ body:has(.mandatory-review-backdrop) .bridge-tabbar { display: none; }
   .button:active, .bridge-tabbar .tab:active {
     transform: scale(.975);
   }
+}
+
+
+/* Screen-reader-only text. Lives here, not in a component sheet: the mascot's
+   label rendered as visible text on /explore because the sheet that defined it
+   was only imported by /community. */
+.visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* Suite card previews. Tori asked for a visual inside each of the four
+   "Four spaces" cards (2026-09-16 screenshot set). These sit in the gap the
+   .number margin used to hold open. Colours are the shipped tokens or the
+   card's own white, so a contrast run reads the same values the browser does.
+   Flat tiles with a hairline edge on purpose: no second glass layer, no glow,
+   no orb. The card already carries one .arc and that is enough. */
+.bridge-home .suite-card .number { margin-bottom: 18px; }
+.bridge-home .suite-peek { margin-bottom: 20px; position: relative; z-index: 2; }
+
+.bridge-home .suite-peek-news { display: grid; gap: 6px; grid-template-columns: repeat(2, 108px); }
+.bridge-home .suite-peek-tile { border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent); border-radius: 10px; display: block; height: 72px; overflow: hidden; position: relative; }
+.bridge-home .suite-peek-tile img { object-fit: cover; }
+
+.bridge-home .suite-peek-create { display: flex; flex-direction: column; gap: 9px; }
+.bridge-home .suite-peek-label { color: #fff; font-family: var(--font-subhead); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.bridge-home .suite-peek-modes { display: flex; flex-wrap: wrap; gap: 6px; }
+.bridge-home .suite-peek-mode { border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent); border-radius: 999px; color: #fff; font-size: 12px; font-weight: 600; padding: 5px 11px; }
+.bridge-home .suite-peek-mode.is-on { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.bridge-home .suite-peek-reposts { color: #e4d7f2; font-size: 12px; font-weight: 600; }
+
+.bridge-home .suite-peek-profile { align-items: flex-start; display: flex; gap: 12px; }
+.bridge-home .suite-peek-avatar { align-items: center; background: var(--brand); border-radius: 12px; color: var(--on-brand); display: flex; flex: none; font-family: var(--font-subhead); font-size: 13px; font-weight: 700; height: 42px; justify-content: center; width: 42px; }
+.bridge-home .suite-peek-profile-copy { display: flex; flex-direction: column; gap: 3px; }
+.bridge-home .suite-peek-name { align-items: center; color: #fff; display: flex; flex-wrap: wrap; font-family: var(--font-display); font-size: 15px; font-weight: 700; gap: 8px; }
+.bridge-home .suite-peek-verified { background: var(--accent-soft); border-radius: 999px; color: var(--accent); font-family: var(--font-subhead); font-size: 10px; font-weight: 700; letter-spacing: .05em; padding: 3px 8px; text-transform: uppercase; }
+.bridge-home .suite-peek-meta { color: #e4d7f2; font-size: 12px; }
+.bridge-home .suite-peek-about { color: #e4d7f2; font-size: 12px; line-height: 1.5; max-width: 330px; }
+
+.bridge-home .suite-peek-explore { display: flex; flex-wrap: wrap; gap: 8px; }
+.bridge-home .suite-peek-explore-tile { border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent); border-radius: 10px; display: block; height: 86px; overflow: hidden; position: relative; width: 132px; }
+.bridge-home .suite-peek-explore-tile img { object-fit: cover; }
+.bridge-home .suite-peek-explore-label { background: var(--canvas); bottom: 0; color: var(--text); display: block; font-family: var(--font-subhead); font-size: 10px; font-weight: 700; left: 0; padding: 5px 7px; position: absolute; right: 0; }
+
+@media (max-width: 720px) {
+  .bridge-home .suite-peek-news { grid-template-columns: repeat(2, 1fr); }
+  .bridge-home .suite-peek-tile { height: 64px; }
+  .bridge-home .suite-peek-explore-tile { flex: 1 1 108px; width: auto; }
 }

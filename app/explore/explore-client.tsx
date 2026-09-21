@@ -91,7 +91,7 @@ function SampleExploreClient() {
             anchored to this wrapper instead - inside the scroller she ends up
             parked off-screen at the end of the scroll. */}
         <div className="explore-rail-wrap">
-        <Mascot className="bridge-mascot-explore" />
+        <Mascot className="bridge-mascot-explore" interactive />
         <div className="explore-category-rail">
           {VISUAL_CATEGORIES.map((item) => (
             <button aria-pressed={query === item.query} className="explore-category-tile grain-image" key={item.label} onClick={() => { setQuery(item.query); setCategory("All categories"); }} type="button">

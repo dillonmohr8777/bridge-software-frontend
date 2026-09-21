@@ -87,6 +87,71 @@
   }
 }
 
+/* ---- interactive: Tori asked to be able to light her pre-roll ---------- */
+
+/* As a button she has to accept the pointer the base rule refuses, and she
+   must not inherit any of the browser's button chrome. */
+.bridge-mascot-button {
+  appearance: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  pointer-events: auto;
+}
+.bridge-mascot-button:focus-visible {
+  border-radius: 12px;
+  outline: 3px solid var(--accent);
+  outline-offset: 6px;
+}
+
+/* The lit tip of the pre-roll in her raised hand, measured off the 400x518
+   sprite: the ember sits at about 11% across and 27% down. */
+.bridge-mascot-ember {
+  background: radial-gradient(circle, rgba(255,214,140,.95) 0%, rgba(255,138,46,.72) 38%, rgba(255,92,20,0) 72%);
+  border-radius: 50%;
+  height: 13%;
+  left: 4%;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 21%;
+  transform: scale(.55);
+  transition: opacity .25s ease-out, transform .25s ease-out;
+  width: 13%;
+}
+.bridge-mascot-button[data-lit="true"] .bridge-mascot-ember {
+  animation: bridge-ember-flare 2.6s ease-out forwards;
+}
+
+@keyframes bridge-ember-flare {
+  0%   { opacity: 0;   transform: scale(.55); }
+  12%  { opacity: 1;   transform: scale(1.18); }
+  30%  { opacity: .78; transform: scale(.94); }
+  55%  { opacity: .95; transform: scale(1.06); }
+  100% { opacity: 0;   transform: scale(.72); }
+}
+
+/* She leans in when she draws. */
+.bridge-mascot-button[data-lit="true"] .bridge-mascot-art {
+  animation: bridge-mascot-draw 2.6s ease-in-out;
+}
+@keyframes bridge-mascot-draw {
+  0%, 100% { transform: translate3d(0,0,0) rotate(0deg); }
+  18%      { transform: translate3d(0,-9px,0) rotate(-1.4deg); }
+  46%      { transform: translate3d(0,-3px,0) rotate(.8deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No flare and no lean, but pressing her still does something visible. */
+  .bridge-mascot-button[data-lit="true"] .bridge-mascot-ember {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+  .bridge-mascot-button[data-lit="true"] .bridge-mascot-art { animation: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bridge-mascot-art,
   .bridge-mascot[data-risen="true"] .bridge-mascot-art {
