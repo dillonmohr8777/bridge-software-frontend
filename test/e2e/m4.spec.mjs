@@ -43,6 +43,13 @@ async function setup(page, handler, role = "owner") {
   });
   return errors;
 }
+async function openPage(page, path) {
+  await page.goto(path);
+  // Auth can resolve beneath the age gate before its requestAnimationFrame unlocks
+  // the page. Wait for actual user interactivity before editing controlled inputs.
+  await expect(page.locator(".age-gated-content")).not.toHaveAttribute("inert", "", { timeout: 15000 });
+  await expect(page.locator(".age-gated-content")).toHaveAttribute("aria-hidden", "false");
+}
 async function evidence(page, testInfo, name, errors) {
   await expect(page.locator("body")).not.toBeEmpty();
   await expect(page.locator("nextjs-portal")).toHaveCount(0);
@@ -65,7 +72,7 @@ test("async inbox membership enables status actions and switches organization sc
     }
     return route.fulfill({ json: { requests: [{ id: "66666666-6666-4666-8666-666666666666", status: "new", firstName: selected === org1 ? "First sender" : "Second sender", workEmail: "sender@example.test", phoneNumber: "555-010-1001", yearsOfService: 2, message: selected === org1 ? "First inquiry" : "Second inquiry", createdAt: "2026-10-11T00:00:00Z" }], pageInfo: { limit: 20, offset: 0, hasMore: false } } });
   });
-  await page.goto("/requests");
+  await openPage(page, "/requests");
   await expect(page.getByLabel("Organization", { exact: true })).toHaveValue(org1);
   await page.getByRole("button", { name: "Mark responded", exact: true }).click();
   await expect.poll(() => actions.length).toBe(1);
@@ -94,13 +101,12 @@ for (const role of ["owner", "page_manager"]) {
       }
       return false;
     }, role);
-    await page.goto("/my-profile");
+    await openPage(page, "/my-profile");
     await expect(page.getByLabel("Display name", { exact: true })).toBeEnabled();
     await expect(page.getByLabel("Business", { exact: true })).toBeDisabled();
     const displayName = page.getByLabel("Display name", { exact: true });
     await displayName.fill("");
     await displayName.pressSequentially("Revised Brand");
-    console.log("Profile edit state", await displayName.evaluate((input) => ({ value: input.value, connected: input.isConnected, disabled: input.disabled, readOnly: input.readOnly })));
     await expect(displayName).toHaveValue("Revised Brand");
     await page.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect(page.getByText("Draft saved. Submit it for review when ready.", { exact: true })).toBeVisible();
@@ -128,7 +134,7 @@ test("directory filters reset cursor and discard an old in-flight page", async (
     const filtered = url.searchParams.get("state") === "Oregon";
     return route.fulfill({ json: { profiles: [{ ...profile, displayName: filtered ? "Filtered business" : "Initial business" }], pageInfo: { nextCursor: filtered ? null : "opaque-initial", hasMore: !filtered } } });
   });
-  await page.goto("/explore");
+  await openPage(page, "/explore");
   await expect(page.getByRole("heading", { name: "Initial business", exact: true })).toBeVisible({ timeout: 15000 });
   await page.getByRole("button", { name: "Load more", exact: true }).click();
   await expect.poll(() => nextPageStarted).toBe(true);
