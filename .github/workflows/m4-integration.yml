@@ -1,7 +1,7 @@
 name: Bridge M4 integration checks
 on:
   pull_request:
-    branches: [development]
+    branches: [development, feature/m4-source-recovery-20261011]
 permissions:
   contents: read
 concurrency:
@@ -56,4 +56,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - run: node --test scripts/editorial-image-usage.test.mjs
       - run: npm run test:images
