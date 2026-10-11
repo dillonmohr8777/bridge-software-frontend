@@ -20,6 +20,7 @@ jobs:
       - run: npm ci
       - name: Audit production dependencies
         run: npm audit --omit=dev
+      - run: node --test scripts/build-info.test.mjs
       - run: npm run test:integration
       - run: npm run typecheck
       - run: npm run lint
