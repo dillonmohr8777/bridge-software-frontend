@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { m4Api, type ContactPreference, type ContactRequest, type ContactRequestStatus, type OffsetPage } from "@/lib/m4/api";
+import { m4Api, type ContactRouting, type InboxOrganization, type ContactPreference, type ContactRequest, type ContactRequestStatus, type OffsetPage } from "@/lib/m4/api";
 
-import { resolveOrganizationId } from "@/lib/m4/profile-editor";
+
 
 const statuses: ContactRequestStatus[] = ["new", "viewed", "responded", "closed"];
 const transitions: Record<ContactRequestStatus, ContactRequestStatus[]> = { new: ["viewed", "responded", "closed"], viewed: ["responded", "closed"], responded: ["closed"], closed: [] };
@@ -36,21 +36,76 @@ function RequestCards({ page, organizationId, onChanged }: { page: OffsetPage<Co
 }
 
 export function ContactRequestInbox() {
-  const { memberships, status } = useAuth();
-  const organizations = memberships.filter((item) => item.status === "active" && ["owner", "admin"].includes(item.role));
+  const { user, memberships, status } = useAuth();
+  if (status === "loading") return <p role="status">Checking your account…</p>;
+  if (!user) return null;
+  const manageableIds = memberships.filter((item) => item.status === "active" && ["owner", "admin"].includes(item.role)).map((item) => item.organizationId);
+  return <AvailableInboxes key={user.id} manageableIds={manageableIds} />;
+}
+
+function AvailableInboxes({ manageableIds }: { manageableIds: string[] }) {
+  const [organizations, setOrganizations] = useState<InboxOrganization[] | null>(null);
+  const [error, setError] = useState("");
+  const [reload, setReload] = useState(0);
   const [organizationId, setOrganizationId] = useState("");
   const [filter, setFilter] = useState<ContactRequestStatus | "">("");
   const [offset, setOffset] = useState(0);
   const [revision, setRevision] = useState(0);
-  const selectedOrganizationId = resolveOrganizationId(organizationId, organizations);
-  if (status === "loading") return <p role="status">Checking your account…</p>;
-  if (!organizations.length) return <div className="empty-state"><h2>No manageable organization</h2><p>An owner or admin membership is required to view a business inbox.</p></div>;
+  const [showRouting, setShowRouting] = useState(false);
+  useEffect(() => {
+    let active = true;
+    m4Api.inboxOrganizations().then((value) => { if (active) setOrganizations(value); }).catch((cause) => { if (active) setError(errorText(cause)); });
+    return () => { active = false; };
+  }, [reload]);
+  if (error) return <div className="empty-state"><p role="alert" className="form-error">{error}</p><button className="button secondary" type="button" onClick={() => { setError(""); setOrganizations(null); setReload(value => value + 1); }}>Retry inbox access</button></div>;
+  if (!organizations) return <p role="status">Loading available inboxes…</p>;
+  if (!organizations.length) return <div className="empty-state"><h2>No available inboxes</h2><p>You do not currently manage a business inbox or have an assigned contact request.</p></div>;
+  const selectedOrganizationId = organizations.some(item => item.id === organizationId) ? organizationId : organizations[0].id;
   return <div className="form-stack">
-    <div className="feed-toolbar"><label htmlFor="inbox-organization">Organization</label><select id="inbox-organization" value={selectedOrganizationId} onChange={(event) => { setOrganizationId(event.target.value); setOffset(0); }}>{organizations.map((item) => <option key={item.organizationId} value={item.organizationId}>{item.organizationName}</option>)}</select>
+    <div className="feed-toolbar"><label htmlFor="inbox-organization">Organization</label><select id="inbox-organization" value={selectedOrganizationId} onChange={(event) => { setOrganizationId(event.target.value); setOffset(0); setShowRouting(false); }}>{organizations.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
       <label htmlFor="inbox-status">Status</label><select id="inbox-status" value={filter} onChange={(event) => { setFilter(event.target.value as ContactRequestStatus | ""); setOffset(0); }}><option value="">All statuses</option>{statuses.map((value) => <option key={value}>{value}</option>)}</select><Link className="button secondary" href="/requests/sent">Sent requests</Link>
     </div>
+    {manageableIds.includes(selectedOrganizationId) && <><button className="button secondary" type="button" aria-expanded={showRouting} onClick={() => setShowRouting(value => !value)}>Manage contact routing</button>{showRouting && <ContactRoutingSettings key={selectedOrganizationId} organizationId={selectedOrganizationId} />}</>}
     <InboxPage key={JSON.stringify([selectedOrganizationId, filter, offset, revision])} organizationId={selectedOrganizationId} filter={filter} offset={offset} setOffset={setOffset} onChanged={() => setRevision((value) => value + 1)} />
   </div>;
+}
+
+function ContactRoutingSettings({ organizationId }: { organizationId: string }) {
+  const [routing, setRouting] = useState<ContactRouting | null>(null);
+  const [error, setError] = useState("");
+  const [revision, setRevision] = useState(0);
+  const [removeSales, setRemoveSales] = useState(false);
+  const [removeAdmin, setRemoveAdmin] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    let active = true;
+    m4Api.getContactRouting(organizationId).then(value => { if (active) setRouting(value); }).catch(cause => { if (active) setError(errorText(cause)); });
+    return () => { active = false; };
+  }, [organizationId, revision]);
+  async function save(event: FormEvent) {
+    event.preventDefault();
+    if (!routing || busy || (!removeSales && !removeAdmin)) return;
+    setBusy(true); setError(""); setSaved(false);
+    try {
+      const next = await m4Api.updateContactRouting(organizationId, { salesRepresentativeMembershipId: removeSales ? null : routing.salesRepresentative?.membershipId ?? null, bridgeAdminUserId: removeAdmin ? null : routing.bridgeAdmin?.userId ?? null });
+      setRouting(next); setRemoveSales(false); setRemoveAdmin(false); setSaved(true);
+    } catch (cause) { setError(errorText(cause)); } finally { setBusy(false); }
+  }
+  return <section className="content-card" aria-labelledby="contact-routing-heading"><h2 id="contact-routing-heading">Contact routing</h2>
+    <p>Requests go to the assigned Bridge administrator or sales representative, with the business owner as fallback. Changes here apply to new requests.</p>
+    {error && <p className="form-error" role="alert">{error}</p>}
+    {!routing ? error ? <button className="button secondary" type="button" onClick={() => { setError(""); setRevision(value => value + 1); }}>Retry routing</button> : <p role="status">Loading contact routing…</p> : <form className="form-stack" onSubmit={save}>
+      <p>Sales representative: <strong>{routing.salesRepresentative?.displayName || (routing.salesRepresentative ? "Assigned representative" : "Not assigned")}</strong></p>
+      {routing.salesRepresentative && <label><input type="checkbox" disabled={busy} checked={removeSales} onChange={event => { setRemoveSales(event.target.checked); setSaved(false); }} /> Remove assigned sales representative</label>}
+      <p>Bridge administrator: <strong>{routing.bridgeAdmin?.displayName || (routing.bridgeAdmin ? "Assigned administrator" : "Not assigned")}</strong></p>
+      {routing.bridgeAdmin && <label><input type="checkbox" disabled={busy} checked={removeAdmin} onChange={event => { setRemoveAdmin(event.target.checked); setSaved(false); }} /> Remove assigned Bridge administrator</label>}
+      {(removeSales || removeAdmin) && <p className="form-hint">Save to remove the selected assignment. Any remaining eligible assignment stays in place; the business owner is the fallback.</p>}
+      <button className="button primary" disabled={busy || (!removeSales && !removeAdmin)} type="submit">{busy ? "Saving routing…" : "Save routing changes"}</button>
+      {saved && <p role="status">Contact routing saved.</p>}
+      <p className="form-hint">Choosing a new contact is not available here yet.</p>
+    </form>}
+  </section>;
 }
 
 function InboxPage({ organizationId, filter, offset, setOffset, onChanged }: { organizationId: string; filter: ContactRequestStatus | ""; offset: number; setOffset(value: number): void; onChanged(): void }) {
