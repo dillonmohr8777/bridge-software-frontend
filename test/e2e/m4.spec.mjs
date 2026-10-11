@@ -23,7 +23,7 @@ function identity(role = "owner") {
 async function setup(page, handler, role = "owner") {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  page.on("console", (entry) => { if (entry.type() === "error") errors.push(entry.text()); });
+  page.on("console", (entry) => { if (entry.type() === "error") errors.push(`${entry.text()} ${entry.location().url}`); });
   await page.addInitScript(() => {
     localStorage.setItem("bridge-age-confirmed-v1", "confirmed");
     // Keep pagination deliberate so the test can exercise filter changes during an in-flight next page.
@@ -37,6 +37,7 @@ async function setup(page, handler, role = "owner") {
     }
     const result = await handler(route, url);
     if (result !== false) return;
+    console.error(`Unexpected fixture route: ${url.href}`);
     return route.fulfill({ status: 404, json: { error: "NOT_FOUND", message: "Unexpected fixture route" } });
   });
   return errors;

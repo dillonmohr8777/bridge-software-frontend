@@ -94,10 +94,10 @@ function OrganizationEditor({ organizationId, role }: { organizationId: string; 
       {profile?.status === "pending_review" && <p className="boundary-note">Saving another change returns this submission to draft.</p>}
       {!permissions.editable && <p className="boundary-note">This profile cannot currently be edited.</p>}
       <fieldset disabled={!!busy || !permissions.editable}>
-        <label>Business<select required disabled={!permissions.canReassignBusiness} value={draft.businessId} onChange={(event) => field("businessId", event.target.value)}><option value="">Choose a business</option>{businesses.map((item) => <option key={item.id} value={item.id}>{item.dbaName || item.legalName}</option>)}</select></label>
+        <label htmlFor="profile-business">Business</label><select id="profile-business" required disabled={!permissions.canReassignBusiness} value={draft.businessId} onChange={(event) => field("businessId", event.target.value)}><option value="">Choose a business</option>{businesses.map((item) => <option key={item.id} value={item.id}>{item.dbaName || item.legalName}</option>)}</select>
         <label>Profile URL<input required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={draft.slug} onChange={(event) => field("slug", event.target.value.toLowerCase())} /></label>
         <label>Display name<input required maxLength={200} value={draft.displayName} onChange={(event) => field("displayName", event.target.value)} /></label>
-        <label>Business type<select value={draft.businessType} onChange={(event) => field("businessType", event.target.value as OrganizationType)}><option value="brand">Brand</option><option value="retailer">Retailer</option><option value="dispensary">Dispensary</option></select></label>
+        <label htmlFor="profile-business-type">Business type</label><select id="profile-business-type" value={draft.businessType} onChange={(event) => field("businessType", event.target.value as OrganizationType)}><option value="brand">Brand</option><option value="retailer">Retailer</option><option value="dispensary">Dispensary</option></select>
         <label>Summary<textarea rows={3} value={draft.summary ?? ""} onChange={(event) => field("summary", event.target.value || null)} /></label>
         <label>Story<textarea rows={6} value={draft.story ?? ""} onChange={(event) => field("story", event.target.value || null)} /></label>
         <label>Categories (comma separated)<input value={categories} onChange={(event) => { setCategories(event.target.value); setDirty(true); }} /></label>

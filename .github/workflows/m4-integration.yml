@@ -32,6 +32,15 @@ jobs:
       - run: npx --no-install playwright install --with-deps chromium
       - name: Run synthetic desktop and mobile journeys
         run: npx --no-install playwright test
+      - name: Report browser failure context
+        if: failure()
+        run: |
+          python - <<'PY'
+          import glob
+          for path in glob.glob("/tmp/bridge-m4-test-results/**/error-context.md", recursive=True):
+              print(path)
+              print(open(path).read()[:9000])
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
