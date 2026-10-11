@@ -99,7 +99,7 @@ test("global admin status alone grants no inbox and failed discovery can retry",
     return route.fulfill({ json: { organizations: [] } });
   }, "owner", who);
   await openPage(page, "/requests");
-  await expect(page.getByRole("alert")).toHaveText("Inbox service unavailable");
+  await expect(page.locator("main .form-error[role=alert]")).toHaveText("Inbox service unavailable");
   await expect(page.getByRole("button", { name: "Mark responded" })).toHaveCount(0);
   await page.getByRole("button", { name: "Retry inbox access" }).click();
   await expect(page.getByRole("heading", { name: "No available inboxes" })).toBeVisible();
@@ -130,7 +130,7 @@ test("owner selects bounded representative, preserves admin, then clears to owne
   });
   await openPage(page, "/requests");
   await page.getByRole("button", { name: "Manage contact routing" }).click();
-  await expect(page.getByRole("alert")).toHaveText("Routing unavailable");
+  await expect(page.locator("main .form-error[role=alert]")).toHaveText("Routing unavailable");
   await expect(page.getByRole("button", { name: "Save routing changes" })).toHaveCount(0);
   expect(saves).toHaveLength(0);
   await page.getByRole("button", { name: "Retry routing" }).click();
@@ -140,7 +140,7 @@ test("owner selects bounded representative, preserves admin, then clears to owne
   await expect(page.getByRole("button", { name: "Save routing changes" })).toBeDisabled();
   await selector.selectOption(rep2.membershipId);
   await page.getByRole("button", { name: "Save routing changes" }).click();
-  await expect(page.getByRole("alert")).toHaveText("Assignment changed. Try again.");
+  await expect(page.locator("main .form-error[role=alert]")).toHaveText("Assignment changed. Try again.");
   await expect(selector).toHaveValue(rep2.membershipId);
   await page.getByRole("button", { name: "Save routing changes" }).click();
   await expect(page.getByText("Contact routing saved.", { exact: true })).toBeVisible();
@@ -208,7 +208,7 @@ test("discovery 403 never falls back to owner memberships", async ({ page }, inf
     return false;
   });
   await openPage(page, "/requests");
-  await expect(page.getByRole("alert")).toHaveText("Inbox access denied");
+  await expect(page.locator("main .form-error[role=alert]")).toHaveText("Inbox access denied");
   await expect(page.getByLabel("Organization", { exact: true })).toHaveCount(0);
   expect(inboxReads).toBe(0);
   await evidence(page, info, "forbidden-inbox", errors.filter(e => !e.includes("403")));
