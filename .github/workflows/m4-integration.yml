@@ -18,13 +18,15 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Record production dependency audit
+        continue-on-error: true
+        run: npm audit --omit=dev
       - run: npm run test:integration
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
         env:
           NEXT_PUBLIC_BRIDGE_API_BASE: https://bridge-api.example.test
-      - run: npm run test:images
       - name: Install temporary browser test tooling
         run: npm install --no-save --package-lock=false @playwright/test@1.56.1
       - run: npx --no-install playwright install --with-deps chromium
@@ -38,3 +40,12 @@ jobs:
             /tmp/bridge-m4-evidence
             /tmp/bridge-m4-test-results
           if-no-files-found: ignore
+  image-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm run test:images
