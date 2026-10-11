@@ -64,6 +64,7 @@ async function evidence(page, testInfo, name, errors) {
 test("async inbox membership enables status actions and switches organization scope", async ({ page }, testInfo) => {
   const actions = [];
   const errors = await setup(page, async (route, url) => {
+    if (url.pathname === "/api/v1/contact-requests/inbox-organizations") return route.fulfill({ json: { organizations: [{ id: org1, name: "First organization" }, { id: org2, name: "Second organization" }] } });
     if (!url.pathname.includes("/contact-requests")) return false;
     const selected = url.pathname.includes(org2) ? org2 : org1;
     if (route.request().method() === "POST") {
