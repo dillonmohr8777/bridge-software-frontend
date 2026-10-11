@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { m4Api, type ContactPreference, type ContactRequest, type ContactRequestStatus, type OffsetPage } from "@/lib/m4/api";
+
+import { resolveOrganizationId } from "@/lib/m4/profile-editor";
 
 const statuses: ContactRequestStatus[] = ["new", "viewed", "responded", "closed"];
 const transitions: Record<ContactRequestStatus, ContactRequestStatus[]> = { new: ["viewed", "responded", "closed"], viewed: ["responded", "closed"], responded: ["closed"], closed: [] };
@@ -34,12 +36,34 @@ function RequestCards({ page, organizationId, onChanged }: { page: OffsetPage<Co
 }
 
 export function ContactRequestInbox() {
-  const { memberships } = useAuth(); const organizations = useMemo(() => memberships.filter((item) => item.status === "active" && ["owner", "admin"].includes(item.role)), [memberships]);
-  const [organizationId, setOrganizationId] = useState(organizations[0]?.organizationId ?? ""); const [filter, setFilter] = useState<ContactRequestStatus | "">(""); const [offset, setOffset] = useState(0); const [page, setPage] = useState<OffsetPage<ContactRequest> | null>(null); const [error, setError] = useState(""); const [revision, setRevision] = useState(0);
-  const selectedOrganizationId = organizationId || organizations[0]?.organizationId || "";
-  useEffect(() => { if (!selectedOrganizationId) return; let active = true; m4Api.inbox(selectedOrganizationId, { status: filter || undefined, limit: 20, offset }).then((value) => { if (active) setPage(value); }).catch((cause) => { if (active) setError(errorText(cause)); }); return () => { active = false; }; }, [selectedOrganizationId, filter, offset, revision]);
+  const { memberships, status } = useAuth();
+  const organizations = memberships.filter((item) => item.status === "active" && ["owner", "admin"].includes(item.role));
+  const [organizationId, setOrganizationId] = useState("");
+  const [filter, setFilter] = useState<ContactRequestStatus | "">("");
+  const [offset, setOffset] = useState(0);
+  const [revision, setRevision] = useState(0);
+  const selectedOrganizationId = resolveOrganizationId(organizationId, organizations);
+  if (status === "loading") return <p role="status">Checking your account…</p>;
   if (!organizations.length) return <div className="empty-state"><h2>No manageable organization</h2><p>An owner or admin membership is required to view a business inbox.</p></div>;
-  return <div className="form-stack"><div className="feed-toolbar"><label htmlFor="inbox-organization">Organization</label><select id="inbox-organization" value={organizationId} onChange={(event) => { setOrganizationId(event.target.value); setOffset(0); }}>{organizations.map((item) => <option key={item.organizationId} value={item.organizationId}>{item.organizationName}</option>)}</select><label htmlFor="inbox-status">Status</label><select id="inbox-status" value={filter} onChange={(event) => { setFilter(event.target.value as ContactRequestStatus | ""); setOffset(0); }}><option value="">All statuses</option>{statuses.map((status) => <option key={status}>{status}</option>)}</select><Link className="button secondary" href="/requests/sent">Sent requests</Link></div>{error && <p className="form-error" role="alert">{error}</p>}{!page && !error && <p role="status">Loading contact requests…</p>}{page && <><RequestCards organizationId={organizationId} page={page} onChanged={() => setRevision((value) => value + 1)} /><Pager page={page} setOffset={setOffset} /></>}</div>;
+  return <div className="form-stack">
+    <div className="feed-toolbar"><label htmlFor="inbox-organization">Organization</label><select id="inbox-organization" value={selectedOrganizationId} onChange={(event) => { setOrganizationId(event.target.value); setOffset(0); }}>{organizations.map((item) => <option key={item.organizationId} value={item.organizationId}>{item.organizationName}</option>)}</select>
+      <label htmlFor="inbox-status">Status</label><select id="inbox-status" value={filter} onChange={(event) => { setFilter(event.target.value as ContactRequestStatus | ""); setOffset(0); }}><option value="">All statuses</option>{statuses.map((value) => <option key={value}>{value}</option>)}</select><Link className="button secondary" href="/requests/sent">Sent requests</Link>
+    </div>
+    <InboxPage key={JSON.stringify([selectedOrganizationId, filter, offset, revision])} organizationId={selectedOrganizationId} filter={filter} offset={offset} setOffset={setOffset} onChanged={() => setRevision((value) => value + 1)} />
+  </div>;
+}
+
+function InboxPage({ organizationId, filter, offset, setOffset, onChanged }: { organizationId: string; filter: ContactRequestStatus | ""; offset: number; setOffset(value: number): void; onChanged(): void }) {
+  const [page, setPage] = useState<OffsetPage<ContactRequest> | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let active = true;
+    m4Api.inbox(organizationId, { status: filter || undefined, limit: 20, offset }).then((value) => { if (active) setPage(value); }).catch((cause) => { if (active) setError(errorText(cause)); });
+    return () => { active = false; };
+  }, [organizationId, filter, offset]);
+  if (error) return <div className="empty-state"><p className="form-error" role="alert">{error}</p><button className="button secondary" type="button" onClick={onChanged}>Try again</button></div>;
+  if (!page) return <p role="status">Loading contact requests…</p>;
+  return <><RequestCards organizationId={organizationId} page={page} onChanged={onChanged} /><Pager page={page} setOffset={setOffset} /></>;
 }
 
 export function SentContactRequests() {

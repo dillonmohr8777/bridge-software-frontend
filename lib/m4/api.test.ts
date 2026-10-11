@@ -23,3 +23,26 @@ test("API calls use the configured base, cookies, exact admin queue pagination, 
     await assert.rejects(m4Api.inviteAdminUser({ email: " Test@Example.com ", displayName: " Test ", choice: "admin" }), (error) => error instanceof M4ApiError && error.code === "ADMIN_USER_ALREADY_EXISTS" && error.status === 409);
   } finally { globalThis.fetch = original; delete process.env.NEXT_PUBLIC_BRIDGE_API_BASE; }
 });
+
+test("directory filters and filter-specific cursor are forwarded without losing false", { concurrency: false }, async () => {
+  const previousBase = process.env.NEXT_PUBLIC_BRIDGE_API_BASE;
+  process.env.NEXT_PUBLIC_BRIDGE_API_BASE = "https://api.example.test";
+  const original = globalThis.fetch;
+  let requested = "";
+  globalThis.fetch = async (input) => { requested = String(input); return Response.json({ profiles: [], pageInfo: { nextCursor: null, hasMore: false } }); };
+  try {
+    await m4Api.listDirectory({ category: "Wholesale", state: "Oregon", city: "Portland", region: "Willamette Valley", verified: false, sort: "name_desc", cursor: "opaque+/=", limit: 20 });
+    const query = new URL(requested).searchParams;
+    assert.equal(query.get("category"), "Wholesale");
+    assert.equal(query.get("state"), "Oregon");
+    assert.equal(query.get("city"), "Portland");
+    assert.equal(query.get("region"), "Willamette Valley");
+    assert.equal(query.get("verified"), "false");
+    assert.equal(query.get("sort"), "name_desc");
+    assert.equal(query.get("cursor"), "opaque+/=");
+  } finally {
+    globalThis.fetch = original;
+    if (previousBase === undefined) delete process.env.NEXT_PUBLIC_BRIDGE_API_BASE;
+    else process.env.NEXT_PUBLIC_BRIDGE_API_BASE = previousBase;
+  }
+});
