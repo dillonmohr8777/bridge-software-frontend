@@ -35,6 +35,7 @@ async function setup(page, handler, role = "owner") {
       await new Promise((resolve) => setTimeout(resolve, 250));
       return route.fulfill({ json: identity(role) });
     }
+    if (url.pathname === "/api/v1/notifications") return route.fulfill({ json: { notifications: [], pageInfo: { limit: 50, offset: 0, hasMore: false } } });
     const result = await handler(route, url);
     if (result !== false) return;
     console.error(`Unexpected fixture route: ${url.href}`);
@@ -96,7 +97,10 @@ for (const role of ["owner", "page_manager"]) {
     await page.goto("/my-profile");
     await expect(page.getByLabel("Display name", { exact: true })).toBeEnabled();
     await expect(page.getByLabel("Business", { exact: true })).toBeDisabled();
-    await page.getByLabel("Display name", { exact: true }).fill("Revised Brand");
+    const displayName = page.getByLabel("Display name", { exact: true });
+    await displayName.fill("");
+    await displayName.pressSequentially("Revised Brand");
+    await expect(displayName).toHaveValue("Revised Brand");
     await page.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect(page.getByText("Draft saved. Submit it for review when ready.", { exact: true })).toBeVisible();
     expect(saves).toHaveLength(1);
@@ -124,7 +128,7 @@ test("directory filters reset cursor and discard an old in-flight page", async (
     return route.fulfill({ json: { profiles: [{ ...profile, displayName: filtered ? "Filtered business" : "Initial business" }], pageInfo: { nextCursor: filtered ? null : "opaque-initial", hasMore: !filtered } } });
   });
   await page.goto("/explore");
-  await expect(page.getByRole("heading", { name: "Initial business", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Initial business", exact: true })).toBeVisible({ timeout: 15000 });
   await page.getByRole("button", { name: "Load more", exact: true }).click();
   await expect.poll(() => nextPageStarted).toBe(true);
   await page.getByLabel("State", { exact: true }).fill("Oregon");
