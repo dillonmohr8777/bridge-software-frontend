@@ -1,64 +1,125 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { canEditOrganization, getBridgeApiBase, getPhase3Client, Phase3Error, type OrganizationRecord } from "@/lib/phase3";
-import { DirectoryClient, directoryRoles, type DirectoryInput, type DirectoryProfile } from "@/lib/phase3/directory";
 
-const empty: DirectoryInput = { slug: "", name: "", companyName: "", description: "", location: "", state: "", serviceTerritories: [], products: [], categories: [], logoUrl: null, visibility: "private" };
-const textFields = { slug: "Profile URL name", name: "Display name", companyName: "Company name", location: "City / location", state: "State abbreviation", logoUrl: "Logo URL (HTTPS)" } as const;
-const listFields = { serviceTerritories: "Service territories (two-letter state codes)", products: "Products", categories: "Categories" } as const;
+import Link from "next/link";
+import { useEffect, useState, type FormEvent } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { m4Api, type Business, type DirectoryLink, type DirectoryProfile, type DirectoryProfileInput, type OrganizationType } from "@/lib/m4/api";
+import { normalizeProfileLinks, profileEditorPermissions, resolveOrganizationId } from "@/lib/m4/profile-editor";
+
+const blank: DirectoryProfileInput = { businessId: "", slug: "", displayName: "", summary: null, story: null, businessType: "brand", categories: [], city: null, state: null, region: null, publicEmail: null, publicPhone: null, licenseType: null, licenseNumber: null, links: [] };
+const message = (error: unknown) => error instanceof Error ? error.message : "The request could not be completed.";
+
+function profileDraft(value: DirectoryProfile): DirectoryProfileInput {
+  return { businessId: value.businessId ?? "", slug: value.slug, displayName: value.displayName, summary: value.summary, story: value.story, businessType: value.businessType ?? "brand", categories: value.categories, city: value.city, state: value.state, region: value.region, publicEmail: value.publicContact.email, publicPhone: value.publicContact.phone, licenseType: value.license?.type ?? null, licenseNumber: value.license?.number ?? null, links: value.links };
+}
+
 export function DirectoryEditor() {
-  const client = useMemo(() => new DirectoryClient(getBridgeApiBase()!), []);
-  const organizationsClient = useMemo(() => getPhase3Client(), []);
-  const [profiles, setProfiles] = useState<DirectoryProfile[]>([]);
-  const [organizations, setOrganizations] = useState<OrganizationRecord[]>([]);
-  const [selected, setSelected] = useState<DirectoryProfile | null>(null);
+  const { memberships, status } = useAuth();
+  const organizations = memberships.filter((item) => item.status === "active" && ["owner", "admin", "page_manager"].includes(item.role));
   const [organizationId, setOrganizationId] = useState("");
-  const [draft, setDraft] = useState<DirectoryInput>({ ...empty });
-  const [lists, setLists] = useState({ serviceTerritories: "", products: "", categories: "" });
+  const selectedOrganizationId = resolveOrganizationId(organizationId, organizations);
+  const selected = organizations.find((item) => item.organizationId === selectedOrganizationId);
+  if (status === "loading") return <p role="status">Checking your account…</p>;
+  if (!selected) return <section className="content-card"><h2>Business profile</h2><p>You need an active owner, admin, or page manager membership to manage a Directory profile.</p><Link className="button primary" href="/join/organization">Create or join an organization</Link></section>;
+  return <div className="form-stack"><section className="content-card"><h2>Business and Directory profile</h2><label htmlFor="m4-org">Organization</label><select id="m4-org" value={selectedOrganizationId} onChange={(event) => setOrganizationId(event.target.value)}>{organizations.map((item) => <option key={item.organizationId} value={item.organizationId}>{item.organizationName}</option>)}</select></section><OrganizationEditor key={selectedOrganizationId + ":" + selected.role} organizationId={selectedOrganizationId} role={selected.role} /></div>;
+}
+
+function OrganizationEditor({ organizationId, role }: { organizationId: string; role: string }) {
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [profile, setProfile] = useState<DirectoryProfile | null>(null);
+  const [draft, setDraft] = useState(blank);
+  const [categories, setCategories] = useState("");
+  const [legalName, setLegalName] = useState("");
+  const [dbaName, setDbaName] = useState("");
+  const [logo, setLogo] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
-  const [ready, setReady] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-  const [uncertain, setUncertain] = useState(false);
-  const [retry, setRetry] = useState(0);
-  const saving = useRef(false);
+  const [notice, setNotice] = useState("");
+  const [dirty, setDirty] = useState(false);
+  const [failedLoad, setFailedLoad] = useState(false);
+  const [revision, setRevision] = useState(0);
   useEffect(() => {
     let active = true;
-    Promise.all([client.mine(), organizationsClient.listOrganizations()]).then(([mine, orgs]) => { if (active) { setProfiles(mine.profiles); setOrganizations(orgs.organizations.filter(canEditOrganization)); setReady(true); } }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Could not load your listings."); }).finally(() => { if (active) setLoading(false); });
+    Promise.all([m4Api.listBusinesses(organizationId), m4Api.getProfile(organizationId)]).then(([items, value]) => {
+      if (!active) return;
+      setBusinesses(items); setProfile(value); setDraft(value ? profileDraft(value) : blank); setCategories(value?.categories.join(", ") ?? ""); setFailedLoad(false); setError("");
+    }).catch((cause) => { if (active) { setError(message(cause)); setFailedLoad(true); } }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [client, organizationsClient, retry]);
-  function select(profile: DirectoryProfile | null) {
-    setSelected(profile); setMessage(""); setError("");
-    setDraft(profile ? Object.fromEntries(Object.keys(empty).map((key) => [key, profile[key as keyof DirectoryInput]])) as DirectoryInput : { ...empty });
-    setLists({ serviceTerritories: profile?.serviceTerritories.join(", ") ?? "", products: profile?.products.join(", ") ?? "", categories: profile?.categories.join(", ") ?? "" });
+  }, [organizationId, revision]);
+  const permissions = profileEditorPermissions(role, profile);
+  const field = <K extends keyof DirectoryProfileInput>(key: K, value: DirectoryProfileInput[K]) => { setDirty(true); setDraft((current) => ({ ...current, [key]: value })); };
+  function changeLink(index: number, patch: Partial<DirectoryLink>) { field("links", draft.links.map((link, i) => i === index ? { ...link, ...patch } : link)); }
+  async function createBusiness(event: FormEvent) {
+    event.preventDefault(); if (!permissions.managesBusiness) return; setBusy("business"); setError("");
+    try { const created = await m4Api.createBusiness(organizationId, { legalName: legalName.trim(), dbaName: dbaName.trim() || null }); setBusinesses((items) => [...items, created]); field("businessId", created.id); setNotice("Business created."); }
+    catch (cause) { setError(message(cause)); } finally { setBusy(""); }
   }
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); if (saving.current || !ready || loading || (!selected && uncertain)) return;
-    saving.current = true; setBusy(true); setError(""); setMessage("");
+  async function save(event: FormEvent) {
+    event.preventDefault(); if (!permissions.editable) return; setBusy("save"); setError(""); setNotice("");
     try {
-      const input = { ...draft, name: draft.name.trim(), ...Object.fromEntries(Object.entries(lists).map(([key, value]) => [key, [...new Set(value.split(",").map((item) => item.trim()).filter(Boolean))]])), ...(!selected && organizationId ? { organizationId } : {}) };
-      const { profile } = await client.save(selected?.id ?? null, input);
-      setProfiles((current) => [...current.filter((item) => item.id !== profile.id), profile]); select(profile);
-      setUncertain(false); setMessage(profile.visibility === "public" ? "Public listing saved." : "Private draft saved. It does not appear in public search.");
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "The save could not be confirmed.");
-      if (!selected && (!(cause instanceof Phase3Error) || cause.code === "unavailable")) setUncertain(true);
-    } finally { saving.current = false; setBusy(false); }
+      const links = normalizeProfileLinks(draft.links);
+      const categoryValues = categories.split(",").map((value) => value.trim()).filter(Boolean);
+      const saved = await m4Api.saveProfile(organizationId, { ...draft, slug: draft.slug.trim().toLowerCase(), displayName: draft.displayName.trim(), summary: draft.summary?.trim() || null, story: draft.story?.trim() || null, categories: categoryValues, links });
+      setProfile(saved); setDraft(profileDraft(saved)); setCategories(saved.categories.join(", ")); setDirty(false); setNotice("Draft saved. Submit it for review when ready.");
+    } catch (cause) { setError(message(cause)); } finally { setBusy(""); }
   }
-  return <section className="content-card"><h2>Your directory listing</h2><p>Start with a private draft. Public listings appear in Explore; verification is managed by Bridge.</p>
-    {loading && <p role="status">Loading your listings…</p>}{error && <p role="alert" className="form-error">{error}</p>}{message && <p role="status">{message}</p>}
-    <div className="auth-form"><label htmlFor="directory-owned">Your listings</label><select id="directory-owned" value={selected?.id ?? ""} disabled={busy || loading || !ready} onChange={(event) => select(profiles.find((profile) => profile.id === event.target.value) ?? null)}><option value="">Create a listing</option>{profiles.map((profile) => <option value={profile.id} key={profile.id}>{profile.name} ({profile.visibility})</option>)}</select><button type="button" className="button secondary" disabled={busy || loading} onClick={() => { setLoading(true); setReady(false); setError(""); setRetry((value) => value + 1); }}>Refresh listings</button></div>
-    {uncertain && <p className="boundary-note">Creation could not be confirmed. Refresh and select the listing if it was created. To avoid duplicates, creating another listing is disabled until you reload this page after checking the list.</p>}
-    {ready && <form className="auth-form" onSubmit={submit}><fieldset disabled={busy || loading} style={{ border: 0, padding: 0, margin: 0, display: "grid", gap: "0.75rem" }}>
-      {!selected ? <><label htmlFor="directory-owner">Listing owner</label><select id="directory-owner" value={organizationId} onChange={(event) => setOrganizationId(event.target.value)}><option value="">Personal sales rep profile</option>{organizations.filter((org) => org.organizationType).map((org) => <option key={org.id} value={org.id}>{org.name} ({org.organizationType})</option>)}</select><p className="form-hint">Organization listings require an active owner or admin membership. <Link className="text-link" href="/join/organization">Manage organizations</Link></p></> : <p>Type: {directoryRoles[selected.role]} · Verification: {selected.verificationStatus}</p>}
-      {Object.entries(textFields).map(([key, label]) => <div className="contact-edit" key={key}><label htmlFor={`listing-${key}`}>{label}</label><input id={`listing-${key}`} value={draft[key as keyof typeof textFields] ?? ""} required={key === "slug" || key === "name"} type={key === "logoUrl" ? "url" : "text"} maxLength={key === "state" ? 2 : key === "slug" ? 80 : key === "logoUrl" ? 2048 : 200} onChange={(event) => setDraft((current) => ({ ...current, [key]: key === "logoUrl" ? event.target.value || null : key === "state" ? event.target.value.toUpperCase() : event.target.value }))} /></div>)}
-      <label htmlFor="listing-description">Description</label><textarea id="listing-description" rows={5} maxLength={5000} value={draft.description} onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
-      {Object.entries(listFields).map(([key, label]) => <div className="contact-edit" key={key}><label htmlFor={`listing-${key}`}>{label} (comma separated)</label><input id={`listing-${key}`} value={lists[key as keyof typeof lists]} onChange={(event) => setLists((current) => ({ ...current, [key]: event.target.value }))} /></div>)}
-      <label htmlFor="listing-visibility">Visibility</label><select id="listing-visibility" value={draft.visibility} onChange={(event) => setDraft((current) => ({ ...current, visibility: event.target.value as DirectoryInput["visibility"] }))}><option value="private">Private draft</option><option value="public">Public in the directory</option></select>
-      <button className="button primary" type="submit" disabled={!selected && uncertain}>{busy ? "Saving…" : draft.visibility === "public" ? "Save public listing" : "Save private draft"}</button>
-      {selected?.visibility === "public" && <Link className="text-link" href={`/profile/${encodeURIComponent(selected.slug)}`}>View public listing</Link>}
-    </fieldset></form>}
-  </section>;
+  async function submit() {
+    if (!permissions.canSubmit || dirty || !window.confirm("Submit this profile for administrator review?")) return; setBusy("submit"); setError("");
+    try { setProfile(await m4Api.submitProfile(organizationId)); setNotice("Profile submitted for review."); }
+    catch (cause) { setError(message(cause)); } finally { setBusy(""); }
+  }
+  async function upload() {
+    if (!logo || !permissions.editable) return;
+    if (logo.size > 2 * 1024 * 1024 || !["image/png", "image/jpeg", "image/webp"].includes(logo.type)) { setError("Choose a PNG, JPEG, or WebP file no larger than 2 MiB."); return; }
+    setBusy("logo"); setError("");
+    try { setProfile(await m4Api.uploadLogo(organizationId, logo)); setLogo(null); setNotice("Logo uploaded to the working profile."); }
+    catch (cause) { setError(message(cause)); } finally { setBusy(""); }
+  }
+  async function removeLogo() {
+    if (!permissions.editable || !window.confirm("Remove this working profile logo?")) return; setBusy("logo"); setError("");
+    try { setProfile(await m4Api.deleteLogo(organizationId)); setNotice("Logo removed."); }
+    catch (cause) { setError(message(cause)); } finally { setBusy(""); }
+  }
+  if (loading) return <p role="status">Loading profile…</p>;
+  if (failedLoad) return <section className="content-card"><p className="form-error" role="alert">{error}</p><button className="button secondary" onClick={() => { setLoading(true); setRevision((value) => value + 1); }} type="button">Try again</button></section>;
+  return <>
+    {error && <p className="form-error" role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
+    {profile?.workflowReason && <p className="boundary-note"><strong>Administrator feedback:</strong> {profile.workflowReason}</p>}
+    {!businesses.length && permissions.managesBusiness && <form className="content-card auth-form" onSubmit={createBusiness}><h2>Create business record</h2><label>Legal name<input required maxLength={200} value={legalName} onChange={(event) => setLegalName(event.target.value)} /></label><label>DBA name<input maxLength={200} value={dbaName} onChange={(event) => setDbaName(event.target.value)} /></label><button className="button primary" disabled={!!busy}>Create business</button></form>}
+    {!profile && !permissions.managesBusiness && <p className="boundary-note">An owner or admin must create the business profile before a page manager can edit it.</p>}
+    {businesses.length > 0 && (profile || permissions.managesBusiness) && <form className="content-card auth-form" onSubmit={save}>
+      <div className="card-topline"><h2>Directory profile</h2>{profile?.status && <span className="status-chip pending">{profile.status.replaceAll("_", " ")}</span>}</div>
+      {profile?.hasPublishedVersion && <p className="boundary-note">Your last approved profile stays public while these changes are saved and reviewed.</p>}
+      {profile?.status === "pending_review" && <p className="boundary-note">Saving another change returns this submission to draft.</p>}
+      {!permissions.editable && <p className="boundary-note">This profile cannot currently be edited.</p>}
+      <fieldset disabled={!!busy || !permissions.editable}>
+        <label htmlFor="profile-business">Business</label><select id="profile-business" required disabled={!permissions.canReassignBusiness} value={draft.businessId} onChange={(event) => field("businessId", event.target.value)}><option value="">Choose a business</option>{businesses.map((item) => <option key={item.id} value={item.id}>{item.dbaName || item.legalName}</option>)}</select>
+        <label>Profile URL<input required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" value={draft.slug} onChange={(event) => field("slug", event.target.value.toLowerCase())} /></label>
+        <label>Display name<input required maxLength={200} value={draft.displayName} onChange={(event) => field("displayName", event.target.value)} /></label>
+        <label htmlFor="profile-business-type">Business type</label><select id="profile-business-type" value={draft.businessType} onChange={(event) => field("businessType", event.target.value as OrganizationType)}><option value="brand">Brand</option><option value="retailer">Retailer</option><option value="dispensary">Dispensary</option></select>
+        <label>Summary<textarea rows={3} value={draft.summary ?? ""} onChange={(event) => field("summary", event.target.value || null)} /></label>
+        <label>Story<textarea rows={6} value={draft.story ?? ""} onChange={(event) => field("story", event.target.value || null)} /></label>
+        <label>Categories (comma separated)<input value={categories} onChange={(event) => { setCategories(event.target.value); setDirty(true); }} /></label>
+        <label>City<input value={draft.city ?? ""} onChange={(event) => field("city", event.target.value || null)} /></label>
+        <label>State<input value={draft.state ?? ""} onChange={(event) => field("state", event.target.value || null)} /></label>
+        <label>Region<input value={draft.region ?? ""} onChange={(event) => field("region", event.target.value || null)} /></label>
+        <label>Public email<input type="email" value={draft.publicEmail ?? ""} onChange={(event) => field("publicEmail", event.target.value || null)} /></label>
+        <label>Public phone<input value={draft.publicPhone ?? ""} onChange={(event) => field("publicPhone", event.target.value || null)} /></label>
+        <fieldset><legend>Website, menu and product links</legend>{draft.links.map((link, index) => <div className="form-stack" key={index}>
+          <label>Link {index + 1} type<select value={link.type} onChange={(event) => changeLink(index, { type: event.target.value as DirectoryLink["type"] })}><option value="website">Website</option><option value="menu">Menu</option><option value="product">Product</option><option value="other">Other</option></select></label>
+          <label>Link {index + 1} label<input maxLength={100} value={link.label} onChange={(event) => changeLink(index, { label: event.target.value })} /></label>
+          <label>Link {index + 1} URL<input required type="url" value={link.url} onChange={(event) => changeLink(index, { url: event.target.value })} /></label>
+          <button className="button secondary" type="button" onClick={() => field("links", draft.links.filter((_, i) => i !== index))}>Remove link {index + 1}</button>
+        </div>)}<button className="button secondary" disabled={draft.links.length >= 20} type="button" onClick={() => field("links", [...draft.links, { type: "website", label: "", url: "", sortOrder: draft.links.length }])}>Add link</button></fieldset>
+        <label>License type<input value={draft.licenseType ?? ""} onChange={(event) => field("licenseType", event.target.value || null)} /></label>
+        <label>License number<input value={draft.licenseNumber ?? ""} onChange={(event) => field("licenseNumber", event.target.value || null)} /></label>
+        <button className="button primary">{busy === "save" ? "Saving…" : "Save draft"}</button>
+      </fieldset>
+      {dirty && <p className="form-hint">Save your changes before submitting for review.</p>}
+      {permissions.canSubmit && <button className="button secondary" disabled={!!busy || dirty} onClick={() => void submit()} type="button">{busy === "submit" ? "Submitting…" : profile?.status === "correction_requested" ? "Resubmit for review" : "Submit for review"}</button>}
+      {profile?.hasPublishedVersion && <Link className="text-link" href={`/profile/${encodeURIComponent(profile.slug)}`}>View public profile</Link>}
+    </form>}
+    {profile && permissions.editable && <section className="content-card auth-form"><h2>Business logo</h2><label>Logo file<input accept="image/png,image/jpeg,image/webp" type="file" onChange={(event) => setLogo(event.target.files?.[0] ?? null)} /></label><div className="button-row"><button className="button primary" disabled={!logo || !!busy} onClick={() => void upload()}>{busy === "logo" ? "Working…" : "Upload logo"}</button>{profile.logoUrl && <button className="button secondary" disabled={!!busy} onClick={() => void removeLogo()}>Remove logo</button>}</div></section>}
+  </>;
 }
