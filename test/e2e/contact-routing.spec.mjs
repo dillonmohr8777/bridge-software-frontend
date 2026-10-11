@@ -178,3 +178,38 @@ test("switching inbox hides old routing and scopes subsequent edits", async ({ p
   expect(saves).toEqual(["/api/v1/organizations/" + org2 + "/directory-profile/contact-routing"]);
   await evidence(page, info, "routing-scope", errors);
 });
+
+test("older API 404 keeps owner inbox while contact selector stays read only", async ({ page }, info) => {
+  const writes = [];
+  const errors = await setup(page, async (route, url) => {
+    if (route.request().method() !== "GET") writes.push(url.pathname);
+    if (url.pathname.endsWith("/inbox-organizations") || url.pathname.endsWith("/contact-routing/candidates")) return route.fulfill({ status: 404, json: { error: "NOT_FOUND", message: "Not found" } });
+    if (url.pathname.endsWith("/contact-routing")) return route.fulfill({ json: { routing: { salesRepresentative: rep1, bridgeAdmin: admin } } });
+    if (url.pathname.endsWith("/contact-requests")) return route.fulfill({ json: inbox });
+    return false;
+  });
+  await openPage(page, "/requests");
+  await expect(page.getByLabel("Organization", { exact: true })).toHaveValue(org1);
+  await expect(page.getByText("Assigned inquiry", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Showing your owner\/admin business inboxes/)).toBeVisible();
+  await page.getByRole("button", { name: "Manage contact routing" }).click();
+  await expect(page.getByText(/Contact selection is not available on this API yet/)).toBeVisible();
+  await expect(page.getByLabel("Assigned sales representative", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Save routing changes" })).toHaveCount(0);
+  expect(writes).toEqual([]);
+  await evidence(page, info, "legacy-api", errors.filter(e => !e.includes("404")));
+});
+
+test("discovery 403 never falls back to owner memberships", async ({ page }, info) => {
+  let inboxReads = 0;
+  const errors = await setup(page, async (route, url) => {
+    if (url.pathname.endsWith("/inbox-organizations")) return route.fulfill({ status: 403, json: { error: "FORBIDDEN", message: "Inbox access denied" } });
+    if (url.pathname.endsWith("/contact-requests")) { inboxReads++; return route.fulfill({ json: inbox }); }
+    return false;
+  });
+  await openPage(page, "/requests");
+  await expect(page.getByRole("alert")).toHaveText("Inbox access denied");
+  await expect(page.getByLabel("Organization", { exact: true })).toHaveCount(0);
+  expect(inboxReads).toBe(0);
+  await evidence(page, info, "forbidden-inbox", errors.filter(e => !e.includes("403")));
+});
