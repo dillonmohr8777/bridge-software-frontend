@@ -18,8 +18,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Record production dependency audit
-        continue-on-error: true
+      - name: Audit production dependencies
         run: npm audit --omit=dev
       - run: npm run test:integration
       - run: npm run typecheck
@@ -58,28 +57,3 @@ jobs:
         with:
           node-version: 24
       - run: npm run test:images
-  dependency-candidate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - name: Resolve patched dependency candidate without install scripts
-        run: npm install --package-lock-only --ignore-scripts --save-exact next@16.4.0 eslint-config-next@16.4.0
-      - name: Refresh compatible vulnerable transitive dependencies
-        continue-on-error: true
-        run: npm audit fix --package-lock-only --ignore-scripts
-      - name: Emit candidate manifests for review
-        run: |
-          node --input-type=module - <<'JS'
-          import {readFileSync} from 'node:fs';
-          for (const file of ['package.json','package-lock.json']) {
-            console.log('CANDIDATE_BEGIN ' + file);
-            console.log(readFileSync(file,'utf8'));
-            console.log('CANDIDATE_END ' + file);
-          }
-          JS
-      - name: Audit candidate production dependencies
-        run: npm audit --omit=dev

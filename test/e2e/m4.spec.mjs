@@ -100,6 +100,7 @@ for (const role of ["owner", "page_manager"]) {
     const displayName = page.getByLabel("Display name", { exact: true });
     await displayName.fill("");
     await displayName.pressSequentially("Revised Brand");
+    console.log("Profile edit state", await displayName.evaluate((input) => ({ value: input.value, connected: input.isConnected, disabled: input.disabled, readOnly: input.readOnly })));
     await expect(displayName).toHaveValue("Revised Brand");
     await page.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect(page.getByText("Draft saved. Submit it for review when ready.", { exact: true })).toBeVisible();
